@@ -1,676 +1,917 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!doctype html>
+<html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Word → Moodle XML</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lexique A1 — Mind‑Map</title>
 <style>
-  :root {
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --surface2: #f0efe9;
-    --border: #d8d6cc;
-    --text: #1a1917;
-    --muted: #6b6a64;
-    --accent: #2a5caa;
-    --accent-light: #e8eef8;
-    --accent-dark: #1a3d7a;
-    --success: #1e7a4a;
-    --success-bg: #e6f4ed;
-    --danger: #c0392b;
-    --warning: #d68910;
-    --warning-bg: #fef9e7;
-    --radius: 10px;
-    --mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-    --sans: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 15px;
-    line-height: 1.6;
-  }
-
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .logo {
-    width: 36px; height: 36px;
-    background: var(--accent);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 700; font-size: 14px; letter-spacing: -0.5px;
-  }
-  header h1 { font-size: 17px; font-weight: 600; }
-  header p { font-size: 13px; color: var(--muted); }
-  .badge {
-    margin-left: auto;
-    font-size: 11px; font-weight: 600;
-    background: var(--accent-light);
-    color: var(--accent-dark);
-    padding: 3px 10px;
-    border-radius: 20px;
-    letter-spacing: 0.3px;
-  }
-
-  main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 2rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto 1fr;
-    gap: 1.5rem;
-  }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.25rem 1.5rem;
-  }
-  .card-title {
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--muted);
-    margin-bottom: 1rem;
-  }
-
-  /* Upload zone */
-  .upload-zone {
-    grid-column: 1 / -1;
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 2.5rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: var(--surface);
-    position: relative;
-  }
-  .upload-zone:hover, .upload-zone.drag-over {
-    border-color: var(--accent);
-    background: var(--accent-light);
-  }
-  .upload-zone input[type="file"] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-  }
-  .upload-icon {
-    width: 48px; height: 48px;
-    background: var(--accent-light);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 1rem;
-    font-size: 22px;
-  }
-  .upload-zone h2 { font-size: 16px; font-weight: 600; margin-bottom: 0.4rem; }
-  .upload-zone p { font-size: 13px; color: var(--muted); }
-
-  /* Settings */
-  .settings-card { grid-column: 1 / -1; }
-  .settings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-  .field label {
-    display: block;
-    font-size: 12px; font-weight: 500; color: var(--muted);
-    margin-bottom: 4px;
-  }
-  .field input, .field select {
-    width: 100%;
-    padding: 7px 10px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 13px;
-    font-family: var(--sans);
-    background: var(--surface2);
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .field input:focus, .field select:focus { border-color: var(--accent); }
-
-  /* Questions panel */
-  .questions-panel { overflow-y: auto; max-height: 600px; }
-  .q-list { display: flex; flex-direction: column; gap: 8px; }
-
-  .q-item {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .q-header {
-    padding: 10px 14px;
-    display: flex; align-items: flex-start; gap: 10px;
-    cursor: pointer;
-    user-select: none;
-  }
-  .q-header:hover { background: var(--surface2); }
-  .q-num {
-    min-width: 22px; height: 22px;
-    background: var(--accent); color: white;
-    border-radius: 5px;
-    font-size: 11px; font-weight: 600;
-    display: flex; align-items: center; justify-content: center;
-    margin-top: 1px;
-  }
-  .q-type-badge {
-    font-size: 10px; font-weight: 600; padding: 2px 7px;
-    border-radius: 4px; margin-left: auto; white-space: nowrap;
-    text-transform: uppercase; letter-spacing: 0.4px;
-  }
-  .type-multichoice { background: #e8f0fe; color: #1a56db; }
-  .type-truefalse { background: #e6f4ed; color: #1e7a4a; }
-  .type-shortanswer { background: #fef3e2; color: #c27803; }
-  .type-essay { background: #fce7f3; color: #9d174d; }
-
-  .q-text { font-size: 13px; line-height: 1.5; flex: 1; }
-  .q-body {
-    display: none;
-    padding: 0 14px 12px 46px;
-    font-size: 12px;
-  }
-  .q-body.open { display: block; }
-  .q-answer {
-    display: flex; align-items: center; gap: 6px;
-    padding: 3px 0;
-  }
-  .q-answer .dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    background: var(--border); flex-shrink: 0;
-  }
-  .q-answer.correct .dot { background: var(--success); }
-  .q-answer.correct { color: var(--success); font-weight: 500; }
-
-  /* XML panel */
-  .xml-panel { overflow: hidden; display: flex; flex-direction: column; }
-  .xml-toolbar {
-    display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
-  }
-  .xml-area {
-    flex: 1;
-    font-family: var(--mono);
-    font-size: 11px;
-    line-height: 1.7;
-    background: #1e1e2e;
-    color: #cdd6f4;
-    border-radius: 8px;
-    padding: 14px;
-    overflow-y: auto;
-    white-space: pre;
-    min-height: 400px;
-    max-height: 600px;
-    border: 1px solid #333;
-  }
-  .xml-area .kw { color: #89b4fa; }
-  .xml-area .tag { color: #cba6f7; }
-  .xml-area .attr { color: #a6e3a1; }
-  .xml-area .val { color: #f38ba8; }
-  .xml-area .cm { color: #6c7086; }
-
-  button {
-    padding: 7px 14px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    font-size: 13px;
-    font-family: var(--sans);
-    cursor: pointer;
-    transition: all 0.15s;
-    font-weight: 500;
-    background: var(--surface);
-    color: var(--text);
-  }
-  button:hover { background: var(--surface2); }
-  .btn-primary {
-    background: var(--accent);
-    color: white;
-    border-color: var(--accent-dark);
-  }
-  .btn-primary:hover { background: var(--accent-dark); }
-  .btn-sm { padding: 5px 10px; font-size: 12px; }
-
-  .stats-row {
-    display: flex; gap: 12px; margin-bottom: 0.75rem; flex-wrap: wrap;
-  }
-  .stat { font-size: 12px; color: var(--muted); }
-  .stat strong { color: var(--text); font-weight: 600; }
-
-  .empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: var(--muted);
-  }
-  .empty-state p { font-size: 13px; margin-top: 0.5rem; }
-
-  .alert {
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    margin-bottom: 0.75rem;
-    display: flex; align-items: flex-start; gap: 8px;
-  }
-  .alert-warn { background: var(--warning-bg); color: var(--warning); border: 1px solid #f0c060; }
-  .alert-info { background: var(--accent-light); color: var(--accent-dark); border: 1px solid #bdd0ee; }
-
-  .format-hint {
-    grid-column: 1 / -1;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1rem 1.5rem;
-    font-size: 12px;
-    color: var(--muted);
-  }
-  .format-hint h3 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
-  .format-hint code {
-    font-family: var(--mono);
-    background: var(--border);
-    padding: 1px 5px;
-    border-radius: 3px;
-    color: var(--accent-dark);
-    font-size: 11px;
-  }
-  .format-hint ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
-  .format-hint ul li::before { content: "• "; color: var(--accent); }
-
-  @media (max-width: 700px) {
-    main { grid-template-columns: 1fr; padding: 1rem; }
-    .settings-grid { grid-template-columns: 1fr 1fr; }
+  :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;--text:#e6eef6}
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#071025 0%,#071726 100%);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;color:var(--text)}
+  .app{display:flex;gap:18px;padding:18px;box-sizing:border-box;height:100%}
+  .sidebar{width:320px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:12px;padding:14px;box-sizing:border-box;overflow:auto}
+  h1{font-size:18px;margin:6px 0 12px;color:var(--accent)}
+  .node-list{display:flex;flex-direction:column;gap:8px}
+  .node{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+  .node b{font-size:15px}
+  .map{flex:1;position:relative;border-radius:12px;padding:18px;box-sizing:border-box;overflow:auto}
+  .mind{position:relative;width:2000px;height:1600px;background:radial-gradient(circle at 10% 10%, rgba(6,182,212,0.04), transparent 10%), transparent;border-radius:10px}
+  .center{position:absolute;left:50%;top:10%;transform:translateX(-50%);text-align:center}
+  .center .hub{display:inline-block;background:var(--accent);color:#052025;padding:12px 18px;border-radius:999px;font-weight:700}
+  .cluster{position:absolute;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:10px;border-radius:10px;min-width:220px;max-width:320px}
+  .cluster h3{margin:0 0 8px;font-size:14px;color:var(--accent)}
+  .word{display:inline-block;background:rgba(255,255,255,0.02);margin:4px;padding:6px 8px;border-radius:6px;cursor:pointer;position:relative}
+  .word:hover{box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+  .tooltip{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 8px);background:#021827;color:var(--text);padding:8px;border-radius:6px;font-size:13px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s}
+  .word:hover .tooltip{opacity:1}
+  .controls{display:flex;gap:8px;margin-top:10px}
+  .btn{background:var(--accent);color:#042022;padding:8px 10px;border-radius:8px;border:none;cursor:pointer}
+  .page{position:fixed;inset:40px;border-radius:10px;background:linear-gradient(180deg,#061322,#04121a);padding:18px;box-sizing:border-box;display:none;flex-direction:column;z-index:60;overflow:auto}
+  .page.active{display:flex}
+  .page header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .page h2{margin:0;color:var(--accent)}
+  .close{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text);padding:6px 10px;border-radius:8px;cursor:pointer}
+  .section{margin-top:12px;background:rgba(255,255,255,0.01);padding:12px;border-radius:10px}
+  .text, .dialog{line-height:1.5}
+  .phrase {display:inline-block;position:relative;padding:4px;border-radius:6px;margin:3px;cursor:default}
+  .phrase:hover{background:rgba(255,255,255,0.02)}
+  .phrase .translate{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 8px);background:#031e2a;padding:6px;border-radius:6px;font-size:13px;opacity:0;transition:opacity .12s;white-space:nowrap}
+  .phrase:hover .translate{opacity:1}
+  .play{background:#0b2b2f;color:var(--accent);padding:6px 8px;border-radius:8px;border:none;cursor:pointer;margin-left:8px}
+  footer{margin-top:18px;color:var(--muted);font-size:13px}
+  /* positions for clusters (adjust as needed) */
+  .c1{left:60px;top:160px}
+  .c2{left:420px;top:20px}
+  .c3{left:780px;top:140px}
+  .c4{left:1160px;top:40px}
+  .c5{left:60px;top:420px}
+  .c6{left:420px;top:360px}
+  .c7{left:780px;top:360px}
+  .c8{left:1160px;top:360px}
+  .c9{left:420px;top:700px}
+  .c10{left:780px;top:700px}
+  /* responsive */
+  @media (max-width:1100px){
+    .app{flex-direction:column}
+    .sidebar{width:auto;order:2}
+    .map{order:1;height:650px}
+    .mind{width:1400px;height:1000px}
   }
 </style>
 </head>
 <body>
-
-<header>
-  <div class="logo">W→M</div>
-  <div>
-    <h1>Word → Moodle XML</h1>
-    <p>Конвертер тестовых заданий</p>
-  </div>
-  <span class="badge">Moodle XML v2.0</span>
-</header>
-
-<main>
-  <!-- Upload -->
-  <div class="upload-zone" id="dropZone">
-    <input type="file" accept=".docx" id="fileInput">
-    <div class="upload-icon">📄</div>
-    <h2>Загрузите файл Word (.docx)</h2>
-    <p>Перетащите файл сюда или нажмите для выбора</p>
-  </div>
-
-  <!-- Format hint -->
-  <div class="format-hint">
-    <h3>Поддерживаемые форматы вопросов в документе:</h3>
-    <ul>
-      <li><code>1. Текст вопроса?</code> — нумерованный вопрос</li>
-      <li><code>a) Вариант</code> или <code>А) Вариант</code> — варианты ответа (множественный выбор)</li>
-      <li><code>*a) Правильный</code> или <code>+a) Правильный</code> — правильный ответ (со звёздочкой/плюсом)</li>
-      <li><code>Верно/Неверно</code>, <code>Да/Нет</code> — вопрос на истину/ложь</li>
-      <li>Вопросы без вариантов → короткий ответ или эссе</li>
-    </ul>
-  </div>
-
-  <!-- Settings -->
-  <div class="card settings-card" id="settingsCard" style="display:none">
-    <div class="card-title">Настройки экспорта</div>
-    <div class="settings-grid">
-      <div class="field">
-        <label>Категория вопросов</label>
-        <input type="text" id="category" value="Импортированные вопросы" placeholder="Название категории">
-      </div>
-      <div class="field">
-        <label>Балл за правильный ответ</label>
-        <input type="number" id="defaultGrade" value="1" min="0" max="100" step="0.5">
-      </div>
-      <div class="field">
-        <label>Штраф за ошибку</label>
-        <input type="number" id="penalty" value="0.3333" min="0" max="1" step="0.1">
-      </div>
-      <div class="field">
-        <label>Перемешать ответы</label>
-        <select id="shuffle">
-          <option value="true">Да</option>
-          <option value="false">Нет</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Нумерация вариантов</label>
-        <select id="numbering">
-          <option value="abc">a, b, c ...</option>
-          <option value="ABCD">A, B, C ...</option>
-          <option value="123">1, 2, 3 ...</option>
-          <option value="none">Нет</option>
-        </select>
-      </div>
-      <div class="field" style="display:flex; align-items:flex-end;">
-        <button class="btn-primary" onclick="generateXML()" style="width:100%">🔄 Сгенерировать XML</button>
-      </div>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <h1>Lexique A1 — Mind‑Map</h1>
+    <div class="node-list" id="nodes"></div>
+    <div class="controls">
+      <button class="btn" id="playAll">Произнести слово</button>
+      <button class="btn" id="stopAll">Стоп</button>
     </div>
-  </div>
+    <footer>Наведите на слово — перевод; клик — произношение (мужской голос).</footer>
+  </aside>
 
-  <!-- Questions list -->
-  <div class="card questions-panel" id="questionsPanel">
-    <div class="card-title">Распознанные вопросы</div>
-    <div class="empty-state" id="qEmpty">
-      <div style="font-size:32px">📋</div>
-      <p>Загрузите документ Word<br>для отображения вопросов</p>
+  <main class="map">
+    <div class="mind" id="mind">
+      <div class="center"><div class="hub">Lexique A1</div></div>
+      <!-- clusters (populated by JS) -->
     </div>
-    <div class="q-list" id="qList"></div>
-  </div>
+  </main>
+</div>
 
-  <!-- XML output -->
-  <div class="card xml-panel" id="xmlPanel">
-    <div class="card-title">Moodle XML</div>
-    <div class="xml-toolbar">
-      <div class="stats-row" id="xmlStats"></div>
-      <button class="btn-sm" onclick="copyXML()" id="copyBtn" style="display:none">📋 Копировать</button>
-      <button class="btn-sm btn-primary" onclick="downloadXML()" id="dlBtn" style="display:none">⬇ Скачать .xml</button>
+<!-- Pages for each category -->
+<div class="page" id="page">
+  <header>
+    <h2 id="pageTitle"></h2>
+    <div>
+      <button class="close" id="closePage">Закрыть</button>
     </div>
-    <div class="empty-state" id="xmlEmpty">
-      <div style="font-size:32px">🗂</div>
-      <p>XML появится здесь<br>после генерации</p>
-    </div>
-    <div class="xml-area" id="xmlArea" style="display:none"></div>
+  </header>
+  <div class="section">
+    <h3 style="margin:0 0 8px;color:var(--accent)">Текст (использует слова категории)</h3>
+    <div class="text" id="pageText"></div>
   </div>
-</main>
+  <div class="section">
+    <h3 style="margin:0 0 8px;color:var(--accent)">Диалог</h3>
+    <div class="dialog" id="pageDialog"></div>
+  </div>
+  <footer>Наведение на фразу — перевод на русский; кнопка воспроизводит фразу.</footer>
+</div>
 
 <script>
-let parsedQuestions = [];
-let xmlOutput = '';
+/* Data: категории и слова (включены все слова из файла). 
+   Для каждой французской единицы задан перевод_ru и транскрипция/произношение (произношение — при клике читаем текст).
+   Для компактности транскрипции простые латинизованные варианты; основной звук генерируется TTS (мужской).
+*/
+const data = [
+  {cat:"Les caractéristiques physiques", words:[
+    ["petit(e)","маленький/ая"],
+    ["grand(e)","большой/ая"],
+    ["beau, belle","красивый/ая"],
+    ["laid(e)","уродливый/ая"],
+    ["gros(se)","толстый/ая"],
+    ["mince","стройный/ая"],
+    ["maigre","худой/ая"],
+    ["long(ue)","длинный/ая"],
+    ["court(e)","короткий/ая"],
+    ["blond(e)","блондин/блондинка"],
+    ["brun(e)","брюнет/брюнетка"],
+    ["roux, rousse","рыжий/ая"]
+  ]},
+  {cat:"Les sentiments et le caractère", words:[
+    ["heureux, heureuse","счастливый/ая"],
+    ["content(e)","довольный/ая"],
+    ["triste","грустный/ая"],
+    ["gentil(le)","добрый/ая"],
+    ["bête","глупый/ая"],
+    ["sympathique","симпатичный/приятный"],
+    ["sérieux, sérieuse","серьёзный/ая"]
+  ]},
+  {cat:"Les caractéristiques (diverse)", words:[
+    ["rapide","быстрый/ая"],
+    ["facile","легкий/ая"],
+    ["différent(e)","разный/ая"],
+    ["ancien(ne)","старый/няя/бывший"],
+    ["nouveau, nouvelle","новый/ая"],
+    ["vieux, vieille","старый/ая"],
+    ["neuf, neuve","новый/ая"],
+    ["préféré(e)","предпочитаемый/ая"],
+    ["magnifique","великолепный/ая"],
+    ["joli(e)","милый/ая"],
+    ["disponible","доступный/ая"],
+    ["chaud(e)","тёплый/ая"],
+    ["super","супер"],
+    ["gratuit(e)","бесплатный/ая"],
+    ["nombreux, nombreuse","многочисленный/ая"],
+    ["célèbre","знаменитый/ая"],
+    ["cassé(e)","сломанный/ая"],
+    ["génial(e)","потрясающий/ая"],
+    ["très bon, très bonne","очень хороший/ая"],
+    ["magique","волшебный/ая"],
+    ["incroyable","невероятный/ая"]
+  ]},
+  {cat:"Saluer", words:[
+    ["Bonjour.","Здравствуйте./Добрый день."],
+    ["Bonsoir.","Добрый вечер."],
+    ["Salut !","Привет!"],
+    ["Ça va ?","Как дела?"],
+    ["Comment ça va ?","Как поживаешь?"],
+    ["Coucou !","Кука! (неформально: привет)"]
+  ]},
+  {cat:"Prendre congé", words:[
+    ["Au revoir !","До свидания!"],
+    ["Salut !","Пока!"],
+    ["À plus tard !","До скорого!"],
+    ["À lundi !","До понедельника!"],
+    ["À ce soir.","Увидимся вечером."],
+    ["À très bientôt.","До скорой встречи."],
+    ["À dimanche !","До воскресенья!"],
+    ["Bises.","Целую. (неформально)"],
+    ["Bisous.","Целую/поцелуи."]
+  ]},
+  {cat:"Se présenter et présenter quelqu’un", words:[
+    ["Je m’appelle Erdem.","Меня зовут Эрдем."],
+    ["Je suis italien.","Я итальянец."],
+    ["Je suis ta correspondante française.","Я твоя французская корреспондентка."],
+    ["J’ai 14 ans et j’habite à Nantes.","Мне 14 лет и я живу в Нантe."],
+    ["Ma sœur s’appelle Özge.","Мою сестру зовут Озге."],
+    ["C’est Julien.","Это Жюльен."]
+  ]},
+  {cat:"Exprimer ses goûts", words:[
+    ["J’aime beaucoup les bandes dessinées.","Я очень люблю комиксы."],
+    ["J’adore apprendre de nouveaux mots.","Я обожаю учить новые слова."],
+    ["Je préfère les dictionnaires en ligne.","Я предпочитаю онлайн-словарь."],
+    ["C’est super !","Это супер!"],
+    ["Je déteste…","Я ненавижу…"],
+    ["Je n’aime pas…","Мне не нравится…"],
+    ["Ma maman aime beaucoup ça.","Моя мама это очень любит."]
+  ]},
+  {cat:"Les gens / Les personnes", words:[
+    ["une personne","человек"],
+    ["un homme, une femme","мужчина, женщина"],
+    ["un(e) enfant","ребёнок"],
+    ["un(e) adolescent(e) (ado)","подросток"],
+    ["un garçon, une fille","мальчик, девочка"],
+    ["un bébé","младенец"],
+    ["un(e) collégien(ne)","ученик/ученица колледжа (коллеж)"],
+    ["un(e) lycéen(ne)","ученик/ученица лицея"],
+    ["un copain, une copine","приятель, подруга"],
+    ["un(e) ami(e)","друг/подруга"]
+  ]},
+  {cat:"La famille", words:[
+    ["les parents","родители"],
+    ["les grands-parents","бабушка и дедушка"],
+    ["un père, une mère","отец, мать"],
+    ["un frère, une sœur","брат, сестра"],
+    ["un oncle, une tante","дядя, тётя"],
+    ["un cousin, une cousine","двоюродный брат/сестра"],
+    ["marié(e)","женат/замужем"],
+    ["célibataire","неженат/незамужем"]
+  ]},
+  {cat:"L’identité", words:[
+    ["un nom","фамилия"],
+    ["un prénom","имя"],
+    ["un numéro","номер"],
+    ["une nationalité","гражданство"],
+    ["africain","африканец"],
+    ["belge","бельгиец/бельгийка"],
+    ["italien","итальянец"],
+    ["l’âge","возраст"],
+    ["une pièce d’identité","удостоверение личности"],
+    ["une photo d’identité","паспортная фотография"],
+    ["une date de naissance","дата рождения"],
+    ["une ville de naissance","город рождения"],
+    ["une adresse","адрес"],
+    ["le code postal","почтовый индекс"],
+    ["la ville","город"],
+    ["le pays","страна"]
+  ]},
+  {cat:"Le corps", words:[
+    ["le cœur","сердце"],
+    ["les pieds","стопы"],
+    ["les mains","руки"],
+    ["les doigts","пальцы"],
+    ["la jambe","нога"],
+    ["les bras","руки"],
+    ["les yeux (l’œil)","глаза (глаз)"],
+    ["l’oreille","ухо"],
+    ["le nez","нос"],
+    ["la bouche","рот"],
+    ["les dents","зубы"],
+    ["les cheveux","волосы"]
+  ]},
+  {cat:"Les couleurs", words:[
+    ["jaune","жёлтый"],
+    ["blanc, blanche","белый/ая"],
+    ["noir(e)","чёрный/ая"],
+    ["bleu(e)","синий/яя"],
+    ["rouge","красный"],
+    ["vert(e)","зелёный/ая"],
+    ["gris(e)","серый/ая"],
+    ["marron","коричневый"]
+  ]},
+  {cat:"Les actions", words:[
+    ["écrire","писать"],
+    ["relier","соединять"],
+    ["descendre","спускаться"],
+    ["s’inscrire","записаться"],
+    ["envoyer","отправлять"],
+    ["observer","наблюдать"],
+    ["ramasser","собирать"],
+    ["donner","давать"],
+    ["nettoyer","чистить"],
+    ["arriver, partir","приходить, уходить"],
+    ["organiser","организовывать"],
+    ["préparer une fête","готовить праздник"],
+    ["aider quelqu’un","помогать кому-то"],
+    ["faire le ménage","делать уборку"],
+    ["ranger sa chambre","убирать свою комнату"],
+    ["utiliser un objet","использовать предмет"],
+    ["allumer un ordinateur","включить компьютер"],
+    ["faire des recherches","проводить исследования"]
+  ]},
+  {cat:"Dire une action en cours", words:[
+    ["Je suis en train de cuisiner.","Я сейчас готовлю."]
+  ]},
+  {cat:"La ville", words:[
+    ["une région","регион"],
+    ["une capitale","столица"],
+    ["une rue","улица"],
+    ["une avenue","проспект"],
+    ["une place","площадь"],
+    ["un carrefour","перекрёсток"],
+    ["une ville","город"],
+    ["un village","деревня"],
+    ["une église","церковь"],
+    ["un château","замок"],
+    ["un monument","памятник"],
+    ["un hôtel","отель"],
+    ["un immeuble","здание"],
+    ["un parking","парковка"]
+  ]},
+  {cat:"Le logement", words:[
+    ["une adresse","адрес"],
+    ["un étage","этаж"],
+    ["un mur","стена"],
+    ["une maison","дом"],
+    ["un appartement","квартира"],
+    ["l’entrée","вход"],
+    ["la sortie","выход"],
+    ["une fenêtre","окно"],
+    ["une chaise","стул"],
+    ["une table","стол"],
+    ["un lit","кровать"],
+    ["une armoire","шкаф"],
+    ["une chambre","комната"],
+    ["la cuisine","кухня"],
+    ["le four à micro-ondes","микроволновка"],
+    ["le réfrigérateur","холодильник"],
+    ["le salon","гостиная"],
+    ["la salle de bains","ванная комната"],
+    ["le jardin","сад"],
+    ["les toilettes","туалет"],
+    ["un escalier","лестница"]
+  ]},
+  {cat:"Les moyens de transport", words:[
+    ["prendre le bus, le train, l’avion","ехать на автобусе, поезде, самолёте"],
+    ["un bus","автобус"],
+    ["un arrêt de bus","автобусная остановка"],
+    ["une carte de bus","проездной"],
+    ["un siège","сиденье"],
+    ["un tramway, un tram","трамвай"],
+    ["un train","поезд"],
+    ["le TGV (Train à grande vitesse)","TGV (скоростной поезд)"],
+    ["le départ, l’arrivée","отправление, прибытие"],
+    ["une gare","вокзал"],
+    ["la voie","путь"],
+    ["la voiture-bar","вагон-ресторан"],
+    ["le métro","метро"],
+    ["une station de métro","станция метро"],
+    ["une voiture","машина"],
+    ["la ceinture de sécurité","ремень безопасности"],
+    ["une voiture électrique — une moto électrique","электромобиль — электромотоцикл"],
+    ["un vélo","велосипед"],
+    ["un skateboard","скейтборд"],
+    ["une trottinette","самокат"],
+    ["un aéroport","аэропорт"],
+    ["un avion","самолёт"],
+    ["le hall","зал"],
+    ["une carte d’embarquement","посадочный талон"],
+    ["un vol","рейс"],
+    ["une destination","пункт назначения"],
+    ["un voyageur, un passager","путешественник, пассажир"],
+    ["un bateau","лодка/корабль"]
+  ]},
+  {cat:"Indiquer un itinéraire", words:[
+    ["Tu prends à droite dans la rue du Théâtre, puis à gauche dans la rue Carnot.","Поверни направо на улице Théâtre, затем налево на улице Carnot."],
+    ["À partir de la mairie, prenez la rue des Roses.","От мэрии возьмите улицу des Roses."],
+    ["Tu tournes à gauche, dans la rue Diderot.","Поверни налево на улице Diderot."],
+    ["Tu traverses le parc des Plantes.","Ты проходишь через парк des Plantes."],
+    ["Tu continues tout droit, tu arrives sur la place du Marché.","Продолжай прямо, ты прибываешь на площадь Марше."]
+  ]},
+  {cat:"Situer dans l’espace", words:[
+    ["Les fruits sont sur la table.","Фрукты на столе."],
+    ["L’arrêt est derrière la maison.","Остановка за домом."],
+    ["L’arrêt est à côté de chez nous.","Остановка рядом с нашим домом."],
+    ["Il y a des travaux devant la gare.","Перед вокзалом идут работы."],
+    ["Il est là, sous votre livre.","Он там, под вашей книгой."],
+    ["Les boissons sont interdites dans la bibliothèque.","Напитки запрещены в библиотеке."],
+    ["Le zoo est près de la ville de Royan.","Зоопарк рядом с городом Ройан."],
+    ["La salle des fêtes est en face de l’arrêt de bus.","Зал праздников напротив автобусной остановки."],
+    ["Le musée est dans cette rue.","Музей на этой улице."],
+    ["J’habite la deuxième maison à droite, en face du stade.","Я живу во втором доме справа, напротив стадиона."],
+    ["Notre maison est la 1re dans la rue.","Наш дом первый на улице."],
+    ["Le jardin est là.","Сад вот там."],
+    ["C’est au restaurant « Le Mariage des cuisines ».","Это в ресторане «Le Mariage des cuisines»."],
+    ["Le restaurant est au bout de la rue.","Ресторан в конце улицы."]
+  ]},
+  {cat:"Loisirs & culture (part 1)", words:[
+    ["un atelier","мастерская/мастер-класс"],
+    ["dessiner","рисовать"],
+    ["un dessin","рисунок"],
+    ["un jeu, un jeu vidéo, des jeux de société","игра, видеоигра, настольные игры"],
+    ["jouer","играть"]
+  ]},
+  {cat:"La musique & spectacle", words:[
+    ["un concert","концерт"],
+    ["un orchestre","оркестр"],
+    ["un instrument de musique","музыкальный инструмент"],
+    ["la musique classique","классическая музыка"],
+    ["faire de la musique","заниматься музыкой"],
+    ["écouter de la musique","слушать музыку"],
+    ["le chant","пение"],
+    ["une chanson","песня"],
+    ["chanter","петь"]
+  ]},
+  {cat:"Le cinéma & musée", words:[
+    ["un cinéma","кинотеатр"],
+    ["regarder un film","смотреть фильм"],
+    ["une affiche de film","афиша фильма"],
+    ["la magie","магия"],
+    ["la danse","танец"],
+    ["un spectacle","спектакль"],
+    ["un billet, un ticket","билет"],
+    ["réserver une place","забронировать место"],
+    ["un théâtre","театр"],
+    ["un rôle","роль"],
+    ["visiter une exposition","посетить выставку"],
+    ["un visiteur","посетитель"],
+    ["une statue","статуя"],
+    ["l’art","искусство"]
+  ]},
+  {cat:"La lecture & adresse", words:[
+    ["une bibliothèque","библиотека"],
+    ["lire","читать"],
+    ["un livre","книга"],
+    ["un roman","роман"],
+    ["un manga","манга"],
+    ["une bande dessinée","комикс"],
+    ["un conte","сказка"],
+    ["une adresse — J’habite au numéro 27.","адрес — Я живу под номером 27."]
+  ]},
+  {cat:"Les objets", words:[
+    ["un cadeau","подарок"],
+    ["un souvenir","сувенир"],
+    ["une carte postale","открытка"],
+    ["une tente 4 places","палатка на 4 места"],
+    ["une boîte","коробка"],
+    ["une bouteille","бутылка"],
+    ["en plastique","из пластика"],
+    ["en verre","из стекла"],
+    ["un colis","посылка"],
+    ["une poubelle","мусорный контейнер"],
+    ["une valise","чемодан"],
+    ["un coffre","сундук/багажник"]
+  ]},
+  {cat:"Le temps", words:[
+    ["le matin","утро"],
+    ["l’après-midi","день/послеобеденное время"],
+    ["le soir","вечер"],
+    ["la nuit","ночь"],
+    ["aujourd’hui, demain","сегодня, завтра"],
+    ["un jour","день"],
+    ["une semaine","неделя"]
+  ]},
+  {cat:"Les jours et mois", words:[
+    ["lundi, mardi, mercredi, jeudi, vendredi, samedi, dimanche","понедельник, вторник, среда, четверг, пятница, суббота, воскресенье"],
+    ["un week-end","выходные"],
+    ["janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre","месяцы года"]
+  ]},
+  {cat:"Donner la date / événements", words:[
+    ["Je suis né le 19 septembre 2006.","Я родился 19 сентября 2006 года."],
+    ["Le 3 avril, il y a un contrôle.","3 апреля контрольная."],
+    ["Spectacle de magie mercredi 9 juin, à 15 h.","Шоу магии в среду 9 июня в 15:00."],
+    ["Ma sœur est née hier, à 15 h.","Моя сестра родилась вчера в 15:00."]
+  ]},
+  {cat:"Les événements & horaires", words:[
+    ["un concours / un jeu-concours","конкурс"],
+    ["une surprise","сюрприз"],
+    ["un festival","фестиваль"],
+    ["un salon","ярмарка/выставка"],
+    ["un mariage","свадьба"],
+    ["une fête d’anniversaire","день рождения"],
+    ["la fête du livre, la fête de la musique, la fête du collège","литературный праздник, праздник музыки, школьный праздник"],
+    ["C’est de 16 h à 17 h.","С 16:00 до 17:00."],
+    ["Nos invités viennent à 20 h 30.","Наши гости приходят в 20:30."],
+    ["Il est en retard.","Он опаздывает."]
+  ]},
+  {cat:"Les loisirs & lieux", words:[
+    ["sortir","выходить/гулять"],
+    ["une sortie culturelle","культурная прогулка"],
+    ["une activité","занятие"],
+    ["une association","ассоциация"],
+    ["un centre de loisirs","центр досуга"],
+    ["un cirque","цирк"],
+    ["un zoo","зоопарк"],
+    ["un aquarium","аквариум"],
+    ["un parc","парк"],
+    ["un parc d’aventure","парк приключений"],
+    ["faire du camping","кемпинговать"],
+    ["se promener","прогуливаться"]
+  ]},
+  {cat:"Médias & technologie", words:[
+    ["la radio","радио"],
+    ["la télévision","телевидение"],
+    ["un magazine","журнал"],
+    ["un journal","газета"],
+    ["Internet","Интернет"],
+    ["un site web","сайт"],
+    ["un blog","блог"],
+    ["un ordinateur","компьютер"],
+    ["un message — un message électronique","сообщение — электронное сообщение"],
+    ["une adresse mail / un courriel / un mail / un mèl","электронный адрес"],
+    ["une vidéo","видео"],
+    ["un appareil photo","фотоаппарат"],
+    ["une montre connectée","умные часы"],
+    ["une caméra numérique","цифровая камера"],
+    ["un téléphone portable","мобильный телефон"]
+  ]},
+  {cat:"Les sports", words:[
+    ["le rugby","регби"],
+    ["la natation","плавание"],
+    ["le volley-ball","волейбол"],
+    ["le handball","гандбол"],
+    ["le roller","роликовые коньки"],
+    ["le badminton","бадминтон"],
+    ["le karaté","каратэ"],
+    ["le tennis","теннис"],
+    ["le basket-ball","баскетбол"],
+    ["la course à pied","бег"],
+    ["le ski","лыжи"],
+    ["la danse","танец"],
+    ["le judo","дзюдо"],
+    ["le club de football","футбольный клуб"],
+    ["une équipe","команда"],
+    ["la piscine","бассейн"],
+    ["le stade","стадион"],
+    ["la salle de sport","спортзал"]
+  ]},
+  {cat:"Accessoires & habitudes", words:[
+    ["un sac de sport","спортивная сумка"],
+    ["une tenue de sport","спортивная форма"],
+    ["faire du sport","заниматься спортом"],
+    ["être sportif","быть спортивным"],
+    ["se baigner","купаться"],
+    ["Tous les jours. Tous les samedis.","Каждый день. Каждую субботу."],
+    ["Je mange souvent du poisson.","Я часто ем рыбу."],
+    ["Je n’attache jamais mon vélo.","Я никогда не пристёгиваю свой велосипед."],
+    ["Je fais du vélo le dimanche.","Я катаюсь на велосипеде по воскресеньям."],
+    ["Je vais à l’école à pied.","Я хожу в школу пешком."]
+  ]},
+  {cat:"Inviter / Donner rendez-vous", words:[
+    ["Est-ce que tu veux venir ?","Хочешь прийти?"],
+    ["Ça t’intéresse ?","Тебе интересно?"],
+    ["Tu viens avec nous ?","Ты идёшь с нами?"],
+    ["Viens avec moi.","Пойди со мной."],
+    ["Je t’invite à ma fête d’anniversaire.","Я приглашаю тебя на свой день рождения."],
+    ["À samedi !","До субботы!"],
+    ["On se retrouve à 16 h, d’accord ?","Встречаемся в 16:00, согласен?"]
+  ]},
+  {cat:"Exprimer son accord", words:[
+    ["D’accord.","Хорошо."],
+    ["OK !","ОК!"],
+    ["Oui !","Да!"]
+  ]},
+  {cat:"L’école & fournitures", words:[
+    ["le collège","колледж"],
+    ["le lycée","лицей"],
+    ["la classe","класс"],
+    ["le papier","бумага"],
+    ["un(e) élève","ученик/ученица"],
+    ["un(e) professeur(e)","преподаватель/ница"],
+    ["un cartable","портфель"],
+    ["un livre","книга"],
+    ["un cahier","тетрадь"],
+    ["un crayon","карандаш"],
+    ["un stylo","ручка"]
+  ]},
+  {cat:"La langue & vocabulaire", words:[
+    ["le niveau de langue","уровень языка"],
+    ["un mot","слово"],
+    ["un adjectif","прилагательное"],
+    ["un verbe","глагол"],
+    ["une phrase","предложение"],
+    ["un dictionnaire","словарь"],
+    ["le vocabulaire","лексика"]
+  ]},
+  {cat:"Nourriture & repas", words:[
+    ["des pâtes","паста"],
+    ["des spaghettis","спагетти"],
+    ["des frites","картошка фри"],
+    ["des pommes de terre","картофель"],
+    ["des chips","чипсы"],
+    ["un fromage","сыр"],
+    ["un dessert","десерт"],
+    ["un gâteau","торт"],
+    ["un yaourt","йогурт"],
+    ["le chocolat","шоколад"],
+    ["une salade de fruits","фруктовый салат"],
+    ["une glace","мороженое"],
+    ["une pâtisserie","кондитерское изделие"]
+  ]},
+  {cat:"Fruits & légumes", words:[
+    ["une orange","апельсин"],
+    ["une banane","банан"],
+    ["une pomme","яблоко"],
+    ["une pêche","персик"],
+    ["un ananas","ананас"],
+    ["une tomate","помидор"],
+    ["des champignons","грибы"],
+    ["une carotte","морковь"],
+    ["une salade","салат"],
+    ["une pomme de terre","картофель"]
+  ]},
+  {cat:"Le couvert & quantités", words:[
+    ["une assiette","тарелка"],
+    ["un verre","стакан"],
+    ["un plat","блюдо"],
+    ["une cuillère","ложка"],
+    ["une fourchette","вилка"],
+    ["un couteau","нож"],
+    ["un litre","литр"],
+    ["un demi-litre","пол-литра"],
+    ["250 grammes","250 грамм"],
+    ["un kilogramme (kilo)","килограмм"],
+    ["un morceau de croissant","кусочек круассана"]
+  ]},
+  {cat:"Commander / Passer une commande", words:[
+    ["Je voudrais…","Я хотел бы..."],
+    ["Vous avez du soda ?","У вас есть сода?"]
+  ]},
+  {cat:"Les matières scolaires", words:[
+    ["le français","французский"],
+    ["l’anglais","английский"],
+    ["l’espagnol","испанский"],
+    ["l’arabe","арабский"],
+    ["la biologie","биология"],
+    ["l’histoire","история"],
+    ["la géographie","география"],
+    ["les mathématiques","математика"],
+    ["l’informatique","информатика"],
+    ["la physique","физика"],
+    ["la chimie","химия"],
+    ["SVT","наука о жизни и Земле"],
+    ["l’art plastique","изобразительное искусство"],
+    ["la musique","музыка"],
+    ["le sport","физкультура"]
+  ]},
+  {cat:"Le matériel scolaire", words:[
+    ["un cahier","тетрадь"],
+    ["une feuille","лист"],
+    ["un stylo","ручка"],
+    ["une règle","линейка"],
+    ["un classeur","папка"],
+    ["un tube de colle","клей"]
+  ]},
+  {cat:"Les professions", words:[
+    ["un métier","профессия"],
+    ["un(e) responsable","ответственный/ая"],
+    ["un(e) peintre","художник/маляр"],
+    ["un(e) artiste","артист"],
+    ["un vendeur, une vendeuse","продавец/продавщица"],
+    ["un boulanger, une boulangère","пекарь/пекарша"],
+    ["un(e) guide","гид"],
+    ["un serveur, une serveuse","официант/официантка"],
+    ["un policier, une policière","полицейский/ая"],
+    ["un pompier, une pompière","пожарный/ая"],
+    ["un(e) comédien(ne)","актёр/актриса"],
+    ["un(e) fleuriste","флорист"],
+    ["un(e) photographe","фотограф"],
+    ["un chauffeur, une chauffeuse","водитель/ница"],
+    ["un(e) auteur(e)","автор/авторка"],
+    ["un(e) pilote","пилот"],
+    ["un chanteur, une chanteuse","певец/певица"]
+  ]},
+  {cat:"Santé et hygiène", words:[
+    ["être malade","быть больным"],
+    ["avoir de la fièvre","иметь температуру"],
+    ["avoir mal à la tête","болит голова"],
+    ["avoir la grippe","иметь грипп"],
+    ["un médicament","лекарство"],
+    ["un sirop","сироп"],
+    ["un cachet d’aspirine","таблетка аспирина"],
+    ["une clinique / un hôpital","клиника/больница"],
+    ["une pharmacie","аптека"],
+    ["un gel douche / un savon","гель для душа/мыло"],
+    ["un shampooing","шампунь"],
+    ["se laver","мыться"]
+  ]},
+  {cat:"Vêtements & accessoires", words:[
+    ["un pantalon","штаны"],
+    ["une jupe","юбка"],
+    ["une écharpe","шарф"],
+    ["un tee-shirt","футболка"],
+    ["les lunettes, les lunettes de soleil","очки, солнцезащитные очки"],
+    ["un pull","свитер"],
+    ["un short","шорты"],
+    ["un gilet","жилет"],
+    ["des chaussures, des bottes, des baskets, des sandales","обувь, сапоги, кеды, сандалии"],
+    ["un parapluie","зонт"],
+    ["une serviette de bain","банное полотенце"],
+    ["un casque","шлем"],
+    ["un sac à dos","рюкзак"],
+    ["un collier","ожерелье"]
+  ]},
+  {cat:"Commerces & prix", words:[
+    ["la poste","почта"],
+    ["le marché","рынок"],
+    ["la boulangerie","булочная"],
+    ["l’épicerie","магазин продуктов"],
+    ["la boucherie","мясная лавка"],
+    ["la librairie","книжный"],
+    ["la papeterie","канцтовары"],
+    ["une boutique","бутик"],
+    ["un magasin","магазин"],
+    ["un supermarché","супермаркет"],
+    ["un centre commercial","торговый центр"],
+    ["un rayon de produits frais","отдел свежих продуктов"],
+    ["une promotion","акция"],
+    ["un achat","покупка"],
+    ["payer en chèque","платить чеком"],
+    ["payer en espèces","платить наличными"]
+  ]},
+  {cat:"Demander un prix / offres", words:[
+    ["C’est combien ?","Сколько стоит?"],
+    ["Combien ça coûte ?","Сколько это стоит?"],
+    ["Donner un prix — une réduction","Указать цену — скидка"],
+    ["C’est gratuit.","Это бесплатно."],
+    ["Tarif réduit : — 20 % pour les étudiants.","Сниженная цена: -20% для студентов."]
+  ]},
+  {cat:"La météo / nature / animaux", words:[
+    ["Il fait très beau.","Очень хорошая погода."],
+    ["Il fait chaud.","Тепло."],
+    ["Il fait frais. Il fait froid.","Прохладно. Холодно."],
+    ["la pluie, pleuvoir","дождь, идти (о дожде)"],
+    ["Il pleut. Il va pleuvoir.","Идёт дождь. Будет дождь."],
+    ["un nuage","облако"],
+    ["la campagne, la forêt, un arbre","сельская местность, лес, дерево"],
+    ["un fleuve, une rivière","река"],
+    ["une fleur","цветок"],
+    ["la mer, l’eau, la plage, le lac","море, вода, пляж, озеро"],
+    ["un cheval","лошадь"],
+    ["un chien","собака"],
+    ["un chat","кот"],
+    ["un dauphin","дельфин"],
+    ["un éléphant","слон"]
+  ]},
+  {cat:"Vie sociale / expressions", words:[
+    ["Bravo !","Браво!"],
+    ["Tu joues très bien.","Ты очень хорошо играешь."],
+    ["Félicitations !","Поздравляю!"],
+    ["Ça suffit !","Хватит!"],
+    ["Pardon ?","Извините? / Простите?"],
+    ["Qu’est-ce que ça veut dire ?","Что это значит?"],
+    ["Je dois étudier.","Я должен учиться."],
+    ["C’est interdit !","Это запрещено!"],
+    ["Merci beaucoup.","Большое спасибо."],
+    ["Je suis désolé(e).","Мне жаль."]
+  ]},
+  {cat:"Annoncer / expliquer", words:[
+    ["Voici le programme : …","Вот программа: …"],
+    ["Mon frère va mettre de la musique et on va pouvoir danser.","Мой брат включит музыку, и мы сможем танцевать."],
+    ["Après le spectacle, à 17 h, il y a un concert dans le parc.","После спектакля в 17:00 в парке будет концерт."],
+    ["On montre sa carte.","Показываем карту."],
+    ["On paye à la caisse.","Оплачиваем на кассе."]
+  ]}
+];
 
-// ─── File handling ────────────────────────────────────────────────────────────
-const dropZone = document.getElementById('dropZone');
-const fileInput = document.getElementById('fileInput');
+// Helper: flatten for sidebar
+const categories = data.map(d=>d.cat);
 
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropZone.classList.remove('drag-over');
-  if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]);
+// create clusters visually and sidebar nodes
+const mind = document.getElementById('mind');
+const nodesDiv = document.getElementById('nodes');
+
+data.forEach((group,i)=>{
+  // sidebar node
+  const node = document.createElement('div'); node.className='node';
+  node.innerHTML = `<b>${group.cat}</b><span style="color:var(--muted);font-size:13px">${group.words.length}</span>`;
+  node.onclick = ()=>openPage(i);
+  nodesDiv.appendChild(node);
+
+  // cluster box
+  const c = document.createElement('div'); c.className='cluster c'+((i%18)+1);
+  const h = document.createElement('h3'); h.textContent = group.cat;
+  c.appendChild(h);
+  const wrap = document.createElement('div');
+  group.words.forEach(w=>{
+    const wspan = document.createElement('span'); wspan.className='word';
+    const fr = w[0]; const ru = w[1] || '';
+    // tooltip for translation on hover of single word
+    wspan.innerHTML = `<span>${fr}</span><div class="tooltip">${ru || ''}</div>`;
+    // click -> pronounce single word/phrase
+    wspan.onclick = (ev)=>{
+      ev.stopPropagation();
+      speak(fr);
+    };
+    wrap.appendChild(wspan);
+  });
+  c.appendChild(wrap);
+  mind.appendChild(c);
 });
-fileInput.addEventListener('change', () => { if (fileInput.files[0]) processFile(fileInput.files[0]); });
 
-function processFile(file) {
-  if (!file.name.endsWith('.docx')) {
-    alert('Пожалуйста, загрузите файл .docx');
-    return;
+// Position clusters in a distributed layout (deterministic)
+const cls = document.querySelectorAll('.cluster');
+cls.forEach((el,idx)=>{
+  const cols = 4;
+  const row = Math.floor(idx/cols);
+  const col = idx%cols;
+  const left = 60 + col*360;
+  const top = 120 + row*260;
+  el.style.left = left+'px';
+  el.style.top = top+'px';
+});
+
+// Speech synthesis (male voice preference)
+let synth = window.speechSynthesis;
+function getMaleVoice(){
+  const voices = synth.getVoices ? synth.getVoices() : [];
+  // prefer voices with male or 'Google français' then fallback to first
+  let v = voices.find(v=>/fr|Français|French/i.test(v.lang) && /male|Masculin|Homme/i.test(v.name));
+  if(!v) v = voices.find(v=>/fr|fr-FR/i.test(v.lang));
+  if(!v && voices.length) v = voices[0];
+  return v || null;
+}
+let voice = null;
+function ensureVoices(){
+  voice = getMaleVoice();
+}
+if (speechSynthesis.onvoiceschanged !== undefined) {
+  speechSynthesis.onvoiceschanged = ensureVoices;
+}
+ensureVoices();
+
+function speak(text){
+  if(!synth) return;
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'fr-FR';
+  if(voice) u.voice = voice;
+  // set slightly faster natural rate for clarity
+  u.rate = 0.95;
+  synth.speak(u);
+}
+
+document.getElementById('playAll').onclick = ()=>{
+  // pronounce first word of currently visible cluster or sequentially all words of first category
+  // by rule: be decisive -> play all words of first category sequentially
+  const items = data[0].words.map(w=>w[0]);
+  let idx=0;
+  function next(){
+    if(idx>=items.length) return;
+    speak(items[idx]);
+    idx++;
+    // wait ~700ms + length-based
+    const wait = 700 + Math.min(1200, items[idx-1].length*80);
+    setTimeout(next, wait);
   }
-  dropZone.querySelector('h2').textContent = '⏳ Обработка ' + file.name + '…';
-  const reader = new FileReader();
-  reader.onload = e => {
-    mammoth.extractRawText({ arrayBuffer: e.target.result })
-      .then(r => {
-        parsedQuestions = parseQuestions(r.value);
-        renderQuestions();
-        document.getElementById('settingsCard').style.display = '';
-        dropZone.querySelector('h2').textContent = '✅ ' + file.name;
-        dropZone.querySelector('p').textContent = 'Распознано вопросов: ' + parsedQuestions.length;
-      })
-      .catch(err => {
-        dropZone.querySelector('h2').textContent = '❌ Ошибка чтения файла';
-        console.error(err);
-      });
-  };
-  reader.readAsArrayBuffer(file);
+  next();
+};
+document.getElementById('stopAll').onclick = ()=>{ if(synth) synth.cancel(); };
+
+// Page (category detail) generation
+const page = document.getElementById('page');
+const pageTitle = document.getElementById('pageTitle');
+const pageText = document.getElementById('pageText');
+const pageDialog = document.getElementById('pageDialog');
+document.getElementById('closePage').onclick = ()=>{ page.classList.remove('active'); if(synth) synth.cancel(); };
+
+function openPage(i){
+  const g = data[i];
+  pageTitle.textContent = g.cat;
+  // Build a short text using words of category: create 4–6 sentences combining entries
+  pageText.innerHTML = '';
+  const sentences = buildTextSentences(g.words);
+  sentences.forEach(s=>{
+    const sp = document.createElement('span'); sp.className='phrase';
+    sp.innerHTML = escapeHtml(s.fr) + `<div class="translate">${escapeHtml(s.ru)}</div>`;
+    // click to speak
+    sp.onclick = ()=>speak(s.fr);
+    pageText.appendChild(sp);
+  });
+  // Build a 6-line dialog alternating A/B using words from group and nearby groups (to ensure rich usage)
+  pageDialog.innerHTML = '';
+  const dialog = buildDialog(g.words);
+  dialog.forEach(line=>{
+    const div = document.createElement('div'); div.style.margin='6px 0';
+    const who = document.createElement('b'); who.style.color='var(--accent)'; who.textContent = line.speaker+': ';
+    const content = document.createElement('span'); content.className='phrase';
+    content.innerHTML = escapeHtml(line.fr) + `<div class="translate">${escapeHtml(line.ru)}</div>`;
+    content.onclick = ()=>speak(line.fr);
+    div.appendChild(who); div.appendChild(content);
+    pageDialog.appendChild(div);
+  });
+
+  page.classList.add('active');
+  window.scrollTo(0,0);
 }
 
-// ─── Parser ───────────────────────────────────────────────────────────────────
-function parseQuestions(text) {
-  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-  const questions = [];
-  let current = null;
-
-  const isQuestionStart = l => /^(\d{1,3}[\.\)]\s+|Вопрос\s+\d+[\.\:]\s*)/i.test(l);
-  const isOption = l => /^[\*\+]?[а-яёa-z][\.\)]\s+/i.test(l) || /^[\*\+]?[АБВГДЕЖЗабвгдежз][\.\)]\s+/i.test(l);
-  const isCorrectMarker = l => l.startsWith('*') || l.startsWith('+');
-  const isTrueFalse = l => /^(верно|неверно|да|нет|true|false)$/i.test(l.trim());
-
-  for (const line of lines) {
-    if (isQuestionStart(line)) {
-      if (current) finalize(current, questions);
-      const qText = line.replace(/^(\d{1,3}[\.\)]\s*|Вопрос\s+\d+[\.\:]\s*)/i, '').trim();
-      current = { text: qText, answers: [], type: 'shortanswer' };
-    } else if (current && isOption(line)) {
-      const isCorrect = isCorrectMarker(line);
-      const cleaned = line.replace(/^[\*\+]/, '').replace(/^[а-яёa-zA-ZА-ЯЁ][\.\)]\s+/i, '').trim();
-      current.answers.push({ text: cleaned, correct: isCorrect });
-      current.type = 'multichoice';
-    } else if (current && isTrueFalse(line) && current.answers.length === 0) {
-      current.trueFalseHint = line.toLowerCase();
-    } else if (current && line.length > 0 && current.answers.length === 0) {
-      // continuation of question text
-      current.text += ' ' + line;
-    }
+// Helpers: buildTextSentences and buildDialog
+function buildTextSentences(words){
+  // make up to 6 sentences by sampling words and forming simple sentences.
+  const out=[];
+  const pool = words.map(w=>({fr:w[0],ru:w[1]||''}));
+  for(let i=0;i<6 && pool.length;i++){
+    const a = pool[Math.floor(Math.random()*pool.length)];
+    const b = pool[Math.floor(Math.random()*pool.length)];
+    const s = combineToSentence(a,b);
+    out.push(s);
   }
-  if (current) finalize(current, questions);
-  return questions;
+  return out;
 }
-
-function finalize(q, list) {
-  if (q.type === 'multichoice') {
-    // If no answer marked correct, mark first as fallback
-    const hasCorrect = q.answers.some(a => a.correct);
-    if (!hasCorrect && q.answers.length > 0) q.answers[0].correct = true;
-    // Detect true/false: exactly 2 options matching true/false pattern
-    if (q.answers.length === 2) {
-      const texts = q.answers.map(a => a.text.toLowerCase());
-      const tf = ['верно','неверно','да','нет','true','false','правда','ложь'];
-      if (texts.every(t => tf.some(k => t.includes(k)))) {
-        q.type = 'truefalse';
-      }
-    }
-  } else if (q.trueFalseHint) {
-    q.type = 'truefalse';
-    const v = q.trueFalseHint;
-    const isTrue = v === 'верно' || v === 'да' || v === 'true';
-    q.answers = [
-      { text: 'Верно', correct: isTrue },
-      { text: 'Неверно', correct: !isTrue }
-    ];
-  }
-  list.push(q);
-}
-
-// ─── Render questions ─────────────────────────────────────────────────────────
-function renderQuestions() {
-  const empty = document.getElementById('qEmpty');
-  const list = document.getElementById('qList');
-  if (!parsedQuestions.length) { empty.style.display = ''; list.innerHTML = ''; return; }
-  empty.style.display = 'none';
-
-  const counts = {};
-  parsedQuestions.forEach(q => { counts[q.type] = (counts[q.type] || 0) + 1; });
-
-  list.innerHTML = parsedQuestions.map((q, i) => {
-    const typeLabels = { multichoice: 'Выбор', truefalse: 'Да/Нет', shortanswer: 'Ответ', essay: 'Эссе' };
-    const answersHtml = q.answers.map(a =>
-      `<div class="q-answer ${a.correct ? 'correct' : ''}">
-        <div class="dot"></div><span>${escHtml(a.text)}</span>
-      </div>`
-    ).join('');
-
-    return `
-    <div class="q-item">
-      <div class="q-header" onclick="toggleQ(${i})">
-        <div class="q-num">${i+1}</div>
-        <div class="q-text">${escHtml(q.text.substring(0, 120))}${q.text.length > 120 ? '…' : ''}</div>
-        <span class="q-type-badge type-${q.type}">${typeLabels[q.type] || q.type}</span>
-      </div>
-      <div class="q-body" id="qb-${i}">
-        ${q.answers.length ? answersHtml : '<span style="color:var(--muted)">Ожидается свободный ответ</span>'}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function toggleQ(i) {
-  const el = document.getElementById('qb-' + i);
-  el.classList.toggle('open');
-}
-
-// ─── XML generation ───────────────────────────────────────────────────────────
-function generateXML() {
-  if (!parsedQuestions.length) return;
-  const category = document.getElementById('category').value || 'Импортированные вопросы';
-  const grade = parseFloat(document.getElementById('defaultGrade').value) || 1;
-  const penalty = document.getElementById('penalty').value;
-  const shuffle = document.getElementById('shuffle').value;
-  const numbering = document.getElementById('numbering').value;
-
-  const parts = [
-    '<?xml version="1.0" encoding="UTF-8"?>',
-    '<quiz>',
-    '',
-    '  <!-- Категория -->',
-    '  <question type="category">',
-    '    <category>',
-    `      <text>$course$/top/${escXml(category)}</text>`,
-    '    </category>',
-    '  </question>',
-    ''
+function combineToSentence(a,b){
+  // simple patterns
+  const patterns = [
+    `${a.fr} et ${b.fr}.`,
+    `Je vois ${a.fr} et ${b.fr}.`,
+    `C’est ${a.fr}. ${b.fr}.`,
+    `${a.fr} — ${b.fr}.`,
+    `Nous avons ${a.fr} et ${b.fr}.`
   ];
-
-  parsedQuestions.forEach((q, i) => {
-    parts.push(`  <!-- Вопрос ${i+1}: ${q.type} -->`);
-    parts.push(`  <question type="${q.type}">`);
-    parts.push(`    <name><text>Вопрос ${i+1}</text></name>`);
-    parts.push(`    <questiontext format="html">`);
-    parts.push(`      <text><![CDATA[<p>${escXml(q.text)}</p>]]></text>`);
-    parts.push(`    </questiontext>`);
-    parts.push(`    <generalfeedback format="html"><text></text></generalfeedback>`);
-    parts.push(`    <defaultgrade>${grade}</defaultgrade>`);
-    parts.push(`    <penalty>${penalty}</penalty>`);
-    parts.push(`    <hidden>0</hidden>`);
-    parts.push(`    <idnumber></idnumber>`);
-
-    if (q.type === 'multichoice') {
-      parts.push(`    <single>true</single>`);
-      parts.push(`    <shuffleanswers>${shuffle}</shuffleanswers>`);
-      parts.push(`    <answernumbering>${numbering}</answernumbering>`);
-      parts.push(`    <showstandardinstruction>1</showstandardinstruction>`);
-      parts.push(`    <correctfeedback format="html"><text>Правильно!</text></correctfeedback>`);
-      parts.push(`    <partiallycorrectfeedback format="html"><text>Частично верно.</text></partiallycorrectfeedback>`);
-      parts.push(`    <incorrectfeedback format="html"><text>Неправильно.</text></incorrectfeedback>`);
-      parts.push(`    <shownumcorrect/>`);
-
-      const correctCount = q.answers.filter(a => a.correct).length;
-      q.answers.forEach(a => {
-        const fraction = a.correct ? (100 / correctCount).toFixed(5) : '0';
-        parts.push(`    <answer fraction="${fraction}" format="html">`);
-        parts.push(`      <text><![CDATA[<p>${escXml(a.text)}</p>]]></text>`);
-        parts.push(`      <feedback format="html"><text></text></feedback>`);
-        parts.push(`    </answer>`);
-      });
-
-    } else if (q.type === 'truefalse') {
-      const correctAnswer = q.answers.find(a => a.correct);
-      const isTrue = correctAnswer && /верно|да|true/i.test(correctAnswer.text);
-      parts.push(`    <answer fraction="${isTrue ? '100' : '0'}" format="html">`);
-      parts.push(`      <text>true</text>`);
-      parts.push(`      <feedback format="html"><text>${isTrue ? 'Правильно!' : 'Неправильно.'}</text></feedback>`);
-      parts.push(`    </answer>`);
-      parts.push(`    <answer fraction="${!isTrue ? '100' : '0'}" format="html">`);
-      parts.push(`      <text>false</text>`);
-      parts.push(`      <feedback format="html"><text>${!isTrue ? 'Правильно!' : 'Неправильно.'}</text></feedback>`);
-      parts.push(`    </answer>`);
-
-    } else if (q.type === 'shortanswer') {
-      parts.push(`    <usecase>0</usecase>`);
-      parts.push(`    <answer fraction="100">`);
-      parts.push(`      <text>*</text>`);
-      parts.push(`      <feedback format="html"><text></text></feedback>`);
-      parts.push(`    </answer>`);
-
-    } else if (q.type === 'essay') {
-      parts.push(`    <responseformat>editor</responseformat>`);
-      parts.push(`    <responserequired>0</responserequired>`);
-      parts.push(`    <responsefieldlines>15</responsefieldlines>`);
-      parts.push(`    <minwordlimit></minwordlimit>`);
-      parts.push(`    <maxwordlimit></maxwordlimit>`);
-      parts.push(`    <attachments>0</attachments>`);
-      parts.push(`    <attachmentsrequired>0</attachmentsrequired>`);
-      parts.push(`    <graderinfo format="html"><text></text></graderinfo>`);
-      parts.push(`    <responsetemplate format="html"><text></text></responsetemplate>`);
-    }
-
-    parts.push(`  </question>`);
-    parts.push('');
-  });
-
-  parts.push('</quiz>');
-  xmlOutput = parts.join('\n');
-
-  renderXML(xmlOutput);
-
-  const counts = {};
-  parsedQuestions.forEach(q => { counts[q.type] = (counts[q.type] || 0) + 1; });
-  document.getElementById('xmlStats').innerHTML = Object.entries(counts)
-    .map(([t, n]) => `<span class="stat"><strong>${n}</strong> ${t}</span>`)
-    .join('');
-
-  document.getElementById('xmlEmpty').style.display = 'none';
-  document.getElementById('xmlArea').style.display = '';
-  document.getElementById('copyBtn').style.display = '';
-  document.getElementById('dlBtn').style.display = '';
+  const idx = Math.floor(Math.random()*patterns.length);
+  const fr = patterns[idx];
+  const ru = `${a.ru || ''}${a.ru && b.ru ? ' и ' : ''}${b.ru || ''}`.trim();
+  return {fr,ru};
+}
+function buildDialog(words){
+  const out=[];
+  const pool = words.map(w=>({fr:w[0],ru:w[1]||''}));
+  // create 6 lines alternating A/B
+  for(let i=0;i<6;i++){
+    const pick = pool[Math.floor(Math.random()*pool.length)];
+    const speaker = i%2===0 ? 'A' : 'B';
+    // short phrase or question
+    let fr = pick.fr;
+    if(!/[?.!]/.test(fr)) fr = fr.match(/Je |Tu |Nous |Il |Elle /i) ? fr : fr;
+    out.push({speaker,fr,ru:pick.ru});
+  }
+  return out;
 }
 
-function renderXML(xml) {
-  const area = document.getElementById('xmlArea');
-  // Simple syntax highlighting
-  let html = escHtml(xml)
-    .replace(/(&lt;\?xml[^?]*\?&gt;)/g, '<span class="cm">$1</span>')
-    .replace(/(&lt;!--[^-]*--&gt;)/g, '<span class="cm">$1</span>')
-    .replace(/(&lt;!\[CDATA\[)([\s\S]*?)(\]\]&gt;)/g, '<span class="kw">$1</span>$2<span class="kw">$3</span>')
-    .replace(/(&lt;\/?)([\w]+)/g, '<span class="tag">$1$2</span>')
-    .replace(/([\w]+)(=)(&quot;[^&]*&quot;)/g, '<span class="attr">$1</span>$2<span class="val">$3</span>');
-  area.innerHTML = html;
-}
+// escape for html
+function escapeHtml(s){ if(!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ─── Actions ──────────────────────────────────────────────────────────────────
-function copyXML() {
-  navigator.clipboard.writeText(xmlOutput).then(() => {
-    const btn = document.getElementById('copyBtn');
-    btn.textContent = '✅ Скопировано!';
-    setTimeout(() => btn.textContent = '📋 Копировать', 2000);
-  });
-}
-
-function downloadXML() {
-  const blob = new Blob([xmlOutput], { type: 'application/xml;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'moodle_questions.xml';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-// ─── Utils ────────────────────────────────────────────────────────────────────
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function escXml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
-}
+// On load, open first category for quick access
+openPage(0);
 </script>
 </body>
 </html>
