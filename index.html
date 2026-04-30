@@ -327,14 +327,15 @@
     cursor: default;
     border-bottom: 1px dashed transparent;
     transition: border-color 0.2s;
+    position: relative;
   }
   .dialog-text:hover {
     border-bottom-color: var(--cat-color, var(--accent1));
   }
   .dialog-text .text-tooltip {
     position: absolute;
-    top: calc(100% + 6px);
-    left: 72px;
+    bottom: calc(100% + 6px);
+    left: 0;
     background: var(--card);
     border: 1px solid var(--cat-color, var(--accent1));
     border-radius: 8px;
@@ -346,6 +347,7 @@
     opacity: 0; pointer-events: none;
     transition: opacity 0.2s;
     z-index: 50;
+    white-space: nowrap;
   }
   .dialog-text:hover .text-tooltip { opacity: 1; }
 
@@ -451,8 +453,8 @@
     <div class="dialog-panel">
       <h3>Textes & Dialogues</h3>
       <div class="dialog-tabs">
-        <div class="dialog-tab active" onclick="showTab('dialog')">Dialogue</div>
-        <div class="dialog-tab" onclick="showTab('text')">Texte</div>
+        <div class="dialog-tab active" data-tab="dialog" onclick="showTab('dialog', this)">Dialogue</div>
+        <div class="dialog-tab" data-tab="text" onclick="showTab('text', this)">Texte</div>
       </div>
       <div class="dialog-content active" id="tab-dialog"></div>
       <div class="dialog-content" id="tab-text"></div>
@@ -516,29 +518,29 @@ const CATEGORIES = [
       { fr: 'italien', ru: 'итальянский', pron: 'i.ta.ljɛ̃' },
       { fr: "l'âge", ru: 'возраст', pron: 'laʒ' },
       { fr: "une pièce d'identité", ru: 'удостоверение личности', pron: 'yn pjɛs di.dɑ̃.ti.te' },
-      { fr: 'une photo d'identité', ru: 'фото на документ', pron: 'yn fo.to di.dɑ̃.ti.te' },
+      { fr: "une photo d'identité", ru: 'фото на документ', pron: 'yn fo.to di.dɑ̃.ti.te' },
       { fr: 'une date de naissance', ru: 'дата рождения', pron: 'yn dat də nɛ.sɑ̃s' },
       { fr: 'une ville de naissance', ru: 'город рождения', pron: 'yn vil də nɛ.sɑ̃s' },
       { fr: 'une adresse', ru: 'адрес', pron: 'yn a.dʁɛs' },
       { fr: 'le code postal', ru: 'почтовый индекс', pron: 'lə kɔd pɔs.tal' },
       { fr: 'la ville', ru: 'город', pron: 'la vil' },
       { fr: 'le pays', ru: 'страна', pron: 'lə pe.i' },
-      { fr: 'Je m'appelle…', ru: 'Меня зовут…', pron: 'ʒə ma.pɛl' },
+      { fr: 'Je m\'appelle…', ru: 'Меня зовут…', pron: 'ʒə ma.pɛl' },
       { fr: 'Je suis italien.', ru: 'Я итальянец.', pron: 'ʒə sɥi i.ta.ljɛ̃' },
-      { fr: "J'ai 14 ans.", ru: 'Мне 14 лет.', pron: 'ʒe ka.tɔʁz ɑ̃' },
-      { fr: "J'habite à Nantes.", ru: 'Я живу в Нанте.', pron: 'ʒa.bit a nɑ̃t' },
+      { fr: 'J\'ai 14 ans.', ru: 'Мне 14 лет.', pron: 'ʒe ka.tɔʁz ɑ̃' },
+      { fr: 'J\'habite à Nantes.', ru: 'Я живу в Нанте.', pron: 'ʒa.bit a nɑ̃t' },
     ],
     dialog: {
       lines: [
-        { speaker: 'Erdem', fr: '— Bonjour ! Je m'appelle Erdem. Et toi ?', ru: '— Привет! Меня зовут Эрдем. А тебя?' },
-        { speaker: 'Julie', fr: '— Moi, c'est Julie. Je suis ta correspondante française !', ru: '— Я Жюли. Я твой французский корреспондент!' },
+        { speaker: 'Erdem', fr: '— Bonjour ! Je m\'appelle Erdem. Et toi ?', ru: '— Привет! Меня зовут Эрдем. А тебя?' },
+        { speaker: 'Julie', fr: '— Moi, c\'est Julie. Je suis ta correspondante française !', ru: '— Я Жюли. Я твой французский корреспондент!' },
         { speaker: 'Erdem', fr: '— Enchanté ! Tu habites où ?', ru: '— Приятно познакомиться! Где ты живёшь?' },
-        { speaker: 'Julie', fr: '— J'ai 14 ans et j'habite à Nantes. Et toi ?', ru: '— Мне 14 лет, и я живу в Нанте. А ты?' },
-        { speaker: 'Erdem', fr: '— J'ai 15 ans. Je suis turc, j'habite à Istanbul.', ru: '— Мне 15 лет. Я турок, живу в Стамбуле.' },
+        { speaker: 'Julie', fr: '— J\'ai 14 ans et j\'habite à Nantes. Et toi ?', ru: '— Мне 14 лет, и я живу в Нанте. А ты?' },
+        { speaker: 'Erdem', fr: '— J\'ai 15 ans. Je suis turc, j\'habite à Istanbul.', ru: '— Мне 15 лет. Я турок, живу в Стамбуле.' },
       ]
     },
     text: {
-      fr: 'Pour se présenter, on dit son prénom et son nom. On dit aussi sa nationalité, son âge et sa ville. Une pièce d'identité contient une photo d'identité, une date de naissance et une adresse avec le code postal.',
+      fr: 'Pour se présenter, on dit son prénom et son nom. On dit aussi sa nationalité, son âge et sa ville. Une pièce d\'identité contient une photo d\'identité, une date de naissance et une adresse avec le code postal.',
       ru: 'При представлении говорят своё имя и фамилию. Также называют национальность, возраст и город. Удостоверение личности содержит фотографию, дату рождения и адрес с почтовым индексом.'
     }
   },
@@ -577,10 +579,10 @@ const CATEGORIES = [
     ],
     dialog: {
       lines: [
-        { speaker: 'Marie', fr: '— C'est qui sur la photo ?', ru: '— Кто это на фотографии?' },
-        { speaker: 'Paul', fr: '— C'est ma famille ! Là, c'est mon père et ma mère.', ru: '— Это моя семья! Вот мой папа и мама.' },
-        { speaker: 'Marie', fr: '— Et le garçon à côté, c'est ton frère ?', ru: '— А мальчик рядом — это твой брат?' },
-        { speaker: 'Paul', fr: '— Oui, c'est Julien, mon petit frère. Il a 10 ans.', ru: '— Да, это Жюльен, мой младший брат. Ему 10 лет.' },
+        { speaker: 'Marie', fr: '— C\'est qui sur la photo ?', ru: '— Кто это на фотографии?' },
+        { speaker: 'Paul', fr: '— C\'est ma famille ! Là, c\'est mon père et ma mère.', ru: '— Это моя семья! Вот мой папа и мама.' },
+        { speaker: 'Marie', fr: '— Et le garçon à côté, c\'est ton frère ?', ru: '— А мальчик рядом — это твой брат?' },
+        { speaker: 'Paul', fr: '— Oui, c\'est Julien, mon petit frère. Il a 10 ans.', ru: '— Да, это Жюльен, мой младший брат. Ему 10 лет.' },
         { speaker: 'Marie', fr: '— Et les grands-parents, ils habitent avec vous ?', ru: '— А бабушка с дедушкой живут с вами?' },
         { speaker: 'Paul', fr: '— Non, ils habitent à Lyon. Mon oncle et ma tante aussi.', ru: '— Нет, они живут в Лионе. Мой дядя и тётя тоже.' },
       ]
@@ -686,10 +688,10 @@ const CATEGORIES = [
     ],
     dialog: {
       lines: [
-        { speaker: 'Maman', fr: '— Tu peux ranger ta chambre, s'il te plaît ?', ru: '— Ты можешь убрать в своей комнате, пожалуйста?' },
+        { speaker: 'Maman', fr: '— Tu peux ranger ta chambre, s\'il te plaît ?', ru: '— Ты можешь убрать в своей комнате, пожалуйста?' },
         { speaker: 'Hugo', fr: '— Je suis en train de cuisiner !', ru: '— Я сейчас готовлю!' },
         { speaker: 'Maman', fr: '— Il y a ton lit, ton armoire et ta table. Tout est en désordre !', ru: '— Там твоя кровать, шкаф и стол. Всё в беспорядке!' },
-        { speaker: 'Hugo', fr: '— D'accord. J'habite au deuxième étage du grand immeuble.', ru: '— Ладно. Я живу на втором этаже большого дома.' },
+        { speaker: 'Hugo', fr: '— D\'accord. J\'habite au deuxième étage du grand immeuble.', ru: '— Ладно. Я живу на втором этаже большого дома.' },
         { speaker: 'Maman', fr: '— Notre appartement est beau, avec un grand salon et un jardin.', ru: '— Наша квартира красивая, с большой гостиной и садом.' },
       ]
     },
@@ -726,7 +728,7 @@ const CATEGORIES = [
       { fr: 'une trottinette', ru: 'самокат', pron: 'yn tʁɔ.ti.nɛt' },
       { fr: 'un aéroport', ru: 'аэропорт', pron: 'œ̃n‿a.e.ʁo.pɔʁ' },
       { fr: 'un avion', ru: 'самолёт', pron: 'œ̃n‿a.vjɔ̃' },
-      { fr: 'une carte d'embarquement', ru: 'посадочный талон', pron: 'yn kaʁt dɑ̃.baʁk.mɑ̃' },
+      { fr: 'une carte d\'embarquement', ru: 'посадочный талон', pron: 'yn kaʁt dɑ̃.baʁk.mɑ̃' },
       { fr: 'un vol', ru: 'рейс', pron: 'œ̃ vɔl' },
       { fr: 'une destination', ru: 'пункт назначения', pron: 'yn dɛs.ti.na.sjɔ̃' },
       { fr: 'un bateau', ru: 'корабль / лодка', pron: 'œ̃ ba.to' },
@@ -787,26 +789,26 @@ const CATEGORIES = [
       { fr: 'une année', ru: 'год', pron: 'yn a.ne' },
       { fr: 'une heure', ru: 'час', pron: 'yn œʁ' },
       { fr: 'une minute', ru: 'минута', pron: 'yn mi.nyt' },
-      { fr: 'les vacances d'été', ru: 'летние каникулы', pron: 'le va.kɑ̃s de.te' },
+      { fr: "les vacances d'été", ru: 'летние каникулы', pron: 'le va.kɑ̃s de.te' },
       { fr: 'un concours', ru: 'конкурс', pron: 'œ̃ kɔ̃.kuʁ' },
       { fr: 'un festival', ru: 'фестиваль', pron: 'œ̃ fɛs.ti.val' },
       { fr: 'un salon', ru: 'выставка / ярмарка', pron: 'œ̃ sa.lɔ̃' },
       { fr: 'un mariage', ru: 'свадьба', pron: 'œ̃ ma.ʁjaʒ' },
       { fr: 'un carnaval', ru: 'карнавал', pron: 'œ̃ kaʁ.na.val' },
-      { fr: 'une fête d'anniversaire', ru: 'день рождения', pron: 'yn fɛt da.ni.vɛʁ.sɛʁ' },
+      { fr: "une fête d'anniversaire", ru: 'день рождения', pron: 'yn fɛt da.ni.vɛʁ.sɛʁ' },
     ],
     dialog: {
       lines: [
-        { speaker: 'Nina', fr: '— Qu'est-ce qu'on fait samedi ?', ru: '— Что мы делаем в субботу?' },
-        { speaker: 'Tom', fr: '— Le matin, on va au marché. L'après-midi, il y a un festival !', ru: '— Утром идём на рынок. После обеда — фестиваль!' },
-        { speaker: 'Nina', fr: '— C'est quel jour exactement ?', ru: '— Какое именно число?' },
+        { speaker: 'Nina', fr: '— Qu\'est-ce qu\'on fait samedi ?', ru: '— Что мы делаем в субботу?' },
+        { speaker: 'Tom', fr: '— Le matin, on va au marché. L\'après-midi, il y a un festival !', ru: '— Утром идём на рынок. После обеда — фестиваль!' },
+        { speaker: 'Nina', fr: '— C\'est quel jour exactement ?', ru: '— Какое именно число?' },
         { speaker: 'Tom', fr: '— Samedi 14 juin, de 14 h à 20 h 30.', ru: '— Суббота, 14 июня, с 14:00 до 20:30.' },
         { speaker: 'Nina', fr: '— Super ! On se retrouve demain à 17 h 30 ?', ru: '— Отлично! Встретимся завтра в 17:30?' },
-        { speaker: 'Tom', fr: '— D'accord ! À demain !', ru: '— Договорились! До завтра!' },
+        { speaker: 'Tom', fr: '— D\'accord ! À demain !', ru: '— Договорились! До завтра!' },
       ]
     },
     text: {
-      fr: 'En France, l'année scolaire commence en septembre et se termine en juin. Les vacances d'été durent deux mois : juillet et août. La semaine de travail commence le lundi. Le week-end, c'est samedi et dimanche.',
+      fr: 'En France, l\'année scolaire commence en septembre et se termine en juin. Les vacances d\'été durent deux mois : juillet et août. La semaine de travail commence le lundi. Le week-end, c\'est samedi et dimanche.',
       ru: 'Во Франции учебный год начинается в сентябре и заканчивается в июне. Летние каникулы длятся два месяца: июль и август. Рабочая неделя начинается в понедельник. Выходные — это суббота и воскресенье.'
     }
   },
@@ -857,15 +859,15 @@ const CATEGORIES = [
       { fr: 'un cirque', ru: 'цирк', pron: 'œ̃ siʁk' },
       { fr: 'un zoo', ru: 'зоопарк', pron: 'œ̃ zo.o' },
       { fr: 'un aquarium', ru: 'аквариум', pron: 'œ̃n‿a.kwa.ʁjɔm' },
-      { fr: 'un parc d'aventure', ru: 'парк приключений', pron: 'œ̃ paʁk da.vɑ̃.tyʁ' },
+      { fr: 'un parc d\'aventure', ru: 'парк приключений', pron: 'œ̃ paʁk da.vɑ̃.tyʁ' },
     ],
     dialog: {
       lines: [
         { speaker: 'Camille', fr: '— Tu veux venir avec nous au théâtre samedi ?', ru: '— Ты хочешь пойти с нами в театр в субботу?' },
-        { speaker: 'Axel', fr: '— Ça m'intéresse ! C'est quel spectacle ?', ru: '— Меня интересует! Какой спектакль?' },
-        { speaker: 'Camille', fr: '— Un spectacle de magie ! J'adore la magie. Il faut réserver une place.', ru: '— Шоу фокусов! Я обожаю магию. Нужно забронировать место.' },
+        { speaker: 'Axel', fr: '— Ça m\'intéresse ! C\'est quel spectacle ?', ru: '— Меня интересует! Какой спектакль?' },
+        { speaker: 'Camille', fr: '— Un spectacle de magie ! J\'adore la magie. Il faut réserver une place.', ru: '— Шоу фокусов! Я обожаю магию. Нужно забронировать место.' },
         { speaker: 'Axel', fr: '— Super ! Et après, on va au cinéma regarder un film ?', ru: '— Отлично! А потом пойдём в кино смотреть фильм?' },
-        { speaker: 'Camille', fr: '— Oui ! Le spectacle se termine à 20 h 30. On se retrouve à 14 h, d'accord ?', ru: '— Да! Спектакль заканчивается в 20:30. Встретимся в 14:00, хорошо?' },
+        { speaker: 'Camille', fr: '— Oui ! Le spectacle se termine à 20 h 30. On se retrouve à 14 h, d\'accord ?', ru: '— Да! Спектакль заканчивается в 20:30. Встретимся в 14:00, хорошо?' },
       ]
     },
     text: {
@@ -918,22 +920,22 @@ const CATEGORIES = [
     ],
     dialog: {
       lines: [
-        { speaker: 'Maman', fr: '— Tu ne vas pas à l'école aujourd'hui ?', ru: '— Ты не идёшь сегодня в школу?' },
-        { speaker: 'Léo', fr: '— J'ai mal à la tête et j'ai de la fièvre. Je suis malade.', ru: '— У меня болит голова и температура. Я болен.' },
+        { speaker: 'Maman', fr: '— Tu ne vas pas à l\'école aujourd\'hui ?', ru: '— Ты не идёшь сегодня в школу?' },
+        { speaker: 'Léo', fr: '— J\'ai mal à la tête et j\'ai de la fièvre. Je suis malade.', ru: '— У меня болит голова и температура. Я болен.' },
         { speaker: 'Maman', fr: '— Oh non ! Tu as la grippe peut-être. Prends ce médicament 3 fois par jour.', ru: '— О нет! Может, у тебя грипп. Принимай это лекарство 3 раза в день.' },
         { speaker: 'Léo', fr: '— Et mon match de basket samedi ?', ru: '— А мой матч по баскетболу в субботу?' },
-        { speaker: 'Maman', fr: '— Ne viens pas à l'école pendant 2 jours. Le match peut attendre !', ru: '— Не ходи в школу 2 дня. Матч подождёт!' },
+        { speaker: 'Maman', fr: '— Ne viens pas à l\'école pendant 2 jours. Le match peut attendre !', ru: '— Не ходи в школу 2 дня. Матч подождёт!' },
       ]
     },
     text: {
-      fr: 'Le sport est très important en France. Les sports les plus populaires sont le football, le tennis et le rugby. Beaucoup d'enfants font de la natation à la piscine ou jouent au basket dans un club. Faire du sport est bon pour la santé.',
+      fr: 'Le sport est très important en France. Les sports les plus populaires sont le football, le tennis et le rugby. Beaucoup d\'enfants font de la natation à la piscine ou jouent au basket dans un club. Faire du sport est bon pour la santé.',
       ru: 'Спорт очень важен во Франции. Самые популярные виды спорта — футбол, теннис и регби. Многие дети занимаются плаванием в бассейне или играют в баскетбол в клубе. Занятие спортом полезно для здоровья.'
     }
   },
   {
     id: 'ecole',
     icon: '📚',
-    title: "L'école & Les matières",
+    title: 'L\'école & Les matières',
     subtitle: 'School & Subjects',
     color: '#e07c7c',
     words: [
@@ -944,7 +946,7 @@ const CATEGORIES = [
       { fr: 'un(e) élève', ru: 'ученик / ученица', pron: 'œ̃n‿e.lɛv' },
       { fr: 'un(e) professeur(e)', ru: 'учитель', pron: 'œ̃ pʁɔ.fɛ.sœʁ' },
       { fr: 'un(e) correspondant(e)', ru: 'корреспондент / партнёр по переписке', pron: 'œ̃ kɔ.ʁɛs.pɔ̃.dɑ̃' },
-      { fr: 'les parents d'élèves', ru: 'родители учеников', pron: 'le pa.ʁɑ̃ de.lɛv' },
+      { fr: 'les parents d\'élèves', ru: 'родители учеников', pron: 'le pa.ʁɑ̃ de.lɛv' },
       { fr: 'le tableau', ru: 'доска', pron: 'lə ta.blo' },
       { fr: 'les cours', ru: 'уроки / занятия', pron: 'le kuʁ' },
       { fr: 'une leçon', ru: 'урок', pron: 'yn lə.sɔ̃' },
@@ -956,18 +958,18 @@ const CATEGORIES = [
       { fr: 'la rentrée scolaire', ru: 'начало учебного года', pron: 'la ʁɑ̃.tʁe skɔ.lɛʁ' },
       { fr: 'un voyage scolaire', ru: 'школьная поездка', pron: 'œ̃ vwa.jaʒ skɔ.lɛʁ' },
       { fr: 'le français', ru: 'французский язык', pron: 'lə fʁɑ̃.sɛ' },
-      { fr: "l'anglais", ru: 'английский язык', pron: 'lɑ̃.ɡlɛ' },
-      { fr: "l'espagnol", ru: 'испанский язык', pron: 'lɛs.pa.ɲɔl' },
-      { fr: "l'arabe", ru: 'арабский язык', pron: 'la.ʁab' },
+      { fr: 'l\'anglais', ru: 'английский язык', pron: 'lɑ̃.ɡlɛ' },
+      { fr: 'l\'espagnol', ru: 'испанский язык', pron: 'lɛs.pa.ɲɔl' },
+      { fr: 'l\'arabe', ru: 'арабский язык', pron: 'la.ʁab' },
       { fr: 'la biologie', ru: 'биология', pron: 'la bjo.lɔ.ʒi' },
-      { fr: "l'histoire", ru: 'история', pron: 'lis.twaʁ' },
+      { fr: 'l\'histoire', ru: 'история', pron: 'lis.twaʁ' },
       { fr: 'la géographie', ru: 'география', pron: 'la ʒe.ɔ.ɡʁa.fi' },
       { fr: 'les mathématiques', ru: 'математика', pron: 'le ma.te.ma.tik' },
-      { fr: "l'informatique", ru: 'информатика', pron: 'lɛ̃.fɔʁ.ma.tik' },
+      { fr: 'l\'informatique', ru: 'информатика', pron: 'lɛ̃.fɔʁ.ma.tik' },
       { fr: 'la physique', ru: 'физика', pron: 'la fi.zik' },
       { fr: 'la chimie', ru: 'химия', pron: 'la ʃi.mi' },
       { fr: 'SVT', ru: 'биология и науки о жизни', pron: 'es.ve.te' },
-      { fr: "l'art plastique", ru: 'изобразительное искусство', pron: 'laʁ plas.tik' },
+      { fr: 'l\'art plastique', ru: 'изобразительное искусство', pron: 'laʁ plas.tik' },
       { fr: 'un cartable', ru: 'ранец / школьная сумка', pron: 'œ̃ kaʁ.tabl' },
       { fr: 'un cahier', ru: 'тетрадь', pron: 'œ̃ ka.je' },
       { fr: 'un crayon', ru: 'карандаш', pron: 'œ̃ kʁɛ.jɔ̃' },
@@ -979,14 +981,14 @@ const CATEGORIES = [
     dialog: {
       lines: [
         { speaker: 'Prof', fr: '— Bonjour ! Ouvrez vos cahiers et préparez vos stylos.', ru: '— Добрый день! Откройте тетради и приготовьте ручки.' },
-        { speaker: 'Élève', fr: '— Monsieur, c'est un test aujourd'hui ?', ru: '— Месье, сегодня контрольная?' },
+        { speaker: 'Élève', fr: '— Monsieur, c\'est un test aujourd\'hui ?', ru: '— Месье, сегодня контрольная?' },
         { speaker: 'Prof', fr: '— Oui ! Le 3 avril, il y a un contrôle de mathématiques et de biologie.', ru: '— Да! 3 апреля контрольная по математике и биологии.' },
         { speaker: 'Élève', fr: '— Et les devoirs pour demain ?', ru: '— А домашнее задание на завтра?' },
-        { speaker: 'Prof', fr: '— Vous devez faire l'exercice 5 et apprendre la leçon de géographie.', ru: '— Вы должны сделать упражнение 5 и выучить урок по географии.' },
+        { speaker: 'Prof', fr: '— Vous devez faire l\'exercice 5 et apprendre la leçon de géographie.', ru: '— Вы должны сделать упражнение 5 и выучить урок по географии.' },
       ]
     },
     text: {
-      fr: 'En France, les élèves vont au collège de la 6ème à la 3ème, puis au lycée. Les matières principales sont le français, les mathématiques, l'anglais et l'histoire-géographie. Les élèves ont un cartable avec des cahiers, des stylos et des crayons.',
+      fr: 'En France, les élèves vont au collège de la 6ème à la 3ème, puis au lycée. Les matières principales sont le français, les mathématiques, l\'anglais et l\'histoire-géographie. Les élèves ont un cartable avec des cahiers, des stylos et des crayons.',
       ru: 'Во Франции ученики ходят в коллеж с 6-го по 3-й класс, затем в лицей. Основные предметы — французский, математика, английский и история-география. У учеников есть ранец с тетрадями, ручками и карандашами.'
     }
   },
@@ -1041,7 +1043,7 @@ const CATEGORIES = [
     dialog: {
       lines: [
         { speaker: 'Serveur', fr: '— Bonjour ! Vous avez du soda ?', ru: '— Добрый день! У вас есть газировка?' },
-        { speaker: 'Client', fr: '— Oui ! Je voudrais le menu du midi, s'il vous plaît.', ru: '— Да! Я бы хотел дневное меню, пожалуйста.' },
+        { speaker: 'Client', fr: '— Oui ! Je voudrais le menu du midi, s\'il vous plaît.', ru: '— Да! Я бы хотел дневное меню, пожалуйста.' },
         { speaker: 'Serveur', fr: '— Comme plat, vous avez le poulet avec des frites ou du riz.', ru: '— На горячее у вас курица с картофелем фри или рис.' },
         { speaker: 'Client', fr: '— Je prends le poulet avec des frites. Et comme dessert, une glace au chocolat.', ru: '— Беру курицу с картофелем фри. И на десерт — шоколадное мороженое.' },
         { speaker: 'Serveur', fr: '— Très bien ! Bon appétit !', ru: '— Прекрасно! Приятного аппетита!' },
@@ -1078,7 +1080,7 @@ const CATEGORIES = [
       { fr: 'la poste', ru: 'почта', pron: 'la pɔst' },
       { fr: 'le marché', ru: 'рынок', pron: 'lə maʁ.ʃe' },
       { fr: 'la boulangerie', ru: 'булочная', pron: 'la bu.lɑ̃.ʒʁi' },
-      { fr: "l'épicerie", ru: 'продуктовый магазин', pron: 'le.pi.sʁi' },
+      { fr: 'l\'épicerie', ru: 'продуктовый магазин', pron: 'le.pi.sʁi' },
       { fr: 'la boucherie', ru: 'мясная лавка', pron: 'la buʃ.ʁi' },
       { fr: 'la librairie', ru: 'книжный магазин', pron: 'la li.bʁɛ.ʁi' },
       { fr: 'la papeterie', ru: 'канцелярский магазин', pron: 'la pap.tʁi' },
@@ -1091,12 +1093,12 @@ const CATEGORIES = [
       { fr: 'vendre', ru: 'продавать', pron: 'vɑ̃dʁ' },
       { fr: 'payer en chèque', ru: 'платить чеком', pron: 'pe.je ɑ̃ ʃɛk' },
       { fr: 'payer en espèces', ru: 'платить наличными', pron: 'pe.je ɑ̃n‿ɛs.pɛs' },
-      { fr: "C'est combien ?", ru: 'Сколько стоит?', pron: 'se kɔ̃.bjɛ̃' },
-      { fr: "C'est gratuit.", ru: 'Это бесплатно.', pron: 'se ɡʁa.tɥi' },
+      { fr: 'C\'est combien ?', ru: 'Сколько стоит?', pron: 'se kɔ̃.bjɛ̃' },
+      { fr: 'C\'est gratuit.', ru: 'Это бесплатно.', pron: 'se ɡʁa.tɥi' },
         ],
     dialog: {
       lines: [
-        { speaker: 'Cliente', fr: '— Excusez-moi, c'est combien ce pull ?', ru: '— Извините, сколько стоит этот свитер?' },
+        { speaker: 'Cliente', fr: '— Excusez-moi, c\'est combien ce pull ?', ru: '— Извините, сколько стоит этот свитер?' },
         { speaker: 'Vendeur', fr: '— Ce pull est à 39 euros ! Tous les sacs à dos sont à 39 euros aussi.', ru: '— Этот свитер стоит 39 евро! Все рюкзаки тоже по 39 евро.' },
         { speaker: 'Cliente', fr: '— Il y a une promotion sur les bottes ?', ru: '— Есть акция на сапоги?' },
         { speaker: 'Vendeur', fr: '— Oui ! Promotion mardi 13 juin sur les bottes ! Réduction de 15 %.', ru: '— Да! Акция в среду 13 июня на сапоги! Скидка 15%.' },
@@ -1104,7 +1106,7 @@ const CATEGORIES = [
       ]
     },
     text: {
-      fr: 'En France, on peut faire ses courses dans différents magasins : la boulangerie pour le pain, la boucherie pour la viande, l'épicerie pour les produits de base. Pour les vêtements, on va dans une boutique ou dans un centre commercial. N'oubliez pas de regarder les promotions !',
+      fr: 'En France, on peut faire ses courses dans différents magasins : la boulangerie pour le pain, la boucherie pour la viande, l\'épicerie pour les produits de base. Pour les vêtements, on va dans une boutique ou dans un centre commercial. N\'oubliez pas de regarder les promotions !',
       ru: 'Во Франции можно делать покупки в разных магазинах: в булочной за хлебом, в мясной лавке за мясом, в продуктовом за основными продуктами. За одеждой ходят в бутик или торговый центр. Не забывайте следить за акциями!'
     }
   },
@@ -1149,11 +1151,11 @@ const CATEGORIES = [
     ],
     dialog: {
       lines: [
-        { speaker: 'Clara', fr: '— Il fait beau aujourd'hui ! On va à la plage ?', ru: '— Сегодня хорошая погода! Пойдём на пляж?' },
+        { speaker: 'Clara', fr: '— Il fait beau aujourd\'hui ! On va à la plage ?', ru: '— Сегодня хорошая погода! Пойдём на пляж?' },
         { speaker: 'Max', fr: '— Non, il va pleuvoir cet après-midi. Tu as regardé la météo ?', ru: '— Нет, после обеда будет дождь. Ты смотрела прогноз погоды?' },
         { speaker: 'Clara', fr: '— Ah non ! Il y a des nuages ?', ru: '— Ой, нет! Уже есть тучи?' },
         { speaker: 'Max', fr: '— Oui. On va à la campagne voir les chevaux et les vaches à la ferme ?', ru: '— Да. Может, съездим в деревню посмотреть на лошадей и коров на ферме?' },
-        { speaker: 'Clara', fr: '— Super idée ! J'adore le paysage de la forêt en automne.', ru: '— Отличная идея! Я обожаю осенний пейзаж в лесу.' },
+        { speaker: 'Clara', fr: '— Super idée ! J\'adore le paysage de la forêt en automne.', ru: '— Отличная идея! Я обожаю осенний пейзаж в лесу.' },
       ]
     },
     text: {
@@ -1190,15 +1192,15 @@ const CATEGORIES = [
     ],
     dialog: {
       lines: [
-        { speaker: 'Enzo', fr: '— Tu peux m'aider ? J'allume l'ordinateur mais Internet ne marche pas.', ru: '— Ты можешь помочь? Я включаю компьютер, но Интернет не работает.' },
-        { speaker: 'Sœur', fr: '— Tu as regardé le site web de l'école ? Il y a le programme des cours.', ru: '— Ты смотрел сайт школы? Там есть расписание занятий.' },
-        { speaker: 'Enzo', fr: '— Non ! Envoie-moi le lien par message électronique s'il te plaît.', ru: '— Нет! Пришли мне ссылку по электронной почте, пожалуйста.' },
-        { speaker: 'Sœur', fr: '— D'accord. Et n'oublie pas ton appareil photo pour la sortie scolaire !', ru: '— Хорошо. И не забудь фотоаппарат на школьную экскурсию!' },
+        { speaker: 'Enzo', fr: '— Tu peux m\'aider ? J\'allume l\'ordinateur mais Internet ne marche pas.', ru: '— Ты можешь помочь? Я включаю компьютер, но Интернет не работает.' },
+        { speaker: 'Sœur', fr: '— Tu as regardé le site web de l\'école ? Il y a le programme des cours.', ru: '— Ты смотрел сайт школы? Там есть расписание занятий.' },
+        { speaker: 'Enzo', fr: '— Non ! Envoie-moi le lien par message électronique s\'il te plaît.', ru: '— Нет! Пришли мне ссылку по электронной почте, пожалуйста.' },
+        { speaker: 'Sœur', fr: '— D\'accord. Et n\'oublie pas ton appareil photo pour la sortie scolaire !', ru: '— Хорошо. И не забудь фотоаппарат на школьную экскурсию!' },
         { speaker: 'Enzo', fr: '— Merci ! Je peux aussi utiliser mon téléphone portable ?', ru: '— Спасибо! Можно я также воспользуюсь мобильным телефоном?' },
       ]
     },
     text: {
-      fr: 'Aujourd'hui, la technologie est très présente dans la vie des jeunes Français. Ils utilisent Internet pour faire des recherches, regarder des vidéos et envoyer des messages électroniques. Le téléphone portable est indispensable.',
+      fr: 'Aujourd\'hui, la technologie est très présente dans la vie des jeunes Français. Ils utilisent Internet pour faire des recherches, regarder des vidéos et envoyer des messages électroniques. Le téléphone portable est indispensable.',
       ru: 'Сегодня технологии очень важны в жизни молодых французов. Они используют Интернет для поиска информации, просмотра видео и отправки электронных писем. Мобильный телефон стал незаменимым.'
     }
   },
@@ -1226,14 +1228,14 @@ const CATEGORIES = [
       { fr: 'un(e) auteur(e)', ru: 'автор / писатель', pron: 'œ̃n‿o.tœʁ' },
       { fr: 'un(e) pilote', ru: 'пилот', pron: 'œ̃ pi.lɔt' },
       { fr: 'un chanteur', ru: 'певец', pron: 'œ̃ ʃɑ̃.tœʁ' },
-      { fr: 'Qu'est-ce que tu veux faire plus tard ?', ru: 'Кем ты хочешь стать?', pron: 'kɛs kə ty vø fɛʁ ply taʁ' },
+      { fr: 'Qu\'est-ce que tu veux faire plus tard ?', ru: 'Кем ты хочешь стать?', pron: 'kɛs kə ty vø fɛʁ ply taʁ' },
     ],
     dialog: {
       lines: [
-        { speaker: 'Maîtresse', fr: '— Qu'est-ce que tu veux faire plus tard ?', ru: '— Кем ты хочешь стать?' },
+        { speaker: 'Maîtresse', fr: '— Qu\'est-ce que tu veux faire plus tard ?', ru: '— Кем ты хочешь стать?' },
         { speaker: 'Jade', fr: '— Je veux être comédienne ou chanteuse !', ru: '— Я хочу стать актрисой или певицей!' },
         { speaker: 'Maîtresse', fr: '— Et toi, Victor ?', ru: '— А ты, Виктор?' },
-        { speaker: 'Victor', fr: '— Moi, je veux être pilote ou photographe. J'adore les voyages et les photos.', ru: '— Я хочу стать пилотом или фотографом. Я обожаю путешествия и фотографию.' },
+        { speaker: 'Victor', fr: '— Moi, je veux être pilote ou photographe. J\'adore les voyages et les photos.', ru: '— Я хочу стать пилотом или фотографом. Я обожаю путешествия и фотографию.' },
         { speaker: 'Maîtresse', fr: '— Très bien ! Il faut étudier sérieusement pour réaliser vos rêves.', ru: '— Отлично! Нужно серьёзно учиться, чтобы осуществить свои мечты.' },
       ]
     },
@@ -1273,15 +1275,15 @@ const CATEGORIES = [
     ],
     dialog: {
       lines: [
-        { speaker: 'Alice', fr: '— J'ai un nouveau livre ! C'est une histoire magique et incroyable !', ru: '— У меня новая книга! Это волшебная и невероятная история!' },
-        { speaker: 'Rémi', fr: '— C'est génial ! Le livre est très bon ?', ru: '— Это здорово! Книга очень хорошая?' },
-        { speaker: 'Alice', fr: '— Oui, magnifique ! Et c'est gratuit à la bibliothèque.', ru: '— Да, великолепная! И это бесплатно в библиотеке.' },
-        { speaker: 'Rémi', fr: '— Super ! Mon vélo est cassé, sinon j'irais avec toi.', ru: '— Отлично! Мой велосипед сломан, иначе я бы пошёл с тобой.' },
+        { speaker: 'Alice', fr: '— J\'ai un nouveau livre ! C\'est une histoire magique et incroyable !', ru: '— У меня новая книга! Это волшебная и невероятная история!' },
+        { speaker: 'Rémi', fr: '— C\'est génial ! Le livre est très bon ?', ru: '— Это здорово! Книга очень хорошая?' },
+        { speaker: 'Alice', fr: '— Oui, magnifique ! Et c\'est gratuit à la bibliothèque.', ru: '— Да, великолепная! И это бесплатно в библиотеке.' },
+        { speaker: 'Rémi', fr: '— Super ! Mon vélo est cassé, sinon j\'irais avec toi.', ru: '— Отлично! Мой велосипед сломан, иначе я бы пошёл с тобой.' },
         { speaker: 'Alice', fr: '— Quel dommage ! La bibliothèque est disponible tous les jours.', ru: '— Жаль! Библиотека открыта каждый день.' },
       ]
     },
     text: {
-      fr: 'En français, les adjectifs s'accordent avec le nom. On dit "un nouveau livre" mais "une nouvelle maison". Les adjectifs comme "magnifique", "génial" et "incroyable" servent à exprimer l'enthousiasme.',
+      fr: 'En français, les adjectifs s\'accordent avec le nom. On dit "un nouveau livre" mais "une nouvelle maison". Les adjectifs comme "magnifique", "génial" et "incroyable" servent à exprimer l\'enthousiasme.',
       ru: 'Во французском языке прилагательные согласуются с существительным. Говорят «un nouveau livre» («новая книга», м.р.), но «une nouvelle maison» («новый дом», ж.р.). Прилагательные «magnifique», «génial» и «incroyable» используются для выражения восторга.'
     }
   },
@@ -1292,48 +1294,48 @@ const CATEGORIES = [
     subtitle: 'Speech Acts & Communication',
     color: '#e07c7c',
     words: [
-      { fr: "J'aime beaucoup…", ru: 'Мне очень нравится…', pron: 'ʒɛm bo.ku' },
-      { fr: "J'adore…", ru: 'Я обожаю…', pron: 'ʒa.dɔʁ' },
+      { fr: 'J\'aime beaucoup…', ru: 'Мне очень нравится…', pron: 'ʒɛm bo.ku' },
+      { fr: 'J\'adore…', ru: 'Я обожаю…', pron: 'ʒa.dɔʁ' },
       { fr: 'Je préfère…', ru: 'Я предпочитаю…', pron: 'ʒə pʁe.fɛʁ' },
       { fr: 'Je déteste…', ru: 'Я ненавижу…', pron: 'ʒə de.tɛst' },
-      { fr: "Je n'aime pas…", ru: 'Мне не нравится…', pron: 'ʒə nɛm pa' },
-      { fr: "Je suis en train de cuisiner.", ru: 'Я сейчас готовлю.', pron: 'ʒə sɥi ɑ̃ tʁɛ̃ də kɥi.zi.ne' },
+      { fr: 'Je n\'aime pas…', ru: 'Мне не нравится…', pron: 'ʒə nɛm pa' },
+      { fr: 'Je suis en train de cuisiner.', ru: 'Я сейчас готовлю.', pron: 'ʒə sɥi ɑ̃ tʁɛ̃ də kɥi.zi.ne' },
       { fr: 'Est-ce que tu veux venir ?', ru: 'Ты хочешь прийти?', pron: 'ɛs kə ty vø və.niʁ' },
-      { fr: 'Ça t'intéresse ?', ru: 'Тебе интересно?', pron: 'sa tɛ̃.te.ʁɛs' },
+      { fr: 'Ça t\'intéresse ?', ru: 'Тебе интересно?', pron: 'sa tɛ̃.te.ʁɛs' },
       { fr: 'Tu viens avec nous ?', ru: 'Ты идёшь с нами?', pron: 'ty vjɛ̃ a.vɛk nu' },
-      { fr: "Je t'invite…", ru: 'Я приглашаю тебя…', pron: 'ʒə tɛ̃.vit' },
-      { fr: 'D'accord.', ru: 'Хорошо. / Договорились.', pron: 'da.kɔʁ' },
+      { fr: 'Je t\'invite…', ru: 'Я приглашаю тебя…', pron: 'ʒə tɛ̃.vit' },
+      { fr: 'D\'accord.', ru: 'Хорошо. / Договорились.', pron: 'da.kɔʁ' },
       { fr: 'Bravo !', ru: 'Браво!', pron: 'bʁa.vo' },
       { fr: 'Félicitations !', ru: 'Поздравляю!', pron: 'fe.li.si.ta.sjɔ̃' },
       { fr: 'Ça suffit !', ru: 'Хватит!', pron: 'sa sy.fi' },
       { fr: 'Pardon ?', ru: 'Простите? / Что?', pron: 'paʁ.dɔ̃' },
       { fr: 'Merci beaucoup.', ru: 'Большое спасибо.', pron: 'mɛʁ.si bo.ku' },
       { fr: 'Je suis désolé(e).', ru: 'Мне жаль. / Извините.', pron: 'ʒə sɥi de.zo.le' },
-      { fr: 'Votre attention s'il vous plaît !', ru: 'Внимание, пожалуйста!', pron: 'vɔtʁ a.tɑ̃.sjɔ̃ sil vu plɛ' },
+      { fr: 'Votre attention s\'il vous plaît !', ru: 'Внимание, пожалуйста!', pron: 'vɔtʁ a.tɑ̃.sjɔ̃ sil vu plɛ' },
       { fr: 'Bon appétit !', ru: 'Приятного аппетита!', pron: 'bɔ̃n‿a.pe.ti' },
       { fr: 'Bon voyage !', ru: 'Хорошей поездки!', pron: 'bɔ̃ vwa.jaʒ' },
       { fr: 'Bonnes vacances !', ru: 'Хороших каникул!', pron: 'bɔn va.kɑ̃s' },
       { fr: 'Tu joues très bien.', ru: 'Ты очень хорошо играешь.', pron: 'ty ʒu tʁɛ bjɛ̃' },
-      { fr: 'C'est interdit !', ru: 'Это запрещено!', pron: 'se ɛ̃.tɛʁ.di' },
+      { fr: 'C\'est interdit !', ru: 'Это запрещено!', pron: 'se ɛ̃.tɛʁ.di' },
       { fr: 'Je dois étudier.', ru: 'Я должен учиться.', pron: 'ʒə dwa e.ty.dje' },
       { fr: 'Tu peux inviter un ami.', ru: 'Ты можешь пригласить друга.', pron: 'ty pø ɛ̃.vi.te œ̃n‿a.mi' },
-      { fr: "Comment il s'appelle ?", ru: 'Как его зовут?', pron: 'kɔ.mɑ̃ il sa.pɛl' },
+      { fr: 'Comment il s\'appelle ?', ru: 'Как его зовут?', pron: 'kɔ.mɑ̃ il sa.pɛl' },
       { fr: 'Tu es sûr que…?', ru: 'Ты уверен, что…?', pron: 'ty e syʁ kə' },
       { fr: 'Veuillez nous excuser…', ru: 'Просим прощения…', pron: 'vœ.je nu ɛks.ky.ze' },
       { fr: 'Pour faire une salade, …', ru: 'Чтобы приготовить салат, …', pron: 'puʁ fɛʁ yn sa.lad' },
     ],
     dialog: {
       lines: [
-        { speaker: 'Prof', fr: '— Votre attention s'il vous plaît ! Bravo à tous pour le concours !', ru: '— Внимание, пожалуйста! Браво всем за конкурс!' },
+        { speaker: 'Prof', fr: '— Votre attention s\'il vous plaît ! Bravo à tous pour le concours !', ru: '— Внимание, пожалуйста! Браво всем за конкурс!' },
         { speaker: 'Élève 1', fr: '— Félicitations à Emma ! Elle joue très bien de la guitare.', ru: '— Поздравляем Эмму! Она очень хорошо играет на гитаре.' },
-        { speaker: 'Emma', fr: '— Merci beaucoup ! J'adore faire de la musique.', ru: '— Большое спасибо! Я обожаю заниматься музыкой.' },
+        { speaker: 'Emma', fr: '— Merci beaucoup ! J\'adore faire de la musique.', ru: '— Большое спасибо! Я обожаю заниматься музыкой.' },
         { speaker: 'Élève 2', fr: '— Est-ce que tu veux venir à ma fête samedi ?', ru: '— Ты хочешь прийти на мою вечеринку в субботу?' },
-        { speaker: 'Emma', fr: '— Ça m'intéresse ! Je dois étudier samedi matin, mais l'après-midi, d'accord !', ru: '— Мне интересно! Утром в субботу я должна учиться, но после обеда — договорились!' },
+        { speaker: 'Emma', fr: '— Ça m\'intéresse ! Je dois étudier samedi matin, mais l\'après-midi, d\'accord !', ru: '— Мне интересно! Утром в субботу я должна учиться, но после обеда — договорились!' },
       ]
     },
     text: {
-      fr: 'La communication en français utilise de nombreux actes de parole : inviter, remercier, féliciter, interdire ou donner des ordres. Il est important d'apprendre ces formules pour parler naturellement. "S'il vous plaît" est la formule de politesse la plus utilisée.',
-      ru: 'Общение на французском языке использует множество речевых актов: приглашать, благодарить, поздравлять, запрещать или давать указания. Важно выучить эти формулы, чтобы говорить естественно. «S'il vous plaît» — самая распространённая вежливая формула.'
+      fr: 'La communication en français utilise de nombreux actes de parole : inviter, remercier, féliciter, interdire ou donner des ordres. Il est important d\'apprendre ces formules pour parler naturellement. "S\'il vous plaît" est la formule de politesse la plus utilisée.',
+      ru: 'Общение на французском языке использует множество речевых актов: приглашать, благодарить, поздравлять, запрещать или давать указания. Важно выучить эти формулы, чтобы говорить естественно. «S\'il vous plaît» — самая распространённая вежливая формула.'
     }
   },
   {
@@ -1373,15 +1375,15 @@ const CATEGORIES = [
       { fr: 'nettoyer', ru: 'убирать / чистить', pron: 'nɛ.twa.je' },
       { fr: 'organiser', ru: 'организовывать', pron: 'ɔʁ.ɡa.ni.ze' },
       { fr: 'préparer une fête', ru: 'готовить праздник', pron: 'pʁe.pa.ʁe yn fɛt' },
-      { fr: 'aider quelqu'un', ru: 'помогать кому-то', pron: 'e.de kɛl.kœ̃' },
+      { fr: 'aider quelqu\'un', ru: 'помогать кому-то', pron: 'e.de kɛl.kœ̃' },
       { fr: 'faire le ménage', ru: 'делать уборку', pron: 'fɛʁ lə me.naʒ' },
       { fr: 'ranger sa chambre', ru: 'убирать в комнате', pron: 'ʁɑ̃.ʒe sa ʃɑ̃bʁ' },
     ],
     dialog: {
       lines: [
-        { speaker: 'Papa', fr: '— Qu'est-ce que c'est ce colis rouge ?', ru: '— Что это за красная посылка?' },
-        { speaker: 'Théo', fr: '— C'est un cadeau pour Mamie ! Une boîte de chocolats et une carte postale.', ru: '— Это подарок для бабушки! Коробка шоколада и открытка.' },
-        { speaker: 'Papa', fr: '— C'est gentil ! La bouteille en verre, c'est quoi ?', ru: '— Как мило! А стеклянная бутылка — что это?' },
+        { speaker: 'Papa', fr: '— Qu\'est-ce que c\'est ce colis rouge ?', ru: '— Что это за красная посылка?' },
+        { speaker: 'Théo', fr: '— C\'est un cadeau pour Mamie ! Une boîte de chocolats et une carte postale.', ru: '— Это подарок для бабушки! Коробка шоколада и открытка.' },
+        { speaker: 'Papa', fr: '— C\'est gentil ! La bouteille en verre, c\'est quoi ?', ru: '— Как мило! А стеклянная бутылка — что это?' },
         { speaker: 'Théo', fr: '— Un souvenir de notre voyage. Elle est verte et bleue, très jolie !', ru: '— Сувенир из нашей поездки. Она зелёная и синяя, очень красивая!' },
         { speaker: 'Papa', fr: '— Maintenant, aide-moi à faire le ménage et ranger ta chambre !', ru: '— А теперь помоги мне сделать уборку и прибраться в своей комнате!' },
       ]
@@ -1433,16 +1435,30 @@ function showCategory(idx) {
   cat.words.forEach(w => {
     const chip = document.createElement('div');
     chip.className = 'word-chip';
+    // Используем data-атрибут для безопасного хранения текста
+    chip.setAttribute('data-fr', w.fr);
     chip.innerHTML = `
       <span>${w.fr}</span>
-      <span class="speak-btn" title="Écouter" onclick="event.stopPropagation(); speakChip(this, '${w.fr.replace(/'/g, "\\'")}')">
+      <span class="speak-btn" title="Écouter">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
       </span>
       <div class="tooltip">
         <strong>${w.pron}</strong><br>${w.ru}
       </div>
     `;
-    chip.addEventListener('click', () => speak(w.fr));
+    const speakBtn = chip.querySelector('.speak-btn');
+    const textToSpeak = w.fr;
+    chip.addEventListener('click', (e) => {
+      // Предотвращаем срабатывание, если клик был по кнопке
+      if (e.target.closest('.speak-btn')) return;
+      speak(textToSpeak);
+    });
+    speakBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speakBtn.classList.add('speaking');
+      speak(textToSpeak);
+      setTimeout(() => speakBtn.classList.remove('speaking'), 1500);
+    });
     grid.appendChild(chip);
   });
 
@@ -1472,19 +1488,16 @@ function showCategory(idx) {
   window.scrollTo(0,0);
 }
 
-function speakChip(btn, text) {
-  btn.classList.add('speaking');
-  speak(text);
-  setTimeout(() => btn.classList.remove('speaking'), 1500);
-}
-
-function showTab(name) {
+function showTab(name, el) {
   document.querySelectorAll('.dialog-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.dialog-tab').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  event && event.target && event.target.classList.add('active');
-  if (!event || !event.target) {
-    document.querySelectorAll('.dialog-tab')[name === 'dialog' ? 0 : 1].classList.add('active');
+  if (el) {
+    el.classList.add('active');
+  } else {
+    // Если el не передан (вызов из другого места), находим нужную вкладку
+    const tabToActivate = document.querySelector(`.dialog-tab[data-tab="${name}"]`);
+    if (tabToActivate) tabToActivate.classList.add('active');
   }
 }
 
