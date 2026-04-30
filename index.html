@@ -3,627 +3,486 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Конвертер тестов: Word (DOCX/TXT) в Moodle XML</title>
+    <title>Химическая станция | Основы химии и элементы</title>
+    <!-- Шрифты для современного вида -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (бесплатные иконки) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            background: #f0f7ff;
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            margin: 0;
-            padding: 20px;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #f5f7fc 0%, #eef2f8 100%);
             color: #1a2c3e;
+            line-height: 1.5;
+            scroll-behavior: smooth;
         }
+
+        /* Кастомный скролл */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #d9e0eb;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3d7ca3;
+            border-radius: 10px;
+        }
+
+        /* Контейнер */
         .container {
-            max-width: 1400px;
+            max-width: 1300px;
             margin: 0 auto;
+            padding: 0 24px;
         }
-        h1 {
-            font-size: 1.9rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #1e6f3f, #2b8c5e);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-top: 0;
-            margin-bottom: 0.25rem;
+
+        /* Header */
+        .hero {
+            background: linear-gradient(135deg, #0b2b3b 0%, #123e54 100%);
+            color: white;
+            padding: 2rem 0 3rem 0;
+            border-radius: 0 0 2rem 2rem;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+            margin-bottom: 3rem;
         }
-        .sub {
-            color: #2c5a74;
-            margin-bottom: 2rem;
-            border-left: 4px solid #2b8c5e;
-            padding-left: 1rem;
-        }
-        .grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.8rem;
-        }
-        .panel {
-            flex: 1;
-            min-width: 280px;
-            background: white;
-            border-radius: 28px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
-            overflow: hidden;
-            transition: all 0.2s;
+
+        .hero-content {
             display: flex;
             flex-direction: column;
-        }
-        .panel-header {
-            background: #f8fafc;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e2edf2;
-            font-weight: 600;
-            font-size: 1.25rem;
-            display: flex;
             align-items: center;
-            gap: 8px;
+            text-align: center;
         }
-        .panel-header i {
-            font-style: normal;
-            font-size: 1.3rem;
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #FFFFFF, #c9e9ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .panel-content {
-            padding: 1.5rem;
-            flex-grow: 1;
+
+        .hero-tag {
+            font-size: 1.2rem;
+            margin-top: 0.75rem;
+            opacity: 0.9;
+            font-weight: 400;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(4px);
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
         }
-        textarea {
-            width: 100%;
-            min-height: 380px;
-            font-family: 'Courier New', 'Fira Code', monospace;
-            font-size: 14px;
+
+        .hero-desc {
+            max-width: 700px;
+            margin: 1.5rem auto 0;
+            font-size: 1.1rem;
             line-height: 1.5;
-            padding: 12px;
-            border: 1px solid #cbdde6;
-            border-radius: 20px;
-            resize: vertical;
-            background: #fefefe;
-            transition: 0.2s;
+            background: rgba(0,0,0,0.2);
+            padding: 0.8rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 400;
         }
-        textarea:focus {
-            outline: none;
-            border-color: #2b8c5e;
-            box-shadow: 0 0 0 3px rgba(43,140,94,0.2);
-        }
-        .toolbar {
+
+        /* Навигационные карточки (быстрые ссылки) */
+        .quick-nav {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.8rem 0 0.5rem;
         }
-        button {
-            background: #1e6f3f;
-            border: none;
-            color: white;
-            padding: 8px 18px;
+        .nav-chip {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(8px);
+            padding: 0.6rem 1.3rem;
             border-radius: 40px;
             font-weight: 500;
-            font-size: 0.85rem;
-            cursor: pointer;
+            font-size: 0.9rem;
             transition: 0.2s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.3);
         }
-        button:hover {
-            background: #0f5a34;
-            transform: translateY(-1px);
+        .nav-chip i {
+            margin-right: 8px;
         }
-        button.secondary {
-            background: #3a6b92;
+        .nav-chip:hover {
+            background: rgba(255,255,255,0.35);
+            transform: scale(1.02);
         }
-        button.secondary:hover {
-            background: #2c5472;
-        }
-        button.outline {
+
+        /* Секции */
+        section {
             background: white;
-            border: 1px solid #2b8c5e;
-            color: #1e6f3f;
-            box-shadow: none;
+            border-radius: 2rem;
+            padding: 2rem 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s;
         }
-        button.outline:hover {
-            background: #e9f4ef;
+
+        .section-title {
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin-bottom: 1.8rem;
+            border-left: 6px solid #2c7da0;
+            padding-left: 1.2rem;
+            color: #0f3b4f;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .file-label {
-            background: #eef2f9;
-            border: 1px dashed #7c9eb3;
-            border-radius: 40px;
-            padding: 8px 18px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            font-weight: 500;
-            color: #1e4663;
-            transition: 0.2s;
+        .section-title i {
+            color: #2c7da0;
+            font-size: 1.8rem;
         }
-        .file-label:hover {
-            background: #e2eaf3;
-        }
-        input[type="file"] {
-            display: none;
-        }
-        .info-box {
-            background: #eef6ef;
-            border-radius: 24px;
-            padding: 12px 18px;
-            font-size: 0.85rem;
+
+        /* Карточки периодической сетки */
+        .periodic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1.2rem;
             margin-top: 1rem;
-            border-left: 5px solid #2b8c5e;
         }
-        .status {
-            font-size: 0.8rem;
-            color: #2d5a2c;
-            margin-top: 8px;
-        }
-        .badge {
-            background: #dff0e4;
-            border-radius: 40px;
-            padding: 4px 12px;
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
-        .footer {
-            margin-top: 2rem;
+        .element-card {
+            background: #f9fbfe;
+            border-radius: 1.2rem;
+            padding: 1rem 0.8rem;
             text-align: center;
-            font-size: 0.75rem;
-            color: #5c7f8c;
-            border-top: 1px solid #cde0e8;
-            padding-top: 1.5rem;
+            transition: all 0.2s ease;
+            border: 1px solid #e2edf2;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
-        @media (max-width: 800px) {
-            .grid {
-                flex-direction: column;
+        .element-card:hover {
+            transform: translateY(-5px);
+            border-color: #9ec5d9;
+            box-shadow: 0 15px 20px -12px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+        .element-symbol {
+            font-size: 2rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(145deg, #1e5a75, #143f52);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .element-name {
+            font-weight: 600;
+            margin-top: 0.4rem;
+            font-size: 0.95rem;
+        }
+        .element-mass {
+            font-size: 0.7rem;
+            color: #5f7f92;
+            margin-top: 0.2rem;
+            font-family: monospace;
+        }
+
+        /* Таблица кислот и оснований */
+        .chem-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .chem-table th {
+            background: #e3f0f5;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #1a4c66;
+        }
+        .chem-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #e9edf2;
+        }
+        .chem-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Текст и списки */
+        .concept-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0 0.5rem;
+        }
+        .concept-badge {
+            background: #eef3fa;
+            border-radius: 50px;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1e6a8a;
+            transition: 0.1s;
+        }
+        .concept-badge i {
+            margin-right: 8px;
+        }
+
+        .reaction-example {
+            background: #f8fafd;
+            padding: 1rem 1.5rem;
+            border-radius: 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            border-left: 4px solid #2c7da0;
+            margin: 1rem 0;
+        }
+
+        .footer {
+            background: #0f2c38;
+            color: #cbdbe2;
+            text-align: center;
+            padding: 2rem;
+            border-radius: 2rem 2rem 0 0;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 0 16px;
             }
-            textarea {
-                min-height: 280px;
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .section-title {
+                font-size: 1.6rem;
+            }
+            .periodic-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            }
+            .chem-table th, .chem-table td {
+                padding: 8px 10px;
+                font-size: 0.8rem;
             }
         }
-        pre {
-            margin: 0;
-            white-space: pre-wrap;
-            word-break: break-all;
+
+        a {
+            text-decoration: none;
+        }
+        button, .nav-chip {
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>📄➡️📚 Конвертер тестов: Word → Moodle XML</h1>
-    <div class="sub">Преобразуйте текст вопросов (из Word, текстовых файлов) в формат импорта Moodle XML (вопросы с выбором одного ответа)</div>
-
-    <div class="grid">
-        <!-- Левая панель: ввод / загрузка Word -->
-        <div class="panel">
-            <div class="panel-header">
-                <i>📝</i> Исходный текст (Word / TXT)
+    <div class="hero">
+        <div class="container hero-content">
+            <h1><i class="fas fa-flask"></i> Химическая станция</h1>
+            <div class="hero-tag">Периодическая система • Кислоты • Реакции • Органика</div>
+            <div class="hero-desc">
+                🧪 Изучай химию с наглядными примерами, таблицами элементов и ключевыми законами. 
+                От основ до интересных фактов.
             </div>
-            <div class="panel-content">
-                <textarea id="sourceText" placeholder='Вставьте текст теста или загрузите файл .docx/.txt (структура описана ниже).&#10;&#10;Пример формата вопроса:&#10;1. Какой цвет у неба?&#10;A) Красный&#10;B) Синий&#10;C) Зеленый&#10;D) Желтый&#10;Правильный ответ: B&#10;&#10;Или разделяйте вопросы пустой строкой.&#10;Важно: варианты ответов с буквами A) B) C) или A. B. и строка "Правильный ответ: X" или "Answer: X".'></textarea>
-                <div class="toolbar">
-                    <label class="file-label">
-                        📂 Загрузить .docx или .txt
-                        <input type="file" id="fileInput" accept=".docx,.txt,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain">
-                    </label>
-                    <button id="clearBtn" class="outline">🧹 Очистить</button>
-                    <button id="exampleBtn" class="outline">📋 Пример теста</button>
-                </div>
-                <div class="info-box">
-                    <strong>📌 Правила разметки (один из способов):</strong><br>
-                    • Каждый вопрос начинается с цифры и точки/скобки (1., 2. и т.д.)<br>
-                    • Варианты ответов: A) Текст  /  B. Текст  (буквы + разделитель)<br>
-                    • Указание правильного ответа: <code>Правильный ответ: B</code> или <code>Answer: C</code><br>
-                    • Вопросы отделяйте пустыми строками. Поддерживается копирование из MS Word.
-                </div>
-                <div id="parseStatus" class="status"></div>
-            </div>
-        </div>
-
-        <!-- Правая панель: XML Moodle + экспорт -->
-        <div class="panel">
-            <div class="panel-header">
-                <i>🎓</i> Moodle XML (готовый к импорту)
-            </div>
-            <div class="panel-content">
-                <textarea id="xmlOutput" readonly placeholder="Здесь появится XML для Moodle ..." style="background:#fafbfd;"></textarea>
-                <div class="toolbar">
-                    <button id="convertBtn">🔄 Конвертировать в Moodle XML</button>
-                    <button id="downloadXmlBtn" class="secondary">💾 Скачать XML-файл</button>
-                    <button id="copyXmlBtn" class="outline">📋 Копировать XML</button>
-                </div>
-                <div id="exportStatus" class="status"></div>
-                <div class="info-box" style="margin-top: 12px;">
-                    <strong>📥 Импорт в Moodle:</strong> Созданный XML совместим c категорией вопросов Moodle (тип "выбор одного ответа"). Используйте Администрирование → Банк вопросов → Импорт → Формат Moodle XML.
-                </div>
+            <div class="quick-nav">
+                <div class="nav-chip" data-scroll="periodic"><i class="fas fa-table"></i> Элементы</div>
+                <div class="nav-chip" data-scroll="acids"><i class="fas fa-vial"></i> Кислоты и основания</div>
+                <div class="nav-chip" data-scroll="reactions"><i class="fas fa-exchange-alt"></i> Типы реакций</div>
+                <div class="nav-chip" data-scroll="theory"><i class="fas fa-atom"></i> Основные законы</div>
             </div>
         </div>
     </div>
+
+    <div class="container">
+        <!-- Секция: Периодическая таблица (выборочные элементы) -->
+        <section id="periodic">
+            <div class="section-title">
+                <i class="fas fa-border-all"></i>
+                <span>🔬 12 ключевых элементов периодической системы</span>
+            </div>
+            <p style="margin-bottom: 1.2rem; color: #2c5e74;">Основные химические элементы, их символы и атомные массы (округлено).</p>
+            <div class="periodic-grid">
+                <!-- H -->
+                <div class="element-card"><div class="element-symbol">H</div><div class="element-name">Водород</div><div class="element-mass">1.008 г/моль</div></div>
+                <div class="element-card"><div class="element-symbol">He</div><div class="element-name">Гелий</div><div class="element-mass">4.0026</div></div>
+                <div class="element-card"><div class="element-symbol">Li</div><div class="element-name">Литий</div><div class="element-mass">6.94</div></div>
+                <div class="element-card"><div class="element-symbol">C</div><div class="element-name">Углерод</div><div class="element-mass">12.011</div></div>
+                <div class="element-card"><div class="element-symbol">N</div><div class="element-name">Азот</div><div class="element-mass">14.007</div></div>
+                <div class="element-card"><div class="element-symbol">O</div><div class="element-name">Кислород</div><div class="element-mass">15.999</div></div>
+                <div class="element-card"><div class="element-symbol">Na</div><div class="element-name">Натрий</div><div class="element-mass">22.990</div></div>
+                <div class="element-card"><div class="element-symbol">Mg</div><div class="element-name">Магний</div><div class="element-mass">24.305</div></div>
+                <div class="element-card"><div class="element-symbol">Cl</div><div class="element-name">Хлор</div><div class="element-mass">35.45</div></div>
+                <div class="element-card"><div class="element-symbol">Fe</div><div class="element-name">Железо</div><div class="element-mass">55.845</div></div>
+                <div class="element-card"><div class="element-symbol">Cu</div><div class="element-name">Медь</div><div class="element-mass">63.546</div></div>
+                <div class="element-card"><div class="element-symbol">Au</div><div class="element-name">Золото</div><div class="element-mass">196.97</div></div>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.85rem; background:#eef3fc; padding: 0.6rem 1rem; border-radius: 20px;"><i class="fas fa-lightbulb"></i> Совет: в периодической системе Менделеева свойства элементов повторяются периодически — это основа химии.</p>
+        </section>
+
+        <!-- Секция: Кислоты и основания -->
+        <section id="acids">
+            <div class="section-title">
+                <i class="fas fa-droplet"></i>
+                <span>🧪 Кислоты, основания и соли</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 2rem;">
+                <div style="flex: 1; min-width: 200px;">
+                    <h3 style="margin-bottom: 0.8rem; color:#1f6683;">📌 Сильные кислоты</h3>
+                    <ul style="list-style-type: none;">
+                        <li><i class="fas fa-check-circle" style="color:#2a9d8f;"></i> HCl — Соляная кислота</li>
+                        <li><i class="fas fa-check-circle" style="color:#2a9d8f;"></i> HNO₃ — Азотная кислота</li>
+                        <li><i class="fas fa-check-circle" style="color:#2a9d8f;"></i> H₂SO₄ — Серная кислота</li>
+                        <li><i class="fas fa-check-circle" style="color:#2a9d8f;"></i> HI — Иодоводородная</li>
+                    </ul>
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <h3 style="margin-bottom: 0.8rem; color:#1f6683;">🧴 Сильные основания (щёлочи)</h3>
+                    <ul style="list-style-type: none;">
+                        <li><i class="fas fa-check-circle" style="color:#e76f51;"></i> NaOH — Гидроксид натрия</li>
+                        <li><i class="fas fa-check-circle" style="color:#e76f51;"></i> KOH — Гидроксид калия</li>
+                        <li><i class="fas fa-check-circle" style="color:#e76f51;"></i> Ca(OH)₂ — Гидроксид кальция</li>
+                        <li><i class="fas fa-check-circle" style="color:#e76f51;"></i> Ba(OH)₂</li>
+                    </ul>
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <h3 style="margin-bottom: 0.8rem; color:#1f6683;">⚖️ Индикаторы pH</h3>
+                    <ul style="list-style-type: none;">
+                        <li><i class="fas fa-chart-line"></i> Лакмус: кислота → красный, щелочь → синий</li>
+                        <li><i class="fas fa-chart-line"></i> Фенолфталеин: бесцветный в кислоте, малиновый в щелочи</li>
+                        <li><i class="fas fa-chart-line"></i> Метилоранж: красный (кислота), желтый (щелочь)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="reaction-example">
+                <i class="fas fa-graduation-cap"></i> <strong>Реакция нейтрализации</strong> — основа взаимодействия кислоты и основания:<br>
+                HCl + NaOH → NaCl (поваренная соль) + H₂O
+            </div>
+        </section>
+
+        <!-- Секция: Типы химических реакций -->
+        <section id="reactions">
+            <div class="section-title">
+                <i class="fas fa-random"></i>
+                <span>🔥 Типы химических реакций</span>
+            </div>
+            <div class="concept-list">
+                <div class="concept-badge"><i class="fas fa-plus-circle"></i> Соединение: A + B → AB</div>
+                <div class="concept-badge"><i class="fas fa-cut"></i> Разложение: AB → A + B</div>
+                <div class="concept-badge"><i class="fas fa-retweet"></i> Замещение: A + BC → AC + B</div>
+                <div class="concept-badge"><i class="fas fa-exchange"></i> Обмен: AB + CD → AD + CB</div>
+                <div class="concept-badge"><i class="fas fa-fire"></i> Окисление-восстановление</div>
+            </div>
+            <p style="margin-top: 16px;">Примеры реакций:</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.5rem;">
+                <div style="background:#f2f6fc; border-radius: 1rem; padding: 0.8rem 1.2rem; flex:1;"><strong>🔹 Горение метана:</strong><br> CH₄ + 2O₂ → CO₂ + 2H₂O</div>
+                <div style="background:#f2f6fc; border-radius: 1rem; padding: 0.8rem 1.2rem; flex:1;"><strong>🔹 Замещение цинка в кислоте:</strong><br> Zn + 2HCl → ZnCl₂ + H₂↑</div>
+                <div style="background:#f2f6fc; border-radius: 1rem; padding: 0.8rem 1.2rem; flex:1;"><strong>🔹 Разложение карбоната:</strong><br> CaCO₃ → CaO + CO₂</div>
+            </div>
+        </section>
+
+        <!-- Секция: Основные законы и теория -->
+        <section id="theory">
+            <div class="section-title">
+                <i class="fas fa-microscope"></i>
+                <span>📖 Основные химические законы</span>
+            </div>
+            <table class="chem-table">
+                <thead>
+                    <tr><th>Закон / Концепция</th><th>Суть</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Закон сохранения массы (Ломоносов — Лавуазье)</td><td>Масса веществ, вступивших в реакцию, равна массе продуктов реакции.</td></tr>
+                    <tr><td>Закон постоянства состава</td><td>Любое чистое вещество имеет постоянный качественный и количественный состав.</td></tr>
+                    <tr><td>Периодический закон (Менделеев)</td><td>Свойства химических элементов находятся в периодической зависимости от их атомной массы (заряда ядра).</td></tr>
+                    <tr><td>Закон Авогадро</td><td>В равных объёмах газов при одинаковых условиях содержится одинаковое число молекул.</td></tr>
+                </tbody>
+            </table>
+            <div class="reaction-example" style="margin-top: 1.5rem;">
+                <i class="fas fa-chalkboard-user"></i> <strong>Моль и число Авогадро:</strong> 1 моль вещества содержит 6,022·10²³ частиц (атомов, молекул). Это фундаментальная константа химии.
+            </div>
+        </section>
+
+        <!-- Секция: Органическая химия и интересные факты -->
+        <section>
+            <div class="section-title">
+                <i class="fas fa-leaf"></i>
+                <span>🧬 Органическая химия & факты</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 1.8rem;">
+                <div style="flex: 1.4">
+                    <h3>🌿 Основные классы органических веществ</h3>
+                    <ul style="margin-left: 1.2rem; margin-top: 0.5rem;">
+                        <li><strong>Алканы</strong> (предельные углеводороды): CH₄, C₂H₆</li>
+                        <li><strong>Алкены</strong> (с двойной связью): C₂H₄ (этилен)</li>
+                        <li><strong>Спирты</strong>: C₂H₅OH (этанол)</li>
+                        <li><strong>Карбоновые кислоты</strong>: CH₃COOH (уксусная)</li>
+                        <li><strong>Углеводы, белки, липиды</strong> — основа живого</li>
+                    </ul>
+                </div>
+                <div style="flex: 1">
+                    <h3>✨ Химические лайфхаки</h3>
+                    <ul>
+                        <li>🔹 Лук не будет щипать глаза, если резать его охлаждённым (меньше летучих соединений).</li>
+                        <li>🔹 Молоко помогает при отравлении кислотами? Не совсем, лучше щелочная вода – но главное вызвать врача.</li>
+                        <li>🔹 Самый распространённый элемент во Вселенной — водород.</li>
+                        <li>🔹 Золото не реагирует с большинством кислот (только с «царской водкой»).</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="background: linear-gradient(110deg, #cbe5f0, #e5f1f7); margin-top: 1.5rem; padding: 1rem 1.5rem; border-radius: 1.2rem;">
+                <i class="fas fa-quote-left"></i> <em>«Химия — это область чудес, в ней скрыто счастье человеческой мысли, благодаря ей побеждаются мрак и тяжесть вещества»</em> — М. Горький.
+            </div>
+        </section>
+
+        <!-- Дополнительная секция - Растворимость и таблица ионов -->
+        <section>
+            <div class="section-title">
+                <i class="fas fa-water"></i>
+                <span>💧 Таблица растворимости (ключевые ионы)</span>
+            </div>
+            <p style="margin-bottom: 0.8rem;">Правила растворимости солей и оснований в воде:</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 0.8rem;">
+                <div><i class="fas fa-check-circle" style="color:#2c7da0;"></i> Все нитраты (NO₃⁻) — растворимы.</div>
+                <div><i class="fas fa-check-circle" style="color:#2c7da0;"></i> Соли Na⁺, K⁺, NH₄⁺ — растворимы.</div>
+                <div><i class="fas fa-times-circle" style="color:#c44536;"></i> Хлориды Ag⁺, Pb²⁺ — нерастворимы.</div>
+                <div><i class="fas fa-times-circle" style="color:#c44536;"></i> Карбонаты CO₃²⁻ (кроме Na⁺, K⁺, NH₄⁺) — нерастворимы.</div>
+                <div><i class="fas fa-times-circle" style="color:#c44536;"></i> Гидроксиды большинства металлов (кроме щелочей) — малорастворимы.</div>
+            </div>
+            <div class="reaction-example" style="margin-top: 1rem;">
+                ☑️ Пример реакции ионного обмена: AgNO₃ + NaCl → AgCl↓ (белый творожистый осадок) + NaNO₃
+            </div>
+        </section>
+    </div>
+
     <div class="footer">
-        🔍 Поддержка множественного выбора из текста: автоматический поиск вариантов A), B), C), D) или A., B. и т.д. Правильный ответ определяется по ключевой фразе.
-        Работает с русским/английским текстом, извлечение из .docx (Word) осуществляется встроенным парсингом (библиотека mammoth не требуется — упрощённый парсинг через FileReader + чистка). 
-        Для корректной обработки сложных .docx используйте предварительное копирование текста.
+        <p><i class="fas fa-atom"></i> Химический портал — для учащихся, студентов и всех, кто влюблён в науку. <br> Данные носят образовательный характер. Периодическая таблица © 2025</p>
+        <p style="margin-top: 0.6rem;">🧪 Экспериментируйте безопасно и изучайте химию с интересом!</p>
     </div>
-</div>
 
-<script>
-    (function() {
-        // DOM элементы
-        const sourceTextarea = document.getElementById('sourceText');
-        const xmlOutput = document.getElementById('xmlOutput');
-        const convertBtn = document.getElementById('convertBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const exampleBtn = document.getElementById('exampleBtn');
-        const fileInput = document.getElementById('fileInput');
-        const downloadXmlBtn = document.getElementById('downloadXmlBtn');
-        const copyXmlBtn = document.getElementById('copyXmlBtn');
-        const parseStatusSpan = document.getElementById('parseStatus');
-        const exportStatusSpan = document.getElementById('exportStatus');
-
-        // Вспомогательные функции
-        function setStatus(el, msg, isError = false) {
-            if (!el) return;
-            el.textContent = msg;
-            el.style.color = isError ? '#b13e3e' : '#2d6a4f';
-            setTimeout(() => {
-                if (el.textContent === msg) {
-                    // оставляем, но через 6 сек очистим если не ошибка
-                    if (!isError) setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 5000);
-                }
-            }, 5000);
-        }
-
-        // Парсинг текста в массив вопросов {questionText, answers: [{letter, text}], correctLetter}
-        function parseQuestionsFromText(rawText) {
-            if (!rawText || rawText.trim() === '') return [];
-            
-            // Разбивка на блоки вопросов: обычно разделяем по двойному переносу строки ИЛИ по явным номерам вопросов.
-            // Лучше: предварительно разделить по шаблону "цифра+точка/скобка" в начале строки.
-            let blocks = [];
-            let lines = rawText.split(/\r?\n/);
-            let currentBlock = [];
-            let questionPattern = /^\s*(\d+)[\.\)]\s+/; // "1. ", "2) "
-
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i];
-                let isNewQuestion = questionPattern.test(line);
-                if (isNewQuestion && currentBlock.length > 0 && currentBlock.some(l => l.trim() !== '')) {
-                    blocks.push(currentBlock.join('\n'));
-                    currentBlock = [];
-                }
-                currentBlock.push(line);
-            }
-            if (currentBlock.length > 0) blocks.push(currentBlock.join('\n'));
-            // дополнительная страховка: если блоков мало и нет цифр, но текст содержит ответы — всё равно берём как один блок
-            if (blocks.length === 0 && rawText.trim() !== '') blocks = [rawText];
-            
-            const questions = [];
-            for (let block of blocks) {
-                block = block.trim();
-                if (block === '') continue;
-                const parsed = parseSingleQuestionBlock(block);
-                if (parsed) questions.push(parsed);
-            }
-            return questions;
-        }
-
-        // Разбор одного блока вопроса
-        function parseSingleQuestionBlock(block) {
-            // 1. Удаляем нумерацию в начале если есть
-            let lines = block.split(/\r?\n/);
-            // Удаляем пустые строки в начале
-            while (lines.length && lines[0].trim() === '') lines.shift();
-            if (lines.length === 0) return null;
-            
-            // Определяем текст вопроса: первая строка и возможно последующие, пока не встретим вариант ответа (буква+разделитель)
-            let questionTextLines = [];
-            let answers = [];
-            let foundAnswers = false;
-            const answerRegex = /^\s*([A-ZА-Я])\s*[\.\)]\s*(.*)/i;   // A) текст   или A. текст
-            const answerRegexParen = /^\s*([A-ZА-Я])\s*\)\s*(.*)/i;    // A) вариант
-            
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i];
-                let trimmed = line.trim();
-                if (trimmed === '' && !foundAnswers) {
-                    questionTextLines.push(line); // сохраняем пустые строки внутри вопроса
-                    continue;
-                }
-                let answerMatch = answerRegex.exec(trimmed) || answerRegexParen.exec(trimmed);
-                if (answerMatch) {
-                    foundAnswers = true;
-                    let letter = answerMatch[1].toUpperCase();
-                    let answerText = answerMatch[2].trim();
-                    if (answerText === '') answerText = '(пустой вариант)';
-                    answers.push({ letter: letter, text: answerText });
-                } else {
-                    if (!foundAnswers) {
-                        questionTextLines.push(line);
-                    } else {
-                        // После ответов могут идти служебные строки "Правильный ответ: X", их добавим но не в варианты.
-                        // лучше: попытаться извлечь правильный ответ из такой строки
-                        // эту строку пока пропускаем, дальше будет отдельный поиск correct.
-                    }
-                }
-            }
-            
-            let questionFullText = questionTextLines.join('\n').trim();
-            if (questionFullText === '') questionFullText = "Вопрос (текст не распознан)";
-            
-            // Поиск правильного ответа во всём блоке
-            let correctLetter = null;
-            // ищем по строкам: Правильный ответ: B , Answer: C , Верный ответ: A
-            const correctPatterns = [
-                /правильный\s+ответ\s*:\s*([A-ZА-Я])/i,
-                /верный\s+ответ\s*:\s*([A-ZА-Я])/i,
-                /answer\s*:\s*([A-ZА-Я])/i,
-                /correct\s*:\s*([A-ZА-Я])/i,
-                /\(правильный\s+ответ\s+([A-ZА-Я])\)/i
-            ];
-            for (let line of lines) {
-                for (let pattern of correctPatterns) {
-                    let match = pattern.exec(line);
-                    if (match) {
-                        correctLetter = match[1].toUpperCase();
-                        break;
-                    }
-                }
-                if (correctLetter) break;
-            }
-            
-            // Если не нашли, но ответов немного — можно предположить, что правильный ответ — первый? Нет, лучше не угадываем, ставим первый если один вариант
-            if (!correctLetter && answers.length === 1) {
-                correctLetter = answers[0].letter;
-            }
-            // Если всё еще нет, но есть список ответов, пытаемся найти вариант, который содержит слова "правильно" или "верно"? Не надо.
-            if (!correctLetter) {
-                // ищем в вариантах метку (например, вариант с пометкой * или (верно))
-                for (let ans of answers) {
-                    if (ans.text.includes('*') || ans.text.toLowerCase().includes('(верно)') || ans.text.toLowerCase().includes('correct')) {
-                        correctLetter = ans.letter;
-                        // чистим текст от маркеров
-                        ans.text = ans.text.replace(/[*\u2022]|\(верно\)|\(correct\)/gi, '').trim();
-                        break;
-                    }
-                }
-            }
-            
-            if (!correctLetter && answers.length > 0) {
-                // last fallback: первый ответ
-                correctLetter = answers[0].letter;
-            }
-            
-            if (answers.length === 0) return null; // нет вариантов — невалидный вопрос
-            
-            return {
-                questionText: questionFullText,
-                answers: answers,
-                correctLetter: correctLetter
-            };
-        }
-
-        // Генерация Moodle XML из массива вопросов
-        function generateMoodleXml(questions) {
-            if (!questions || questions.length === 0) {
-                return '<?xml version="1.0" encoding="UTF-8"?>\n<quiz>\n  <!-- Нет корректных вопросов для экспорта -->\n</quiz>';
-            }
-            let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<quiz>\n';
-            for (let idx = 0; idx < questions.length; idx++) {
-                const q = questions[idx];
-                // Экранирование XML
-                const escapeXml = (str) => {
-                    if (!str) return '';
-                    return str.replace(/[&<>]/g, function(m) {
-                        if (m === '&') return '&amp;';
-                        if (m === '<') return '&lt;';
-                        if (m === '>') return '&gt;';
-                        return m;
-                    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-                        return c;
-                    }).replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
-                };
-                
-                let questionTextEnc = escapeXml(q.questionText);
-                xml += `  <question type="multichoice">\n`;
-                xml += `    <name>\n      <text>Вопрос ${idx+1}</text>\n    </name>\n`;
-                xml += `    <questiontext format="html">\n      <text><![CDATA[${questionTextEnc}]]></text>\n    </questiontext>\n`;
-                xml += `    <generalfeedback format="html">\n      <text></text>\n    </generalfeedback>\n`;
-                xml += `    <defaultgrade>1.0000000</defaultgrade>\n`;
-                xml += `    <penalty>0.3333333</penalty>\n`;
-                xml += `    <hidden>0</hidden>\n`;
-                xml += `    <single>true</single>\n`;
-                xml += `    <shuffleanswers>true</shuffleanswers>\n`;
-                xml += `    <answernumbering>abc</answernumbering>\n`;
-                xml += `    <correctfeedback format="html">\n      <text>Ваш ответ верный.</text>\n    </correctfeedback>\n`;
-                xml += `    <partiallycorrectfeedback format="html">\n      <text>Ваш ответ частично верный.</text>\n    </partiallycorrectfeedback>\n`;
-                xml += `    <incorrectfeedback format="html">\n      <text>Ваш ответ неверный.</text>\n    </incorrectfeedback>\n`;
-                
-                for (let ans of q.answers) {
-                    let isCorrect = (ans.letter === q.correctLetter) ? 1 : 0;
-                    let answerTextEnc = escapeXml(ans.text);
-                    xml += `    <answer fraction="${isCorrect}" format="html">\n`;
-                    xml += `      <text><![CDATA[${answerTextEnc}]]></text>\n`;
-                    xml += `      <feedback format="html">\n        <text></text>\n      </feedback>\n`;
-                    xml += `    </answer>\n`;
-                }
-                xml += `  </question>\n`;
-            }
-            xml += '</quiz>';
-            return xml;
-        }
-
-        // Основная функция конвертации из текста в XML и обновления вывода
-        function convertAndShow() {
-            const raw = sourceTextarea.value;
-            if (!raw.trim()) {
-                setStatus(parseStatusSpan, '⚠️ Нет текста для конвертации. Вставьте тест или загрузите файл.', false);
-                xmlOutput.value = '<?xml version="1.0" encoding="UTF-8"?>\n<quiz>\n  <!-- Нет данных. Добавьте текст с вопросами -->\n</quiz>';
-                setStatus(exportStatusSpan, 'XML не сгенерирован (пустой ввод)', false);
-                return;
-            }
-            const questions = parseQuestionsFromText(raw);
-            if (questions.length === 0) {
-                setStatus(parseStatusSpan, '❌ Не удалось распознать вопросы. Проверьте формат (цифры, варианты A) B) и "Правильный ответ: X")', true);
-                xmlOutput.value = '<?xml version="1.0" encoding="UTF-8"?>\n<quiz>\n  <!-- Не удалось распарсить ни одного вопроса -->\n</quiz>';
-                return;
-            }
-            setStatus(parseStatusSpan, `✅ Найдено вопросов: ${questions.length}. Правильные ответы определены.`, false);
-            const moodleXml = generateMoodleXml(questions);
-            xmlOutput.value = moodleXml;
-            setStatus(exportStatusSpan, `✨ XML готов (${questions.length} вопросов). Можно скачать или скопировать.`, false);
-        }
-        
-        // Загрузка файлов .docx (простой парсинг через чтение как zip? Тяжело, но для .txt и .docx - извлечение текста через FileReader + для docx используем подход с ArrayBuffer и распаковка без библиотек сложна.
-        // Упрощённо: для .docx будем использовать чтение как text? Не сработает. Но можно предложить пользователю копировать текст. Чтобы не усложнять зависимостями, сделаем честное предупреждение,
-        // но попробуем использовать FileReader для .docx как ArrayBuffer и распарсить через специальную технику: на самом деле docx - zip с XML. Сделаем примитивный парсер текста: ищем в документе body.
-        // Реализуем базовую функцию извлечения текста из docx без библиотек (достаточно для многих случаев).
-        async function extractTextFromDocx(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    const arrayBuffer = e.target.result;
-                    try {
-                        // используем JSZip через CDN? Но мы не хотим подключать внешние библиотеки? Можно без них, но извлечение сложно.
-                        // Для простоты: дадим пользователю инструкцию, либо подключаем динамически JSZip. Я подключаю динамически для удобства.
-                        if (typeof JSZip === 'undefined') {
-                            // динамическая загрузка JSZip
-                            const script = document.createElement('script');
-                            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-                            script.onload = () => {
-                                extractWithZip(arrayBuffer).then(resolve).catch(reject);
-                            };
-                            script.onerror = () => reject(new Error('Не удалось загрузить библиотеку для .docx, скопируйте текст вручную.'));
-                            document.head.appendChild(script);
-                        } else {
-                            extractWithZip(arrayBuffer).then(resolve).catch(reject);
+    <!-- Плавный скролл -->
+    <script>
+        (function() {
+            const navChips = document.querySelectorAll('.nav-chip');
+            navChips.forEach(chip => {
+                chip.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('data-scroll');
+                    if(targetId) {
+                        const targetSection = document.getElementById(targetId);
+                        if(targetSection) {
+                            targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }
-                    } catch(err) {
-                        reject(err);
                     }
-                };
-                reader.onerror = () => reject(new Error('Ошибка чтения файла'));
-                reader.readAsArrayBuffer(file);
+                });
             });
-        }
-        
-        async function extractWithZip(arrayBuffer) {
-            const zip = await JSZip.loadAsync(arrayBuffer);
-            const documentFile = zip.file("word/document.xml");
-            if (!documentFile) throw new Error("word/document.xml не найден в .docx");
-            const xmlString = await documentFile.async("string");
-            // удаляем теги XML и извлекаем текст
-            const textContent = xmlString.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-            // дополнительно пробуем улучшить читаемость: разбивка по предложениям
-            return textContent;
-        }
-        
-        // Обработка загрузки файла
-        fileInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const fileName = file.name;
-            if (fileName.endsWith('.txt')) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    sourceTextarea.value = ev.target.result;
-                    setStatus(parseStatusSpan, `📄 Загружен ${fileName} (текст). Нажмите "Конвертировать".`, false);
-                };
-                reader.onerror = () => setStatus(parseStatusSpan, 'Ошибка чтения .txt', true);
-                reader.readAsText(file, 'UTF-8');
-            } 
-            else if (fileName.endsWith('.docx')) {
-                try {
-                    setStatus(parseStatusSpan, '⏳ Обработка .docx, пожалуйста подождите...', false);
-                    const extractedText = await extractTextFromDocx(file);
-                    if (extractedText && extractedText.length > 0) {
-                        sourceTextarea.value = extractedText;
-                        setStatus(parseStatusSpan, `✅ Текст из ${fileName} извлечён. Нажмите "Конвертировать".`, false);
-                    } else {
-                        throw new Error('Текст не найден');
-                    }
-                } catch (err) {
-                    console.warn(err);
-                    setStatus(parseStatusSpan, `⚠️ Не удалось автоматически разобрать .docx: ${err.message}. Скопируйте текст вручную из Word.`, true);
-                }
-            } else {
-                setStatus(parseStatusSpan, 'Поддерживаются .txt и .docx', true);
-            }
-            fileInput.value = '';
-        });
-        
-        // Пример текста
-        exampleBtn.addEventListener('click', () => {
-            sourceTextarea.value = `1. Какая столица Франции?
-A) Берлин
-B) Мадрид
-C) Париж
-D) Лиссабон
-Правильный ответ: C
-
-2. Что такое HTML?
-A) Язык программирования
-B) Язык разметки гипертекста
-C) База данных
-D) Графический редактор
-Answer: B
-
-3. 2 + 2 * 2 равно?
-A) 6
-B) 8
-C) 4
-D) 5
-Верный ответ: A`;
-            setStatus(parseStatusSpan, 'Пример загружен. Нажмите "Конвертировать"', false);
-        });
-        
-        clearBtn.addEventListener('click', () => {
-            sourceTextarea.value = '';
-            xmlOutput.value = '';
-            setStatus(parseStatusSpan, 'Поле очищено', false);
-            setStatus(exportStatusSpan, '', false);
-        });
-        
-        convertBtn.addEventListener('click', () => {
-            convertAndShow();
-        });
-        
-        downloadXmlBtn.addEventListener('click', () => {
-            const xmlContent = xmlOutput.value;
-            if (!xmlContent || xmlContent.includes('Нет данных') || xmlContent.includes('Не удалось распарсить')) {
-                setStatus(exportStatusSpan, 'Нет валидного XML для скачивания. Сначала конвертируйте тест.', true);
-                return;
-            }
-            const blob = new Blob([xmlContent], {type: 'application/xml'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'moodle_questions.xml';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            setStatus(exportStatusSpan, 'Файл moodle_questions.xml скачан.', false);
-        });
-        
-        copyXmlBtn.addEventListener('click', () => {
-            const xml = xmlOutput.value;
-            if (!xml || xml.includes('Нет данных')) {
-                setStatus(exportStatusSpan, 'Нечего копировать, сначала сгенерируйте XML', true);
-                return;
-            }
-            navigator.clipboard.writeText(xml).then(() => {
-                setStatus(exportStatusSpan, 'XML скопирован в буфер обмена!', false);
-            }).catch(() => {
-                setStatus(exportStatusSpan, 'Не удалось скопировать', true);
-            });
-        });
-        
-        // начальная инициализация: пустой, но покажем пример при пустом?
-        if (!sourceTextarea.value) {
-            sourceTextarea.value = `1. Пример вопроса:\nA) Первый вариант\nB) Второй верный\nC) Третий\nПравильный ответ: B`;
-        }
-    })();
-</script>
+            // Дополнительно для улучшения отображения корректных символов (верхние/нижние индексы уже в тексте)
+            console.log("Химический сайт загружен | Periodic table & info");
+        })();
+    </script>
 </body>
 </html>
