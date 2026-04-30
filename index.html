@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Химическая станция | Основы химии и элементы</title>
-    <!-- Шрифты для современного вида -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 (бесплатные иконки) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Mind-Map français-russe | Vocabulaire DELF A1</title>
     <style>
         * {
             margin: 0;
@@ -16,473 +12,402 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(145deg, #f5f7fc 0%, #eef2f8 100%);
-            color: #1a2c3e;
-            line-height: 1.5;
-            scroll-behavior: smooth;
+            background: linear-gradient(145deg, #e9f0e6 0%, #c8dfc3 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1e2f1c;
         }
 
-        /* Кастомный скролл */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #d9e0eb;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3d7ca3;
-            border-radius: 10px;
-        }
-
-        /* Контейнер */
-        .container {
-            max-width: 1300px;
+        /* Контейнер для mind-map */
+        .mindmap {
+            max-width: 1600px;
             margin: 0 auto;
-            padding: 0 24px;
+            background: rgba(255, 248, 225, 0.85);
+            border-radius: 4rem;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255,255,255,0.7);
+            backdrop-filter: blur(1px);
         }
 
-        /* Header */
-        .hero {
-            background: linear-gradient(135deg, #0b2b3b 0%, #123e54 100%);
-            color: white;
-            padding: 2rem 0 3rem 0;
-            border-radius: 0 0 2rem 2rem;
-            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
-            margin-bottom: 3rem;
-        }
-
-        .hero-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        h1 {
             text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 700;
             letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #FFFFFF, #c9e9ff);
-            background-clip: text;
+            background: linear-gradient(135deg, #2b5e2a, #1e4620);
             -webkit-background-clip: text;
+            background-clip: text;
             color: transparent;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-shadow: 3px 3px 8px rgba(0,0,0,0.05);
+            margin-bottom: 0.25rem;
         }
 
-        .hero-tag {
-            font-size: 1.2rem;
-            margin-top: 0.75rem;
-            opacity: 0.9;
-            font-weight: 400;
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(4px);
-            padding: 0.3rem 1.2rem;
-            border-radius: 40px;
-            display: inline-block;
-        }
-
-        .hero-desc {
-            max-width: 700px;
-            margin: 1.5rem auto 0;
+        .sub {
+            text-align: center;
             font-size: 1.1rem;
-            line-height: 1.5;
-            background: rgba(0,0,0,0.2);
-            padding: 0.8rem 1.5rem;
-            border-radius: 60px;
-            font-weight: 400;
+            color: #3a5c34;
+            margin-bottom: 2rem;
+            border-bottom: 2px dashed #9bc18f;
+            display: inline-block;
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 0.5rem;
         }
 
-        /* Навигационные карточки (быстрые ссылки) */
-        .quick-nav {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin: 1.8rem 0 0.5rem;
-        }
-        .nav-chip {
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(8px);
-            padding: 0.6rem 1.3rem;
-            border-radius: 40px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: 0.2s;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-        .nav-chip i {
-            margin-right: 8px;
-        }
-        .nav-chip:hover {
-            background: rgba(255,255,255,0.35);
-            transform: scale(1.02);
+        /* Сетка mind-map: гибкая, похожая на кластеры */
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 2rem 1.8rem;
+            margin-top: 1rem;
         }
 
-        /* Секции */
-        section {
-            background: white;
+        /* Карточка категории = узел mind-map */
+        .category-card {
+            background: #fffff2;
             border-radius: 2rem;
-            padding: 2rem 2rem;
-            margin-bottom: 2.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
-            transition: all 0.2s;
+            box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
+            transition: all 0.25s ease;
+            overflow: hidden;
+            border: 1px solid #e2dbc9;
         }
 
-        .section-title {
-            font-size: 1.9rem;
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .cat-header {
+            background: #dcebd4;
+            padding: 1rem 1.5rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 1.8rem;
-            border-left: 6px solid #2c7da0;
-            padding-left: 1.2rem;
-            color: #0f3b4f;
+            border-bottom: 3px solid #a8c99e;
+            color: #1d3e1a;
+            letter-spacing: -0.2px;
             display: flex;
             align-items: center;
             gap: 12px;
         }
-        .section-title i {
-            color: #2c7da0;
+
+        .cat-header span:first-child {
             font-size: 1.8rem;
         }
 
-        /* Карточки периодической сетки */
-        .periodic-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 1.2rem;
-            margin-top: 1rem;
-        }
-        .element-card {
-            background: #f9fbfe;
-            border-radius: 1.2rem;
-            padding: 1rem 0.8rem;
-            text-align: center;
-            transition: all 0.2s ease;
-            border: 1px solid #e2edf2;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-        }
-        .element-card:hover {
-            transform: translateY(-5px);
-            border-color: #9ec5d9;
-            box-shadow: 0 15px 20px -12px rgba(0, 0, 0, 0.1);
-            background: white;
-        }
-        .element-symbol {
-            font-size: 2rem;
-            font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-            background: linear-gradient(145deg, #1e5a75, #143f52);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-        .element-name {
-            font-weight: 600;
-            margin-top: 0.4rem;
-            font-size: 0.95rem;
-        }
-        .element-mass {
-            font-size: 0.7rem;
-            color: #5f7f92;
-            margin-top: 0.2rem;
-            font-family: monospace;
-        }
-
-        /* Таблица кислот и оснований */
-        .chem-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #ffffff;
-            border-radius: 1rem;
-            overflow: hidden;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .chem-table th {
-            background: #e3f0f5;
-            padding: 12px 16px;
-            text-align: left;
-            font-weight: 600;
-            color: #1a4c66;
-        }
-        .chem-table td {
-            padding: 10px 16px;
-            border-bottom: 1px solid #e9edf2;
-        }
-        .chem-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* Текст и списки */
-        .concept-list {
+        .word-cloud {
+            padding: 1.2rem 1.2rem;
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
-            margin: 1rem 0 0.5rem;
+            gap: 0.65rem 1rem;
+            align-items: center;
         }
-        .concept-badge {
-            background: #eef3fa;
-            border-radius: 50px;
-            padding: 0.5rem 1.2rem;
-            font-size: 0.9rem;
+
+        /* Карточка слова / фразы - интерактивный элемент */
+        .word-tile {
+            background: #fef7e0;
+            border-radius: 60px;
+            padding: 0.45rem 1.2rem;
+            font-size: 0.95rem;
             font-weight: 500;
-            color: #1e6a8a;
-            transition: 0.1s;
-        }
-        .concept-badge i {
-            margin-right: 8px;
-        }
-
-        .reaction-example {
-            background: #f8fafd;
-            padding: 1rem 1.5rem;
-            border-radius: 1.2rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            border-left: 4px solid #2c7da0;
-            margin: 1rem 0;
+            color: #2c4b28;
+            cursor: default;
+            transition: all 0.2s ease;
+            border: 1px solid #d6cdad;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            position: relative;
+            display: inline-block;
         }
 
-        .footer {
-            background: #0f2c38;
-            color: #cbdbe2;
-            text-align: center;
-            padding: 2rem;
-            border-radius: 2rem 2rem 0 0;
-            margin-top: 2rem;
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 700px) {
-            .container {
-                padding: 0 16px;
-            }
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-            .section-title {
-                font-size: 1.6rem;
-            }
-            .periodic-grid {
-                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            }
-            .chem-table th, .chem-table td {
-                padding: 8px 10px;
-                font-size: 0.8rem;
-            }
-        }
-
-        a {
-            text-decoration: none;
-        }
-        button, .nav-chip {
+        /* Эффект при наведении: всплывает подсказка */
+        .word-tile:hover {
+            background: #f3e6c2;
+            border-color: #b3a568;
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             cursor: pointer;
+        }
+
+        /* кастомный тултип (перевод + пример) */
+        .word-tile {
+            position: relative;
+        }
+
+        .tooltip-custom {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2f1c;
+            color: #fffaec;
+            padding: 0.7rem 1rem;
+            border-radius: 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 400;
+            width: max-content;
+            max-width: 280px;
+            min-width: 180px;
+            text-align: center;
+            transition: opacity 0.18s ease, visibility 0.18s;
+            box-shadow: 0 10px 18px rgba(0,0,0,0.25);
+            z-index: 200;
+            pointer-events: none;
+            border: 1px solid #e4c77a;
+            backdrop-filter: blur(2px);
+            line-height: 1.4;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .tooltip-custom strong {
+            color: #ffdd99;
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .tooltip-custom i {
+            font-style: normal;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin-top: 5px;
+            color: #e0dbb6;
+        }
+
+        .word-tile:hover .tooltip-custom {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* адаптив: на маленьких экранах тултип сверху */
+        @media (max-width: 650px) {
+            .tooltip-custom {
+                bottom: auto;
+                top: 130%;
+                transform: translateX(-50%);
+            }
+            .word-tile:hover .tooltip-custom {
+                top: 130%;
+                bottom: auto;
+            }
+            .categories {
+                gap: 1.5rem;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            font-size: 0.8rem;
+            color: #44633e;
+            background: rgba(235, 245, 225, 0.7);
+            border-radius: 2rem;
+            padding: 0.7rem;
+        }
+        hr {
+            margin: 0.5rem 0;
+            border-color: #bdd8b2;
+        }
+        .badge-info {
+            font-size: 0.7rem;
+            background: #e2e6d8;
+            display: inline-block;
+            border-radius: 20px;
+            padding: 0.2rem 0.8rem;
+            margin-left: 0.5rem;
+            vertical-align: middle;
         }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <div class="container hero-content">
-            <h1><i class="fas fa-flask"></i> Химическая станция</h1>
-            <div class="hero-tag">Периодическая система • Кислоты • Реакции • Органика</div>
-            <div class="hero-desc">
-                🧪 Изучай химию с наглядными примерами, таблицами элементов и ключевыми законами. 
-                От основ до интересных фактов.
+<div class="mindmap">
+    <h1>🗺️ Carte mentale · DELF A1</h1>
+    <div style="text-align: center;"><span class="sub">🇫🇷 survolez un mot → traduction + exemple 🇷🇺</span></div>
+
+    <div class="categories">
+        <!-- Категория 1: SALUTER & PRÉSENTATION -->
+        <div class="category-card">
+            <div class="cat-header"><span>👋</span> Saluer & se présenter</div>
+            <div class="word-cloud">
+                <div class="word-tile">Bonjour<span class="tooltip-custom"><strong>Здравствуйте / Добрый день</strong> Bonjour, comment ça va ? <i>👉 Здравствуйте, как дела?</i></span></div>
+                <div class="word-tile">Bonsoir<span class="tooltip-custom"><strong>Добрый вечер</strong> Bonsoir, ravi de vous voir.<i>👉 Добрый вечер, рад вас видеть.</i></span></div>
+                <div class="word-tile">Salut<span class="tooltip-custom"><strong>Привет!</strong> Salut ! Ça va ? <i>👉 Привет! Как дела?</i></span></div>
+                <div class="word-tile">Ça va ?<span class="tooltip-custom"><strong>Как дела?</strong> Ça va ? – Oui, ça va bien.<i>👉 Как дела? – Да, всё хорошо.</i></span></div>
+                <div class="word-tile">Je m'appelle...<span class="tooltip-custom"><strong>Меня зовут...</strong> Je m'appelle Lucie et j'ai 12 ans.<i>👉 Меня зовут Люси, мне 12 лет.</i></span></div>
+                <div class="word-tile">Au revoir<span class="tooltip-custom"><strong>До свидания</strong> Au revoir, à demain ! <i>👉 До свидания, до завтра!</i></span></div>
+                <div class="word-tile">À bientôt<span class="tooltip-custom"><strong>До скорого</strong> Merci et à très bientôt !<i>👉 Спасибо, до скорой встречи!</i></span></div>
             </div>
-            <div class="quick-nav">
-                <div class="nav-chip" data-scroll="periodic"><i class="fas fa-table"></i> Элементы</div>
-                <div class="nav-chip" data-scroll="acids"><i class="fas fa-vial"></i> Кислоты и основания</div>
-                <div class="nav-chip" data-scroll="reactions"><i class="fas fa-exchange-alt"></i> Типы реакций</div>
-                <div class="nav-chip" data-scroll="theory"><i class="fas fa-atom"></i> Основные законы</div>
+        </div>
+
+        <!-- La famille & identité -->
+        <div class="category-card">
+            <div class="cat-header"><span>👨‍👩‍👧‍👦</span> Famille & identité</div>
+            <div class="word-cloud">
+                <div class="word-tile">la mère<span class="tooltip-custom"><strong>мама</strong> Ma mère est gentille.<i>👉 Моя мама добрая.</i></span></div>
+                <div class="word-tile">le père<span class="tooltip-custom"><strong>папа</strong> Le père de Paul est médecin.<i>👉 Отец Поля – врач.</i></span></div>
+                <div class="word-tile">frère<span class="tooltip-custom"><strong>брат</strong> J'ai un petit frère.<i>👉 У меня есть младший брат.</i></span></div>
+                <div class="word-tile">sœur<span class="tooltip-custom"><strong>сестра</strong> Ma sœur s'appelle Élise.<i>👉 Мою сестру зовут Элиз.</i></span></div>
+                <div class="word-tile">un nom<span class="tooltip-custom"><strong>фамилия</strong> Quel est ton nom ? — Dupont.<i>👉 Какая у тебя фамилия? – Дюпон.</i></span></div>
+                <div class="word-tile">un prénom<span class="tooltip-custom"><strong>имя</strong> Son prénom est Thomas.<i>👉 Его имя Тома.</i></span></div>
+                <div class="word-tile">la nationalité<span class="tooltip-custom"><strong>национальность</strong> Je suis italien.<i>👉 Я итальянец.</i></span></div>
+            </div>
+        </div>
+
+        <!-- Goûts & sentiments -->
+        <div class="category-card">
+            <div class="cat-header"><span>❤️</span> Exprimer ses goûts</div>
+            <div class="word-cloud">
+                <div class="word-tile">J'aime<span class="tooltip-custom"><strong>Мне нравится</strong> J'aime beaucoup la musique.<i>👉 Мне очень нравится музыка.</i></span></div>
+                <div class="word-tile">J'adore<span class="tooltip-custom"><strong>Обожаю</strong> J'adore les bandes dessinées !<i>👉 Обожаю комиксы!</i></span></div>
+                <div class="word-tile">Je déteste<span class="tooltip-custom"><strong>Ненавижу</strong> Je déteste le bruit.<i>👉 Ненавижу шум.</i></span></div>
+                <div class="word-tile">C'est super<span class="tooltip-custom"><strong>Это супер</strong> C'est super, ce film !<i>👉 Этот фильм супер!</i></span></div>
+                <div class="word-tile">triste<span class="tooltip-custom"><strong>грустный</strong> Il est triste aujourd'hui.<i>👉 Он сегодня грустный.</i></span></div>
+                <div class="word-tile">heureux<span class="tooltip-custom"><strong>счастливый</strong> Nous sommes heureux !<i>👉 Мы счастливы!</i></span></div>
+            </div>
+        </div>
+
+        <!-- Corps & caractéristiques physiques -->
+        <div class="category-card">
+            <div class="cat-header"><span>🧍</span> Corps & physique</div>
+            <div class="word-cloud">
+                <div class="word-tile">les yeux<span class="tooltip-custom"><strong>глаза</strong> Elle a les yeux bleus.<i>👉 У неё голубые глаза.</i></span></div>
+                <div class="word-tile">les cheveux<span class="tooltip-custom"><strong>волосы</strong> Les cheveux blonds et longs.<i>👉 Длинные светлые волосы.</i></span></div>
+                <div class="word-tile">grand(e)<span class="tooltip-custom"><strong>высокий/высокая</strong> Mon frère est très grand.<i>👉 Мой брат очень высокий.</i></span></div>
+                <div class="word-tile">petit(e)<span class="tooltip-custom"><strong>маленький</strong> La maison est petite mais jolie.<i>👉 Дом маленький, но симпатичный.</i></span></div>
+                <div class="word-tile">beau/belle<span class="tooltip-custom"><strong>красивый</strong> Quel beau paysage !<i>👉 Какой красивый пейзаж!</i></span></div>
+            </div>
+        </div>
+
+        <!-- Logement & ville, itinéraire -->
+        <div class="category-card">
+            <div class="cat-header"><span>🏠</span> Logement & ville</div>
+            <div class="word-cloud">
+                <div class="word-tile">une maison<span class="tooltip-custom"><strong>дом</strong> J'habite une grande maison.<i>👉 Я живу в большом доме.</i></span></div>
+                <div class="word-tile">un appartement<span class="tooltip-custom"><strong>квартира</strong> L'appartement est au 3ème étage.<i>👉 Квартира на 3 этаже.</i></span></div>
+                <div class="word-tile">la rue<span class="tooltip-custom"><strong>улица</strong> La rue est calme.<i>👉 Улица тихая.</i></span></div>
+                <div class="word-tile">à droite<span class="tooltip-custom"><strong>направо</strong> Tournez à droite, puis tout droit.<i>👉 Поверните направо, потом прямо.</i></span></div>
+                <div class="word-tile">devant la gare<span class="tooltip-custom"><strong>перед вокзалом</strong> Il y a un taxi devant la gare.<i>👉 Перед вокзалом такси.</i></span></div>
+                <div class="word-tile">le métro<span class="tooltip-custom"><strong>метро</strong> Je prends le métro tous les jours.<i>👉 Я езжу на метро каждый день.</i></span></div>
+            </div>
+        </div>
+
+        <!-- Actions quotidiennes & habitude -->
+        <div class="category-card">
+            <div class="cat-header"><span>⚡</span> Actions & routines</div>
+            <div class="word-cloud">
+                <div class="word-tile">faire le ménage<span class="tooltip-custom"><strong>делать уборку</strong> Je fais le ménage le samedi.<i>👉 Я делаю уборку по субботам.</i></span></div>
+                <div class="word-tile">ranger sa chambre<span class="tooltip-custom"><strong>наводить порядок в комнате</strong> Range ta chambre s'il te plaît !<i>👉 Пожалуйста, убери свою комнату!</i></span></div>
+                <div class="word-tile">tous les jours<span class="tooltip-custom"><strong>каждый день</strong> Je me lève tôt tous les jours.<i>👉 Я встаю рано каждый день.</i></span></div>
+                <div class="word-tile">je suis en train de<span class="tooltip-custom"><strong>я сейчас (делаю)</strong> Je suis en train de lire un livre.<i>👉 Я сейчас читаю книгу.</i></span></div>
+                <div class="word-tile">aider quelqu'un<span class="tooltip-custom"><strong>помогать кому-то</strong> J'aide mon ami avec ses devoirs.<i>👉 Я помогаю другу с уроками.</i></span></div>
+            </div>
+        </div>
+
+        <!-- Loisirs, musique, sports -->
+        <div class="category-card">
+            <div class="cat-header"><span>🎸</span> Loisirs & sports</div>
+            <div class="word-cloud">
+                <div class="word-tile">un concert<span class="tooltip-custom"><strong>концерт</strong> Le concert commence à 20h.<i>👉 Концерт начинается в 20:00.</i></span></div>
+                <div class="word-tile">faire du vélo<span class="tooltip-custom"><strong>кататься на велосипеде</strong> Je fais du vélo chaque dimanche.<i>👉 Я катаюсь на велосипеде каждое воскресенье.</i></span></div>
+                <div class="word-tile">la natation<span class="tooltip-custom"><strong>плавание</strong> La natation est mon sport préféré.<i>👉 Плавание — мой любимый вид спорта.</i></span></div>
+                <div class="word-tile">un film<span class="tooltip-custom"><strong>фильм</strong> Je regarde un film ce soir.<i>👉 Сегодня вечером смотрю фильм.</i></span></div>
+                <div class="word-tile">une bande dessinée<span class="tooltip-custom"><strong>комикс</strong> Tu aimes les bandes dessinées ?<i>👉 Ты любишь комиксы?</i></span></div>
+            </div>
+        </div>
+
+        <!-- Nourriture & commandes -->
+        <div class="category-card">
+            <div class="cat-header"><span>🍕</span> Nourriture & restaurant</div>
+            <div class="word-cloud">
+                <div class="word-tile">une pizza<span class="tooltip-custom"><strong>пицца</strong> Je voudrais une pizza, s'il vous plaît.<i>👉 Я хотел бы пиццу, пожалуйста.</i></span></div>
+                <div class="word-tile">un sandwich<span class="tooltip-custom"><strong>сэндвич</strong> Je mange un sandwich au jambon.<i>👉 Я ем сэндвич с ветчиной.</i></span></div>
+                <div class="word-tile">le petit-déjeuner<span class="tooltip-custom"><strong>завтрак</strong> Le petit-déjeuner à 7h.<i>👉 Завтрак в 7 часов.</i></span></div>
+                <div class="word-tile">une glace<span class="tooltip-custom"><strong>мороженое</strong> En été, je mange une glace.<i>👉 Летом я ем мороженое.</i></span></div>
+                <div class="word-tile">Je voudrais...<span class="tooltip-custom"><strong>Я хотел бы...</strong> Je voudrais un café.<i>👉 Я хотел бы кофе.</i></span></div>
+            </div>
+        </div>
+
+        <!-- École, matériel -->
+        <div class="category-card">
+            <div class="cat-header"><span>📚</span> École & cours</div>
+            <div class="word-cloud">
+                <div class="word-tile">un professeur<span class="tooltip-custom"><strong>учитель</strong> Le professeur explique la leçon.<i>👉 Учитель объясняет урок.</i></span></div>
+                <div class="word-tile">les devoirs<span class="tooltip-custom"><strong>домашние задания</strong> Je fais mes devoirs après l'école.<i>👉 Я делаю домашнее задание после школы.</i></span></div>
+                <div class="word-tile">un dictionnaire<span class="tooltip-custom"><strong>словарь</strong> Utilise le dictionnaire en ligne.<i>👉 Используй онлайн-словарь.</i></span></div>
+                <div class="word-tile">une leçon<span class="tooltip-custom"><strong>урок (тема)</strong> Apprends la leçon par cœur.<i>👉 Выучи урок наизусть.</i></span></div>
+                <div class="word-tile">un examen<span class="tooltip-custom"><strong>экзамен</strong> L'examen de français est lundi.<i>👉 Экзамен по французскому в понедельник.</i></span></div>
+            </div>
+        </div>
+
+        <!-- Vêtements, commerces, prix -->
+        <div class="category-card">
+            <div class="cat-header"><span>🛍️</span> Vêtements & achats</div>
+            <div class="word-cloud">
+                <div class="word-tile">un pantalon<span class="tooltip-custom"><strong>брюки</strong> Ce pantalon est trop cher.<i>👉 Эти брюки слишком дорогие.</i></span></div>
+                <div class="word-tile">des chaussures<span class="tooltip-custom"><strong>обувь</strong> J'achète des chaussures noires.<i>👉 Я покупаю чёрную обувь.</i></span></div>
+                <div class="word-tile">Combien ça coûte ?<span class="tooltip-custom"><strong>Сколько это стоит?</strong> Combien ça coûte, ce pull ?<i>👉 Сколько стоит этот свитер?</i></span></div>
+                <div class="word-tile">le prix<span class="tooltip-custom"><strong>цена</strong> Le prix est réduit de 20%.<i>👉 Цена снижена на 20%.</i></span></div>
+                <div class="word-tile">un supermarché<span class="tooltip-custom"><strong>супермаркет</strong> Je vais au supermarché le samedi.<i>👉 Я хожу в супермаркет по субботам.</i></span></div>
+            </div>
+        </div>
+
+        <!-- Météo, nature, animaux -->
+        <div class="category-card">
+            <div class="cat-header"><span>🌤️</span> Météo & nature</div>
+            <div class="word-cloud">
+                <div class="word-tile">Il pleut<span class="tooltip-custom"><strong>Идёт дождь</strong> Prends ton parapluie, il pleut !<i>👉 Возьми зонт, идёт дождь!</i></span></div>
+                <div class="word-tile">Il fait chaud<span class="tooltip-custom"><strong>Жарко</strong> En juillet, il fait très chaud.<i>👉 В июле очень жарко.</i></span></div>
+                <div class="word-tile">la plage<span class="tooltip-custom"><strong>пляж</strong> Nous allons à la plage demain.<i>👉 Мы идём на пляж завтра.</i></span></div>
+                <div class="word-tile">un chien<span class="tooltip-custom"><strong>собака</strong> J'ai un chien blanc.<i>👉 У меня белая собака.</i></span></div>
+                <div class="word-tile">un arbre<span class="tooltip-custom"><strong>дерево</strong> Les arbres sont verts.<i>👉 Деревья зелёные.</i></span></div>
+            </div>
+        </div>
+
+        <!-- Obligation, interdiction & formules -->
+        <div class="category-card">
+            <div class="cat-header"><span>⚠️</span> Obligation / Interdiction</div>
+            <div class="word-cloud">
+                <div class="word-tile">je dois<span class="tooltip-custom"><strong>я должен</strong> Je dois étudier pour le test.<i>👉 Я должен готовиться к тесту.</i></span></div>
+                <div class="word-tile">C'est interdit<span class="tooltip-custom"><strong>Запрещено</strong> C'est interdit de fumer ici.<i>👉 Здесь курить запрещено.</i></span></div>
+                <div class="word-tile">Ne pas utiliser<span class="tooltip-custom"><strong>Не использовать</strong> Ne pas utiliser le téléphone en classe.<i>👉 Не пользуйтесь телефоном в классе.</i></span></div>
+                <div class="word-tile">Tu peux<span class="tooltip-custom"><strong>Ты можешь / можно</strong> Tu peux inviter un ami.<i>👉 Ты можешь пригласить друга.</i></span></div>
+                <div class="word-tile">Pardon<span class="tooltip-custom"><strong>Извините</strong> Pardon, je suis en retard.<i>👉 Извините, я опоздал.</i></span></div>
+            </div>
+        </div>
+
+        <!-- Temps, rendez-vous, fréquences -->
+        <div class="category-card">
+            <div class="cat-header"><span>⏰</span> Temps & rendez-vous</div>
+            <div class="word-cloud">
+                <div class="word-tile">aujourd'hui<span class="tooltip-custom"><strong>сегодня</strong> Aujourd'hui il y a un contrôle.<i>👉 Сегодня контрольная.</i></span></div>
+                <div class="word-tile">demain<span class="tooltip-custom"><strong>завтра</strong> On se retrouve demain à 15h.<i>👉 Встречаемся завтра в 15:00.</i></span></div>
+                <div class="word-tile">la semaine prochaine<span class="tooltip-custom"><strong>на следующей неделе</strong> La semaine prochaine, je voyage.<i>👉 На следующей неделе я путешествую.</i></span></div>
+                <div class="word-tile">Rendez-vous à 16h<span class="tooltip-custom"><strong>Встреча в 16:00</strong> Rendez-vous devant le cinéma.<i>👉 Встреча у кинотеатра.</i></span></div>
+                <div class="word-tile">tous les samedis<span class="tooltip-custom"><strong>каждую субботу</strong> Je fais du sport tous les samedis.<i>👉 Я занимаюсь спортом каждую субботу.</i></span></div>
+            </div>
+        </div>
+
+        <!-- Actions & demandes polies -->
+        <div class="category-card">
+            <div class="cat-header"><span>💬</span> Parler & communiquer</div>
+            <div class="word-cloud">
+                <div class="word-tile">Merci beaucoup<span class="tooltip-custom"><strong>Большое спасибо</strong> Merci beaucoup pour votre aide.<i>👉 Большое спасибо за вашу помощь.</i></span></div>
+                <div class="word-tile">S'il te plaît<span class="tooltip-custom"><strong>Пожалуйста (просьба)</strong> Envoie un message, s'il te plaît.<i>👉 Пожалуйста, отправь сообщение.</i></span></div>
+                <div class="word-tile">Bravo<span class="tooltip-custom"><strong>Браво, молодец</strong> Bravo, tu as très bien joué !<i>👉 Браво, ты отлично сыграл!</i></span></div>
+                <div class="word-tile">Vous pouvez répéter ?<span class="tooltip-custom"><strong>Можете повторить?</strong> Vous pouvez répéter s'il vous plaît ?<i>👉 Повторите, пожалуйста?</i></span></div>
+                <div class="word-tile">D'accord<span class="tooltip-custom"><strong>Согласен / Договорились</strong> D'accord, on se voit à 18h.<i>👉 Договорились, увидимся в 18:00.</i></span></div>
             </div>
         </div>
     </div>
-
-    <div class="container">
-        <!-- Секция: Периодическая таблица (выборочные элементы) -->
-        <section id="periodic">
-            <div class="section-title">
-                <i class="fas fa-border-all"></i>
-                <span>🔬 12 ключевых элементов периодической системы</span>
-            </div>
-            <p style="margin-bottom: 1.2rem; color: #2c5e74;">Основные химические элементы, их символы и атомные массы (округлено).</p>
-            <div class="periodic-grid">
-                <!-- H -->
-                <div class="element-card"><div class="element-symbol">H</div><div class="element-name">Водород</div><div class="element-mass">1.008 г/моль</div></div>
-                <div class="element-card"><div class="element-symbol">He</div><div class="element-name">Гелий</div><div class="element-mass">4.0026</div></div>
-                <div class="element-card"><div class="element-symbol">Li</div><div class="element-name">Литий</div><div class="element-mass">6.94</div></div>
-                <div class="element-card"><div class="element-symbol">C</div><div class="element-name">Углерод</div><div class="element-mass">12.011</div></div>
-                <div class="element-card"><div class="element-symbol">N</div><div class="element-name">Азот</div><div class="element-mass">14.007</div></div>
-                <div class="element-card"><div class="element-symbol">O</div><div class="element-name">Кислород</div><div class="element-mass">15.999</div></div>
-                <div class="element-card"><div class="element-symbol">Na</div><div class="element-name">Натрий</div><div class="element-mass">22.990</div></div>
-                <div class="element-card"><div class="element-symbol">Mg</div><div class="element-name">Магний</div><div class="element-mass">24.305</div></div>
-                <div class="element-card"><div class="element-symbol">Cl</div><div class="element-name">Хлор</div><div class="element-mass">35.45</div></div>
-                <div class="element-card"><div class="element-symbol">Fe</div><div class="element-name">Железо</div><div class="element-mass">55.845</div></div>
-                <div class="element-card"><div class="element-symbol">Cu</div><div class="element-name">Медь</div><div class="element-mass">63.546</div></div>
-                <div class="element-card"><div class="element-symbol">Au</div><div class="element-name">Золото</div><div class="element-mass">196.97</div></div>
-            </div>
-            <p style="margin-top: 1rem; font-size: 0.85rem; background:#eef3fc; padding: 0.6rem 1rem; border-radius: 20px;"><i class="fas fa-lightbulb"></i> Совет: в периодической системе Менделеева свойства элементов повторяются периодически — это основа химии.</p>
-        </section>
-
-        <!-- Секция: Кислоты и основания -->
-        <section id="acids">
-            <div class="section-title">
-                <i class="fas fa-droplet"></i>
-                <span>🧪 Кислоты, основания и соли</span>
-            </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 2rem;">
-                <div style="flex: 1; min-width: 200px;">
-                    <h3 style="margin-bottom: 0.8rem; color:#1f6683;">📌 Сильные кислоты</h3>
-                    <ul style="list-style-type: none;">
-                        <li><i class="fas fa-check-circle" style="color:#2a9d8f;"></i> HCl — Соляная кислота</li>
-                        <li><i class="fas fa-check-circle" style="color:#2a9d8f;"></i> HNO₃ — Азотная кислота</li>
-                        <li><i class="fas fa-check-circle" style="color:#2a9d8f;"></i> H₂SO₄ — Серная кислота</li>
-                        <li><i class="fas fa-check-circle" style="color:#2a9d8f;"></i> HI — Иодоводородная</li>
-                    </ul>
-                </div>
-                <div style="flex: 1; min-width: 200px;">
-                    <h3 style="margin-bottom: 0.8rem; color:#1f6683;">🧴 Сильные основания (щёлочи)</h3>
-                    <ul style="list-style-type: none;">
-                        <li><i class="fas fa-check-circle" style="color:#e76f51;"></i> NaOH — Гидроксид натрия</li>
-                        <li><i class="fas fa-check-circle" style="color:#e76f51;"></i> KOH — Гидроксид калия</li>
-                        <li><i class="fas fa-check-circle" style="color:#e76f51;"></i> Ca(OH)₂ — Гидроксид кальция</li>
-                        <li><i class="fas fa-check-circle" style="color:#e76f51;"></i> Ba(OH)₂</li>
-                    </ul>
-                </div>
-                <div style="flex: 1; min-width: 200px;">
-                    <h3 style="margin-bottom: 0.8rem; color:#1f6683;">⚖️ Индикаторы pH</h3>
-                    <ul style="list-style-type: none;">
-                        <li><i class="fas fa-chart-line"></i> Лакмус: кислота → красный, щелочь → синий</li>
-                        <li><i class="fas fa-chart-line"></i> Фенолфталеин: бесцветный в кислоте, малиновый в щелочи</li>
-                        <li><i class="fas fa-chart-line"></i> Метилоранж: красный (кислота), желтый (щелочь)</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="reaction-example">
-                <i class="fas fa-graduation-cap"></i> <strong>Реакция нейтрализации</strong> — основа взаимодействия кислоты и основания:<br>
-                HCl + NaOH → NaCl (поваренная соль) + H₂O
-            </div>
-        </section>
-
-        <!-- Секция: Типы химических реакций -->
-        <section id="reactions">
-            <div class="section-title">
-                <i class="fas fa-random"></i>
-                <span>🔥 Типы химических реакций</span>
-            </div>
-            <div class="concept-list">
-                <div class="concept-badge"><i class="fas fa-plus-circle"></i> Соединение: A + B → AB</div>
-                <div class="concept-badge"><i class="fas fa-cut"></i> Разложение: AB → A + B</div>
-                <div class="concept-badge"><i class="fas fa-retweet"></i> Замещение: A + BC → AC + B</div>
-                <div class="concept-badge"><i class="fas fa-exchange"></i> Обмен: AB + CD → AD + CB</div>
-                <div class="concept-badge"><i class="fas fa-fire"></i> Окисление-восстановление</div>
-            </div>
-            <p style="margin-top: 16px;">Примеры реакций:</p>
-            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.5rem;">
-                <div style="background:#f2f6fc; border-radius: 1rem; padding: 0.8rem 1.2rem; flex:1;"><strong>🔹 Горение метана:</strong><br> CH₄ + 2O₂ → CO₂ + 2H₂O</div>
-                <div style="background:#f2f6fc; border-radius: 1rem; padding: 0.8rem 1.2rem; flex:1;"><strong>🔹 Замещение цинка в кислоте:</strong><br> Zn + 2HCl → ZnCl₂ + H₂↑</div>
-                <div style="background:#f2f6fc; border-radius: 1rem; padding: 0.8rem 1.2rem; flex:1;"><strong>🔹 Разложение карбоната:</strong><br> CaCO₃ → CaO + CO₂</div>
-            </div>
-        </section>
-
-        <!-- Секция: Основные законы и теория -->
-        <section id="theory">
-            <div class="section-title">
-                <i class="fas fa-microscope"></i>
-                <span>📖 Основные химические законы</span>
-            </div>
-            <table class="chem-table">
-                <thead>
-                    <tr><th>Закон / Концепция</th><th>Суть</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>Закон сохранения массы (Ломоносов — Лавуазье)</td><td>Масса веществ, вступивших в реакцию, равна массе продуктов реакции.</td></tr>
-                    <tr><td>Закон постоянства состава</td><td>Любое чистое вещество имеет постоянный качественный и количественный состав.</td></tr>
-                    <tr><td>Периодический закон (Менделеев)</td><td>Свойства химических элементов находятся в периодической зависимости от их атомной массы (заряда ядра).</td></tr>
-                    <tr><td>Закон Авогадро</td><td>В равных объёмах газов при одинаковых условиях содержится одинаковое число молекул.</td></tr>
-                </tbody>
-            </table>
-            <div class="reaction-example" style="margin-top: 1.5rem;">
-                <i class="fas fa-chalkboard-user"></i> <strong>Моль и число Авогадро:</strong> 1 моль вещества содержит 6,022·10²³ частиц (атомов, молекул). Это фундаментальная константа химии.
-            </div>
-        </section>
-
-        <!-- Секция: Органическая химия и интересные факты -->
-        <section>
-            <div class="section-title">
-                <i class="fas fa-leaf"></i>
-                <span>🧬 Органическая химия & факты</span>
-            </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 1.8rem;">
-                <div style="flex: 1.4">
-                    <h3>🌿 Основные классы органических веществ</h3>
-                    <ul style="margin-left: 1.2rem; margin-top: 0.5rem;">
-                        <li><strong>Алканы</strong> (предельные углеводороды): CH₄, C₂H₆</li>
-                        <li><strong>Алкены</strong> (с двойной связью): C₂H₄ (этилен)</li>
-                        <li><strong>Спирты</strong>: C₂H₅OH (этанол)</li>
-                        <li><strong>Карбоновые кислоты</strong>: CH₃COOH (уксусная)</li>
-                        <li><strong>Углеводы, белки, липиды</strong> — основа живого</li>
-                    </ul>
-                </div>
-                <div style="flex: 1">
-                    <h3>✨ Химические лайфхаки</h3>
-                    <ul>
-                        <li>🔹 Лук не будет щипать глаза, если резать его охлаждённым (меньше летучих соединений).</li>
-                        <li>🔹 Молоко помогает при отравлении кислотами? Не совсем, лучше щелочная вода – но главное вызвать врача.</li>
-                        <li>🔹 Самый распространённый элемент во Вселенной — водород.</li>
-                        <li>🔹 Золото не реагирует с большинством кислот (только с «царской водкой»).</li>
-                    </ul>
-                </div>
-            </div>
-            <div style="background: linear-gradient(110deg, #cbe5f0, #e5f1f7); margin-top: 1.5rem; padding: 1rem 1.5rem; border-radius: 1.2rem;">
-                <i class="fas fa-quote-left"></i> <em>«Химия — это область чудес, в ней скрыто счастье человеческой мысли, благодаря ей побеждаются мрак и тяжесть вещества»</em> — М. Горький.
-            </div>
-        </section>
-
-        <!-- Дополнительная секция - Растворимость и таблица ионов -->
-        <section>
-            <div class="section-title">
-                <i class="fas fa-water"></i>
-                <span>💧 Таблица растворимости (ключевые ионы)</span>
-            </div>
-            <p style="margin-bottom: 0.8rem;">Правила растворимости солей и оснований в воде:</p>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 0.8rem;">
-                <div><i class="fas fa-check-circle" style="color:#2c7da0;"></i> Все нитраты (NO₃⁻) — растворимы.</div>
-                <div><i class="fas fa-check-circle" style="color:#2c7da0;"></i> Соли Na⁺, K⁺, NH₄⁺ — растворимы.</div>
-                <div><i class="fas fa-times-circle" style="color:#c44536;"></i> Хлориды Ag⁺, Pb²⁺ — нерастворимы.</div>
-                <div><i class="fas fa-times-circle" style="color:#c44536;"></i> Карбонаты CO₃²⁻ (кроме Na⁺, K⁺, NH₄⁺) — нерастворимы.</div>
-                <div><i class="fas fa-times-circle" style="color:#c44536;"></i> Гидроксиды большинства металлов (кроме щелочей) — малорастворимы.</div>
-            </div>
-            <div class="reaction-example" style="margin-top: 1rem;">
-                ☑️ Пример реакции ионного обмена: AgNO₃ + NaCl → AgCl↓ (белый творожистый осадок) + NaNO₃
-            </div>
-        </section>
-    </div>
-
-    <div class="footer">
-        <p><i class="fas fa-atom"></i> Химический портал — для учащихся, студентов и всех, кто влюблён в науку. <br> Данные носят образовательный характер. Периодическая таблица © 2025</p>
-        <p style="margin-top: 0.6rem;">🧪 Экспериментируйте безопасно и изучайте химию с интересом!</p>
-    </div>
-
-    <!-- Плавный скролл -->
-    <script>
-        (function() {
-            const navChips = document.querySelectorAll('.nav-chip');
-            navChips.forEach(chip => {
-                chip.addEventListener('click', function(e) {
-                    const targetId = this.getAttribute('data-scroll');
-                    if(targetId) {
-                        const targetSection = document.getElementById(targetId);
-                        if(targetSection) {
-                            targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                    }
-                });
-            });
-            // Дополнительно для улучшения отображения корректных символов (верхние/нижние индексы уже в тексте)
-            console.log("Химический сайт загружен | Periodic table & info");
-        })();
-    </script>
+    <footer>
+        🌟 Mind-map DELF A1 — наведите курсор на любое слово, чтобы увидеть перевод и живой пример. <br>
+        📖 Лексика из официального lexique + акты речи. Apprenez en s'amusant !
+    </footer>
+</div>
 </body>
 </html>
