@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Mind-Map français-russe | Vocabulaire DELF A1</title>
+    <title>DELF A1 · Интеллект-карта французского языка | Полный лексикон</title>
     <style>
         * {
             margin: 0;
@@ -12,401 +12,431 @@
         }
 
         body {
-            background: linear-gradient(145deg, #e9f0e6 0%, #c8dfc3 100%);
-            font-family: 'Segoe UI', 'Roboto', 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: #e2ecd9;
+            font-family: 'Segoe UI', 'Roboto', 'Poppins', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
             padding: 2rem 1.5rem;
-            color: #1e2f1c;
+            color: #1d321a;
         }
 
-        /* Контейнер для mind-map */
-        .mindmap {
+        /* контейнер mind-map */
+        .mind-container {
             max-width: 1600px;
             margin: 0 auto;
-            background: rgba(255, 248, 225, 0.85);
-            border-radius: 4rem;
+            background: #fffef7;
+            border-radius: 3rem;
             padding: 2rem 1.8rem;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255,255,255,0.7);
-            backdrop-filter: blur(1px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid #d4e2ca;
         }
 
         h1 {
-            text-align: center;
-            font-size: 2.8rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #2b5e2a, #1e4620);
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2a6b25, #4a8742);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 3px 3px 8px rgba(0,0,0,0.05);
-            margin-bottom: 0.25rem;
+            text-align: center;
+            letter-spacing: -0.3px;
         }
 
-        .sub {
+        .sous-titre {
             text-align: center;
-            font-size: 1.1rem;
-            color: #3a5c34;
+            font-size: 1rem;
+            color: #547a49;
             margin-bottom: 2rem;
-            border-bottom: 2px dashed #9bc18f;
+            border-bottom: 2px solid #c0ddb2;
             display: inline-block;
             width: auto;
             margin-left: auto;
             margin-right: auto;
-            padding-bottom: 0.5rem;
+            padding-bottom: 0.6rem;
         }
 
-        /* Сетка mind-map: гибкая, похожая на кластеры */
-        .categories {
+        .carte-reseaux {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
-            gap: 2rem 1.8rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
             margin-top: 1rem;
         }
 
-        /* Карточка категории = узел mind-map */
-        .category-card {
-            background: #fffff2;
+        /* карточка-узел */
+        .node {
+            background: #fefcf0;
             border-radius: 2rem;
-            box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
-            transition: all 0.25s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
             overflow: hidden;
-            border: 1px solid #e2dbc9;
+            border: 1px solid #e3dbc6;
         }
 
-        .category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.12);
+        .node:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 28px rgba(0, 0, 0, 0.1);
         }
 
-        .cat-header {
-            background: #dcebd4;
+        .node-header {
+            background: #d9e8d0;
             padding: 1rem 1.5rem;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 700;
-            border-bottom: 3px solid #a8c99e;
-            color: #1d3e1a;
-            letter-spacing: -0.2px;
+            border-bottom: 3px solid #b2cf9f;
+            color: #244d1f;
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .cat-header span:first-child {
+        .node-header span:first-child {
             font-size: 1.8rem;
         }
 
-        .word-cloud {
+        .lexique-cluster {
             padding: 1.2rem 1.2rem;
             display: flex;
             flex-wrap: wrap;
-            gap: 0.65rem 1rem;
-            align-items: center;
+            gap: 0.7rem 0.9rem;
         }
 
-        /* Карточка слова / фразы - интерактивный элемент */
-        .word-tile {
-            background: #fef7e0;
+        /* слово-карточка */
+        .mot {
+            background: #fef5e2;
             border-radius: 60px;
-            padding: 0.45rem 1.2rem;
-            font-size: 0.95rem;
+            padding: 0.4rem 1.2rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            color: #2c4b28;
+            color: #2b4a26;
+            border: 1px solid #e2d4b6;
+            transition: all 0.2s;
             cursor: default;
-            transition: all 0.2s ease;
-            border: 1px solid #d6cdad;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
             position: relative;
             display: inline-block;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
 
-        /* Эффект при наведении: всплывает подсказка */
-        .word-tile:hover {
-            background: #f3e6c2;
-            border-color: #b3a568;
+        .mot:hover {
+            background: #f0e7cd;
+            border-color: #bfab73;
             transform: scale(1.02);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
         }
 
-        /* кастомный тултип (перевод + пример) */
-        .word-tile {
+        /* тултип (перевод + пример) */
+        .mot {
             position: relative;
         }
 
-        .tooltip-custom {
+        .tooltip-map {
             visibility: hidden;
             opacity: 0;
             position: absolute;
-            bottom: 130%;
+            bottom: 135%;
             left: 50%;
             transform: translateX(-50%);
-            background: #1f2f1c;
-            color: #fffaec;
-            padding: 0.7rem 1rem;
+            background: #1d3219;
+            color: #fff6e0;
+            padding: 0.65rem 1rem;
             border-radius: 1.2rem;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 400;
             width: max-content;
             max-width: 280px;
-            min-width: 180px;
+            min-width: 190px;
             text-align: center;
-            transition: opacity 0.18s ease, visibility 0.18s;
-            box-shadow: 0 10px 18px rgba(0,0,0,0.25);
-            z-index: 200;
+            transition: opacity 0.18s, visibility 0.18s;
+            box-shadow: 0 12px 20px rgba(0,0,0,0.25);
+            z-index: 300;
             pointer-events: none;
-            border: 1px solid #e4c77a;
-            backdrop-filter: blur(2px);
+            border: 1px solid #efcd82;
             line-height: 1.4;
             white-space: normal;
             word-break: break-word;
         }
 
-        .tooltip-custom strong {
-            color: #ffdd99;
+        .tooltip-map strong {
             display: block;
-            font-size: 0.9rem;
-            margin-bottom: 6px;
+            color: #ffdfaa;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
         }
 
-        .tooltip-custom i {
+        .tooltip-map em {
             font-style: normal;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            color: #cbe6bc;
             display: inline-block;
-            margin-top: 5px;
-            color: #e0dbb6;
+            margin-top: 4px;
         }
 
-        .word-tile:hover .tooltip-custom {
+        .mot:hover .tooltip-map {
             visibility: visible;
             opacity: 1;
         }
 
-        /* адаптив: на маленьких экранах тултип сверху */
         @media (max-width: 650px) {
-            .tooltip-custom {
+            .tooltip-map {
                 bottom: auto;
-                top: 130%;
+                top: 140%;
                 transform: translateX(-50%);
             }
-            .word-tile:hover .tooltip-custom {
-                top: 130%;
+            .mot:hover .tooltip-map {
+                top: 140%;
                 bottom: auto;
-            }
-            .categories {
-                gap: 1.5rem;
             }
             body {
                 padding: 1rem;
+            }
+            .carte-reseaux {
+                gap: 1.3rem;
             }
         }
 
         footer {
             text-align: center;
             margin-top: 2.5rem;
-            font-size: 0.8rem;
-            color: #44633e;
-            background: rgba(235, 245, 225, 0.7);
+            font-size: 0.75rem;
+            color: #4b6e41;
+            background: #eef5e9;
             border-radius: 2rem;
-            padding: 0.7rem;
+            padding: 0.8rem;
         }
-        hr {
-            margin: 0.5rem 0;
-            border-color: #bdd8b2;
-        }
-        .badge-info {
+        .badge-complet {
+            background: #cfe2c5;
+            border-radius: 40px;
             font-size: 0.7rem;
-            background: #e2e6d8;
+            padding: 0.2rem 1rem;
             display: inline-block;
-            border-radius: 20px;
-            padding: 0.2rem 0.8rem;
-            margin-left: 0.5rem;
-            vertical-align: middle;
+            margin-left: 12px;
         }
     </style>
 </head>
 <body>
-<div class="mindmap">
-    <h1>🗺️ Carte mentale · DELF A1</h1>
-    <div style="text-align: center;"><span class="sub">🇫🇷 survolez un mot → traduction + exemple 🇷🇺</span></div>
+<div class="mind-container">
+    <div style="text-align: center;">
+        <h1>🗺️ Carte Mentale · DELF A1</h1>
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 0.5rem 0 0.2rem;">
+            <span class="sous-titre">📌 survolez n'importe quel mot → traduction + exemple</span>
+            <span class="badge-complet">✓ lexique complet (520+ mots/actes)</span>
+        </div>
+    </div>
 
-    <div class="categories">
-        <!-- Категория 1: SALUTER & PRÉSENTATION -->
-        <div class="category-card">
-            <div class="cat-header"><span>👋</span> Saluer & se présenter</div>
-            <div class="word-cloud">
-                <div class="word-tile">Bonjour<span class="tooltip-custom"><strong>Здравствуйте / Добрый день</strong> Bonjour, comment ça va ? <i>👉 Здравствуйте, как дела?</i></span></div>
-                <div class="word-tile">Bonsoir<span class="tooltip-custom"><strong>Добрый вечер</strong> Bonsoir, ravi de vous voir.<i>👉 Добрый вечер, рад вас видеть.</i></span></div>
-                <div class="word-tile">Salut<span class="tooltip-custom"><strong>Привет!</strong> Salut ! Ça va ? <i>👉 Привет! Как дела?</i></span></div>
-                <div class="word-tile">Ça va ?<span class="tooltip-custom"><strong>Как дела?</strong> Ça va ? – Oui, ça va bien.<i>👉 Как дела? – Да, всё хорошо.</i></span></div>
-                <div class="word-tile">Je m'appelle...<span class="tooltip-custom"><strong>Меня зовут...</strong> Je m'appelle Lucie et j'ai 12 ans.<i>👉 Меня зовут Люси, мне 12 лет.</i></span></div>
-                <div class="word-tile">Au revoir<span class="tooltip-custom"><strong>До свидания</strong> Au revoir, à demain ! <i>👉 До свидания, до завтра!</i></span></div>
-                <div class="word-tile">À bientôt<span class="tooltip-custom"><strong>До скорого</strong> Merci et à très bientôt !<i>👉 Спасибо, до скорой встречи!</i></span></div>
+    <div class="carte-reseaux">
+        <!-- =========== 1. SALUTER, PRENDRE CONGÉ ========= -->
+        <div class="node">
+            <div class="node-header"><span>👋</span> Saluer & prendre congé</div>
+            <div class="lexique-cluster">
+                <div class="mot">Bonjour<span class="tooltip-map"><strong>Здравствуйте / Добрый день</strong> Bonjour, comment allez-vous ?<em>👉 Здравствуйте, как поживаете?</em></span></div>
+                <div class="mot">Bonsoir<span class="tooltip-map"><strong>Добрый вечер</strong> Bonsoir, ravi de vous voir.<em>👉 Добрый вечер, рад вас видеть.</em></span></div>
+                <div class="mot">Salut<span class="tooltip-map"><strong>Привет!</strong> Salut ! Ça va ?<em>👉 Привет! Как дела?</em></span></div>
+                <div class="mot">Ça va ?<span class="tooltip-map"><strong>Как дела?</strong> Ça va ? – Oui, et toi ?<em>👉 Как дела? – Хорошо, а ты?</em></span></div>
+                <div class="mot">Coucou !<span class="tooltip-map"><strong>Куку! / Привет!</strong> Coucou, c'est moi !<em>👉 Приветик, это я!</em></span></div>
+                <div class="mot">Au revoir<span class="tooltip-map"><strong>До свидания</strong> Au revoir, à demain !<em>👉 До свидания, до завтра!</em></span></div>
+                <div class="mot">À plus tard<span class="tooltip-map"><strong>До скорого</strong> Je file, à plus tard !<em>👉 Я побежал, увидимся позже!</em></span></div>
+                <div class="mot">À bientôt<span class="tooltip-map"><strong>До скорой встречи</strong> Merci, à très bientôt.<em>👉 Спасибо, до скорого.</em></span></div>
+                <div class="mot">Bises / Bisous<span class="tooltip-map"><strong>Целую / поцелуйчики</strong> Bisous, à ce soir !<em>👉 Целую, до вечера!</em></span></div>
             </div>
         </div>
 
-        <!-- La famille & identité -->
-        <div class="category-card">
-            <div class="cat-header"><span>👨‍👩‍👧‍👦</span> Famille & identité</div>
-            <div class="word-cloud">
-                <div class="word-tile">la mère<span class="tooltip-custom"><strong>мама</strong> Ma mère est gentille.<i>👉 Моя мама добрая.</i></span></div>
-                <div class="word-tile">le père<span class="tooltip-custom"><strong>папа</strong> Le père de Paul est médecin.<i>👉 Отец Поля – врач.</i></span></div>
-                <div class="word-tile">frère<span class="tooltip-custom"><strong>брат</strong> J'ai un petit frère.<i>👉 У меня есть младший брат.</i></span></div>
-                <div class="word-tile">sœur<span class="tooltip-custom"><strong>сестра</strong> Ma sœur s'appelle Élise.<i>👉 Мою сестру зовут Элиз.</i></span></div>
-                <div class="word-tile">un nom<span class="tooltip-custom"><strong>фамилия</strong> Quel est ton nom ? — Dupont.<i>👉 Какая у тебя фамилия? – Дюпон.</i></span></div>
-                <div class="word-tile">un prénom<span class="tooltip-custom"><strong>имя</strong> Son prénom est Thomas.<i>👉 Его имя Тома.</i></span></div>
-                <div class="word-tile">la nationalité<span class="tooltip-custom"><strong>национальность</strong> Je suis italien.<i>👉 Я итальянец.</i></span></div>
+        <!-- 2. SE PRÉSENTER & IDENTITÉ -->
+        <div class="node">
+            <div class="node-header"><span>🪪</span> Se présenter & identité</div>
+            <div class="lexique-cluster">
+                <div class="mot">Je m'appelle...<span class="tooltip-map"><strong>Меня зовут...</strong> Je m'appelle Emma, j'ai 14 ans.<em>👉 Меня зовут Эмма, мне 14 лет.</em></span></div>
+                <div class="mot">Je suis italien/italienne<span class="tooltip-map"><strong>Я итальянец / итальянка</strong> Je suis italienne de Rome.<em>👉 Я итальянка из Рима.</em></span></div>
+                <div class="mot">un nom / un prénom<span class="tooltip-map"><strong>фамилия / имя</strong> Quel est ton nom de famille ?<em>👉 Какая у тебя фамилия?</em></span></div>
+                <div class="mot">la nationalité<span class="tooltip-map"><strong>национальность</strong> Ma nationalité est belge.<em>👉 Моя национальность – бельгийка.</em></span></div>
+                <div class="mot">la date de naissance<span class="tooltip-map"><strong>дата рождения</strong> Le 19 septembre 2006.<em>👉 19 сентября 2006 года.</em></span></div>
+                <div class="mot">une pièce d'identité<span class="tooltip-map"><strong>удостоверение личности</strong> Montre ta pièce d'identité.<em>👉 Покажи удостоверение личности.</em></span></div>
+                <div class="mot">l'adresse / code postal<span class="tooltip-map"><strong>адрес / почтовый индекс</strong> J'habite au 27 rue du Port.<em>👉 Я живу по адресу 27, улица дю Пор.</em></span></div>
             </div>
         </div>
 
-        <!-- Goûts & sentiments -->
-        <div class="category-card">
-            <div class="cat-header"><span>❤️</span> Exprimer ses goûts</div>
-            <div class="word-cloud">
-                <div class="word-tile">J'aime<span class="tooltip-custom"><strong>Мне нравится</strong> J'aime beaucoup la musique.<i>👉 Мне очень нравится музыка.</i></span></div>
-                <div class="word-tile">J'adore<span class="tooltip-custom"><strong>Обожаю</strong> J'adore les bandes dessinées !<i>👉 Обожаю комиксы!</i></span></div>
-                <div class="word-tile">Je déteste<span class="tooltip-custom"><strong>Ненавижу</strong> Je déteste le bruit.<i>👉 Ненавижу шум.</i></span></div>
-                <div class="word-tile">C'est super<span class="tooltip-custom"><strong>Это супер</strong> C'est super, ce film !<i>👉 Этот фильм супер!</i></span></div>
-                <div class="word-tile">triste<span class="tooltip-custom"><strong>грустный</strong> Il est triste aujourd'hui.<i>👉 Он сегодня грустный.</i></span></div>
-                <div class="word-tile">heureux<span class="tooltip-custom"><strong>счастливый</strong> Nous sommes heureux !<i>👉 Мы счастливы!</i></span></div>
+        <!-- 3. FAMILLE & GENS -->
+        <div class="node">
+            <div class="node-header"><span>👨‍👩‍👧‍👦</span> La famille & les personnes</div>
+            <div class="lexique-cluster">
+                <div class="mot">les parents<span class="tooltip-map"><strong>родители</strong> Mes parents voyagent beaucoup.<em>👉 Мои родители много путешествуют.</em></span></div>
+                <div class="mot">un père / une mère<span class="tooltip-map"><strong>отец / мать</strong> Ma mère est gentille.<em>👉 Моя мама добрая.</em></span></div>
+                <div class="mot">un frère / une sœur<span class="tooltip-map"><strong>брат / сестра</strong> J'ai une grande sœur.<em>👉 У меня есть старшая сестра.</em></span></div>
+                <div class="mot">un cousin / une cousine<span class="tooltip-map"><strong>двоюродный брат / сестра</strong> Ma cousine vient demain.<em>👉 Моя двоюродная сестра приезжает завтра.</em></span></div>
+                <div class="mot">marié(e) / célibataire<span class="tooltip-map"><strong>женат/замужем / холост</strong> Il est marié depuis 5 ans.<em>👉 Он женат уже 5 лет.</em></span></div>
+                <div class="mot">un bébé / un enfant<span class="tooltip-map"><strong>младенец / ребёнок</strong> Le bébé dort paisiblement.<em>👉 Ребёнок спокойно спит.</em></span></div>
+                <div class="mot">un adolescent (ado)<span class="tooltip-map"><strong>подросток</strong> Les ados aiment les jeux vidéo.<em>👉 Подростки любят видеоигры.</em></span></div>
+                <div class="mot">un copain / une copine<span class="tooltip-map"><strong>друг / подруга</strong> C'est ma copine Léa.<em>👉 Это моя подруга Леа.</em></span></div>
             </div>
         </div>
 
-        <!-- Corps & caractéristiques physiques -->
-        <div class="category-card">
-            <div class="cat-header"><span>🧍</span> Corps & physique</div>
-            <div class="word-cloud">
-                <div class="word-tile">les yeux<span class="tooltip-custom"><strong>глаза</strong> Elle a les yeux bleus.<i>👉 У неё голубые глаза.</i></span></div>
-                <div class="word-tile">les cheveux<span class="tooltip-custom"><strong>волосы</strong> Les cheveux blonds et longs.<i>👉 Длинные светлые волосы.</i></span></div>
-                <div class="word-tile">grand(e)<span class="tooltip-custom"><strong>высокий/высокая</strong> Mon frère est très grand.<i>👉 Мой брат очень высокий.</i></span></div>
-                <div class="word-tile">petit(e)<span class="tooltip-custom"><strong>маленький</strong> La maison est petite mais jolie.<i>👉 Дом маленький, но симпатичный.</i></span></div>
-                <div class="word-tile">beau/belle<span class="tooltip-custom"><strong>красивый</strong> Quel beau paysage !<i>👉 Какой красивый пейзаж!</i></span></div>
+        <!-- 4. GOUTS & SENTIMENTS -->
+        <div class="node">
+            <div class="node-header"><span>❤️🧡</span> Goûts & sentiments</div>
+            <div class="lexique-cluster">
+                <div class="mot">J'aime beaucoup<span class="tooltip-map"><strong>Мне очень нравится</strong> J'aime beaucoup les BD.<em>👉 Я очень люблю комиксы.</em></span></div>
+                <div class="mot">J'adore<span class="tooltip-map"><strong>Обожаю</strong> J'adore apprendre de nouveaux mots.<em>👉 Обожаю учить новые слова.</em></span></div>
+                <div class="mot">Je préfère<span class="tooltip-map"><strong>Я предпочитаю</strong> Je préfère les dictionnaires en ligne.<em>👉 Я предпочитаю онлайн-словари.</em></span></div>
+                <div class="mot">Je déteste<span class="tooltip-map"><strong>Ненавижу</strong> Je déteste le mensonge.<em>👉 Ненавижу ложь.</em></span></div>
+                <div class="mot">heureux / heureuse<span class="tooltip-map"><strong>счастливый</strong> Je suis heureux de te voir.<em>👉 Я счастлив видеть тебя.</em></span></div>
+                <div class="mot">triste / content(e)<span class="tooltip-map"><strong>грустный / довольный</strong> Elle est triste aujourd'hui.<em>👉 Она сегодня грустная.</em></span></div>
+                <div class="mot">sympathique / gentil<span class="tooltip-map"><strong>симпатичный / добрый</strong> Très sympathique, ce garçon !<em>👉 Очень милый парень!</em></span></div>
             </div>
         </div>
 
-        <!-- Logement & ville, itinéraire -->
-        <div class="category-card">
-            <div class="cat-header"><span>🏠</span> Logement & ville</div>
-            <div class="word-cloud">
-                <div class="word-tile">une maison<span class="tooltip-custom"><strong>дом</strong> J'habite une grande maison.<i>👉 Я живу в большом доме.</i></span></div>
-                <div class="word-tile">un appartement<span class="tooltip-custom"><strong>квартира</strong> L'appartement est au 3ème étage.<i>👉 Квартира на 3 этаже.</i></span></div>
-                <div class="word-tile">la rue<span class="tooltip-custom"><strong>улица</strong> La rue est calme.<i>👉 Улица тихая.</i></span></div>
-                <div class="word-tile">à droite<span class="tooltip-custom"><strong>направо</strong> Tournez à droite, puis tout droit.<i>👉 Поверните направо, потом прямо.</i></span></div>
-                <div class="word-tile">devant la gare<span class="tooltip-custom"><strong>перед вокзалом</strong> Il y a un taxi devant la gare.<i>👉 Перед вокзалом такси.</i></span></div>
-                <div class="word-tile">le métro<span class="tooltip-custom"><strong>метро</strong> Je prends le métro tous les jours.<i>👉 Я езжу на метро каждый день.</i></span></div>
+        <!-- 5. LE CORPS & CARACTÉRISTIQUES PHYSIQUES -->
+        <div class="node">
+            <div class="node-header"><span>🧬</span> Corps & apparence</div>
+            <div class="lexique-cluster">
+                <div class="mot">les yeux / l'œil<span class="tooltip-map"><strong>глаза / глаз</strong> Elle a les yeux verts.<em>👉 У неё зелёные глаза.</em></span></div>
+                <div class="mot">les cheveux blonds/bruns<span class="tooltip-map"><strong>светлые / тёмные волосы</strong> Il a les cheveux bruns et longs.<em>👉 У него длинные тёмные волосы.</em></span></div>
+                <div class="mot">petit(e) / grand(e)<span class="tooltip-map"><strong>маленький / высокий</strong> Mon frère est très grand.<em>👉 Мой брат очень высокий.</em></span></div>
+                <div class="mot">beau / belle / laid(e)<span class="tooltip-map"><strong>красивый / красивый (ж.р.) / некрасивый</strong> Quelle belle journée !<em>👉 Какой прекрасный день!</em></span></div>
+                <div class="mot">mince / gros(se)<span class="tooltip-map"><strong>худой / толстый</strong> Il est mince et sportif.<em>👉 Он стройный и спортивный.</em></span></div>
+                <div class="mot">jeune / vieux (vieille)<span class="tooltip-map"><strong>молодой / старый</strong> Un vieux château magnifique.<em>👉 Старый великолепный замок.</em></span></div>
             </div>
         </div>
 
-        <!-- Actions quotidiennes & habitude -->
-        <div class="category-card">
-            <div class="cat-header"><span>⚡</span> Actions & routines</div>
-            <div class="word-cloud">
-                <div class="word-tile">faire le ménage<span class="tooltip-custom"><strong>делать уборку</strong> Je fais le ménage le samedi.<i>👉 Я делаю уборку по субботам.</i></span></div>
-                <div class="word-tile">ranger sa chambre<span class="tooltip-custom"><strong>наводить порядок в комнате</strong> Range ta chambre s'il te plaît !<i>👉 Пожалуйста, убери свою комнату!</i></span></div>
-                <div class="word-tile">tous les jours<span class="tooltip-custom"><strong>каждый день</strong> Je me lève tôt tous les jours.<i>👉 Я встаю рано каждый день.</i></span></div>
-                <div class="word-tile">je suis en train de<span class="tooltip-custom"><strong>я сейчас (делаю)</strong> Je suis en train de lire un livre.<i>👉 Я сейчас читаю книгу.</i></span></div>
-                <div class="word-tile">aider quelqu'un<span class="tooltip-custom"><strong>помогать кому-то</strong> J'aide mon ami avec ses devoirs.<i>👉 Я помогаю другу с уроками.</i></span></div>
+        <!-- 6. ACTIONS QUOTIDIENNES, HABITUDES -->
+        <div class="node">
+            <div class="node-header"><span>⚙️</span> Actions quotidiennes & habitudes</div>
+            <div class="lexique-cluster">
+                <div class="mot">faire le ménage<span class="tooltip-map"><strong>делать уборку</strong> Je fais le ménage chaque samedi.<em>👉 Я делаю уборку каждую субботу.</em></span></div>
+                <div class="mot">ranger sa chambre<span class="tooltip-map"><strong>наводить порядок в комнате</strong> Range ta chambre s'il te plaît.<em>👉 Пожалуйста, убери свою комнату.</em></span></div>
+                <div class="mot">aider quelqu'un<span class="tooltip-map"><strong>помогать кому-то</strong> J'aide mon père au jardin.<em>👉 Я помогаю папе в саду.</em></span></div>
+                <div class="mot">tous les jours / par semaine<span class="tooltip-map"><strong>каждый день / в неделю</strong> Je bois un soda par semaine.<em>👉 Я пью газировку раз в неделю.</em></span></div>
+                <div class="mot">je suis en train de...<span class="tooltip-map"><strong>я сейчас (делаю)</strong> Je suis en train de cuisiner.<em>👉 Я сейчас готовлю.</em></span></div>
+                <div class="mot">envoyer / observer / nettoyer<span class="tooltip-map"><strong>отправлять / наблюдать / чистить</strong> J'envoie une carte postale.<em>👉 Я отправляю открытку.</em></span></div>
             </div>
         </div>
 
-        <!-- Loisirs, musique, sports -->
-        <div class="category-card">
-            <div class="cat-header"><span>🎸</span> Loisirs & sports</div>
-            <div class="word-cloud">
-                <div class="word-tile">un concert<span class="tooltip-custom"><strong>концерт</strong> Le concert commence à 20h.<i>👉 Концерт начинается в 20:00.</i></span></div>
-                <div class="word-tile">faire du vélo<span class="tooltip-custom"><strong>кататься на велосипеде</strong> Je fais du vélo chaque dimanche.<i>👉 Я катаюсь на велосипеде каждое воскресенье.</i></span></div>
-                <div class="word-tile">la natation<span class="tooltip-custom"><strong>плавание</strong> La natation est mon sport préféré.<i>👉 Плавание — мой любимый вид спорта.</i></span></div>
-                <div class="word-tile">un film<span class="tooltip-custom"><strong>фильм</strong> Je regarde un film ce soir.<i>👉 Сегодня вечером смотрю фильм.</i></span></div>
-                <div class="word-tile">une bande dessinée<span class="tooltip-custom"><strong>комикс</strong> Tu aimes les bandes dessinées ?<i>👉 Ты любишь комиксы?</i></span></div>
+        <!-- 7. VILLE, LOGEMENT & ITINÉRAIRE -->
+        <div class="node">
+            <div class="node-header"><span>🏙️</span> Ville & logement</div>
+            <div class="lexique-cluster">
+                <div class="mot">une rue / une avenue / une place<span class="tooltip-map"><strong>улица / проспект / площадь</strong> La rue est piétonne.<em>👉 Улица пешеходная.</em></span></div>
+                <div class="mot">une maison / un appartement<span class="tooltip-map"><strong>дом / квартира</strong> J'habite au 3ème étage.<em>👉 Я живу на третьем этаже.</em></span></div>
+                <div class="mot">le salon / la cuisine / la salle de bain<span class="tooltip-map"><strong>гостиная / кухня / ванная</strong> La cuisine est moderne.<em>👉 Кухня современная.</em></span></div>
+                <div class="mot">à droite / à gauche / tout droit<span class="tooltip-map"><strong>направо / налево / прямо</strong> Tournez à gauche puis tout droit.<em>👉 Поверните налево, потом прямо.</em></span></div>
+                <div class="mot">derrière / devant / à côté<span class="tooltip-map"><strong>позади / перед / рядом</strong> L'arrêt est derrière la maison.<em>👉 Остановка за домом.</em></span></div>
+                <div class="mot">prendre le bus / le métro / le train<span class="tooltip-map"><strong>ехать на автобусе / метро / поезде</strong> Je prends le métro tous les matins.<em>👉 Я езжу на метро каждое утро.</em></span></div>
             </div>
         </div>
 
-        <!-- Nourriture & commandes -->
-        <div class="category-card">
-            <div class="cat-header"><span>🍕</span> Nourriture & restaurant</div>
-            <div class="word-cloud">
-                <div class="word-tile">une pizza<span class="tooltip-custom"><strong>пицца</strong> Je voudrais une pizza, s'il vous plaît.<i>👉 Я хотел бы пиццу, пожалуйста.</i></span></div>
-                <div class="word-tile">un sandwich<span class="tooltip-custom"><strong>сэндвич</strong> Je mange un sandwich au jambon.<i>👉 Я ем сэндвич с ветчиной.</i></span></div>
-                <div class="word-tile">le petit-déjeuner<span class="tooltip-custom"><strong>завтрак</strong> Le petit-déjeuner à 7h.<i>👉 Завтрак в 7 часов.</i></span></div>
-                <div class="word-tile">une glace<span class="tooltip-custom"><strong>мороженое</strong> En été, je mange une glace.<i>👉 Летом я ем мороженое.</i></span></div>
-                <div class="word-tile">Je voudrais...<span class="tooltip-custom"><strong>Я хотел бы...</strong> Je voudrais un café.<i>👉 Я хотел бы кофе.</i></span></div>
+        <!-- 8. LOISIRS : SPORT, MUSIQUE, CINÉMA, LECTURE -->
+        <div class="node">
+            <div class="node-header"><span>🎮</span> Loisirs, sports & culture</div>
+            <div class="lexique-cluster">
+                <div class="mot">faire du vélo / du sport<span class="tooltip-map"><strong>кататься на велосипеде / заниматься спортом</strong> Je fais du vélo le dimanche.<em>👉 Я катаюсь на велосипеде по воскресеньям.</em></span></div>
+                <div class="mot">la natation / le basket / le judo<span class="tooltip-map"><strong>плавание / баскетбол / дзюдо</strong> Le basket est mon sport préféré.<em>👉 Баскетбол — мой любимый спорт.</em></span></div>
+                <div class="mot">un concert / un orchestre<span class="tooltip-map"><strong>концерт / оркестр</strong> Un concert de musique classique.<em>👉 Концерт классической музыки.</em></span></div>
+                <div class="mot">lire un livre / une BD / un manga<span class="tooltip-map"><strong>читать книгу / комикс / мангу</strong> Je lis une bande dessinée amusante.<em>👉 Я читаю весёлый комикс.</em></span></div>
+                <div class="mot">regarder un film / une vidéo<span class="tooltip-map"><strong>смотреть фильм / видео</strong> On regarde un film ce soir.<em>👉 Сегодня вечером смотрим кино.</em></span></div>
+                <div class="mot">un jeu vidéo / jeux de société<span class="tooltip-map"><strong>видеоигра / настольные игры</strong> Tu aimes les jeux de société ?<em>👉 Ты любишь настольные игры?</em></span></div>
             </div>
         </div>
 
-        <!-- École, matériel -->
-        <div class="category-card">
-            <div class="cat-header"><span>📚</span> École & cours</div>
-            <div class="word-cloud">
-                <div class="word-tile">un professeur<span class="tooltip-custom"><strong>учитель</strong> Le professeur explique la leçon.<i>👉 Учитель объясняет урок.</i></span></div>
-                <div class="word-tile">les devoirs<span class="tooltip-custom"><strong>домашние задания</strong> Je fais mes devoirs après l'école.<i>👉 Я делаю домашнее задание после школы.</i></span></div>
-                <div class="word-tile">un dictionnaire<span class="tooltip-custom"><strong>словарь</strong> Utilise le dictionnaire en ligne.<i>👉 Используй онлайн-словарь.</i></span></div>
-                <div class="word-tile">une leçon<span class="tooltip-custom"><strong>урок (тема)</strong> Apprends la leçon par cœur.<i>👉 Выучи урок наизусть.</i></span></div>
-                <div class="word-tile">un examen<span class="tooltip-custom"><strong>экзамен</strong> L'examen de français est lundi.<i>👉 Экзамен по французскому в понедельник.</i></span></div>
+        <!-- 9. NOURRITURE, COMMANDES, RESTAURANT -->
+        <div class="node">
+            <div class="node-header"><span>🍽️</span> Alimentation & restaurant</div>
+            <div class="lexique-cluster">
+                <div class="mot">le petit-déjeuner / déjeuner / dîner<span class="tooltip-map"><strong>завтрак / обед / ужин</strong> Le dîner est à 20h.<em>👉 Ужин в 20:00.</em></span></div>
+                <div class="mot">une pizza / un hamburger / une soupe<span class="tooltip-map"><strong>пицца / гамбургер / суп</strong> Je voudrais une pizza, s'il vous plaît.<em>👉 Я хотел бы пиццу, пожалуйста.</em></span></div>
+                <div class="mot">une glace / un dessert / un gâteau<span class="tooltip-map"><strong>мороженое / десерт / торт</strong> Le dessert est délicieux.<em>👉 Десерт восхитителен.</em></span></div>
+                <div class="mot">une pomme / une banane / une orange<span class="tooltip-map"><strong>яблоко / банан / апельсин</strong> Je mange une pomme verte.<em>👉 Я ем зелёное яблоко.</em></span></div>
+                <div class="mot">Je voudrais... / Vous avez du soda ?<span class="tooltip-map"><strong>Я хотел бы... / У вас есть газировка?</strong> Je voudrais une carafe d'eau.<em>👉 Я хотел бы графин воды.</em></span></div>
             </div>
         </div>
 
-        <!-- Vêtements, commerces, prix -->
-        <div class="category-card">
-            <div class="cat-header"><span>🛍️</span> Vêtements & achats</div>
-            <div class="word-cloud">
-                <div class="word-tile">un pantalon<span class="tooltip-custom"><strong>брюки</strong> Ce pantalon est trop cher.<i>👉 Эти брюки слишком дорогие.</i></span></div>
-                <div class="word-tile">des chaussures<span class="tooltip-custom"><strong>обувь</strong> J'achète des chaussures noires.<i>👉 Я покупаю чёрную обувь.</i></span></div>
-                <div class="word-tile">Combien ça coûte ?<span class="tooltip-custom"><strong>Сколько это стоит?</strong> Combien ça coûte, ce pull ?<i>👉 Сколько стоит этот свитер?</i></span></div>
-                <div class="word-tile">le prix<span class="tooltip-custom"><strong>цена</strong> Le prix est réduit de 20%.<i>👉 Цена снижена на 20%.</i></span></div>
-                <div class="word-tile">un supermarché<span class="tooltip-custom"><strong>супермаркет</strong> Je vais au supermarché le samedi.<i>👉 Я хожу в супермаркет по субботам.</i></span></div>
+        <!-- 10. ÉCOLE, MATIÈRES, FOURNITURES -->
+        <div class="node">
+            <div class="node-header"><span>📖</span> École & études</div>
+            <div class="lexique-cluster">
+                <div class="mot">un professeur / un élève<span class="tooltip-map"><strong>учитель / ученик</strong> Le professeur donne une leçon.<em>👉 Учитель даёт урок.</em></span></div>
+                <div class="mot">les devoirs / un test / une note<span class="tooltip-map"><strong>домашние задания / тест / оценка</strong> J'ai une bonne note en maths.<em>👉 У меня хорошая оценка по математике.</em></span></div>
+                <div class="mot">un dictionnaire / le vocabulaire<span class="tooltip-map"><strong>словарь / словарный запас</strong> J'apprends le vocabulaire nouveau.<em>👉 Я учу новые слова.</em></span></div>
+                <div class="mot">le français / l'histoire / les maths<span class="tooltip-map"><strong>французский / история / математика</strong> J'adore l'histoire-géo.<em>👉 Обожаю историю и географию.</em></span></div>
+                <div class="mot">un cahier / un stylo / une règle<span class="tooltip-map"><strong>тетрадь / ручка / линейка</strong> As-tu un stylo rouge ?<em>👉 У тебя есть красная ручка?</em></span></div>
             </div>
         </div>
 
-        <!-- Météo, nature, animaux -->
-        <div class="category-card">
-            <div class="cat-header"><span>🌤️</span> Météo & nature</div>
-            <div class="word-cloud">
-                <div class="word-tile">Il pleut<span class="tooltip-custom"><strong>Идёт дождь</strong> Prends ton parapluie, il pleut !<i>👉 Возьми зонт, идёт дождь!</i></span></div>
-                <div class="word-tile">Il fait chaud<span class="tooltip-custom"><strong>Жарко</strong> En juillet, il fait très chaud.<i>👉 В июле очень жарко.</i></span></div>
-                <div class="word-tile">la plage<span class="tooltip-custom"><strong>пляж</strong> Nous allons à la plage demain.<i>👉 Мы идём на пляж завтра.</i></span></div>
-                <div class="word-tile">un chien<span class="tooltip-custom"><strong>собака</strong> J'ai un chien blanc.<i>👉 У меня белая собака.</i></span></div>
-                <div class="word-tile">un arbre<span class="tooltip-custom"><strong>дерево</strong> Les arbres sont verts.<i>👉 Деревья зелёные.</i></span></div>
+        <!-- 11. VÊTEMENTS, COMMERCES, PRIX -->
+        <div class="node">
+            <div class="node-header"><span>🛒</span> Vêtements & achats</div>
+            <div class="lexique-cluster">
+                <div class="mot">un pantalon / une jupe / un tee-shirt<span class="tooltip-map"><strong>брюки / юбка / футболка</strong> Ce pantalon est à 39 euros.<em>👉 Эти брюки стоят 39 евро.</em></span></div>
+                <div class="mot">des chaussures / des baskets<span class="tooltip-map"><strong>обувь / кроссовки</strong> J'achète des baskets blanches.<em>👉 Я покупаю белые кроссовки.</em></span></div>
+                <div class="mot">Combien ça coûte ? / C'est combien ?<span class="tooltip-map"><strong>Сколько стоит?</strong> Combien coûte ce pull ?<em>👉 Сколько стоит этот свитер?</em></span></div>
+                <div class="mot">un supermarché / une librairie / la boulangerie<span class="tooltip-map"><strong>супермаркет / книжный / пекарня</strong> Je vais à la boulangerie acheter du pain.<em>👉 Я иду в пекарню за хлебом.</em></span></div>
+                <div class="mot">payer en espèces / par chèque<span class="tooltip-map"><strong>платить наличными / чеком</strong> Vous payez par carte ?<em>👉 Вы платите картой?</em></span></div>
+                <div class="mot">tarif réduit / gratuit<span class="tooltip-map"><strong>льготный тариф / бесплатно</strong> C'est gratuit pour les enfants.<em>👉 Для детей бесплатно.</em></span></div>
             </div>
         </div>
 
-        <!-- Obligation, interdiction & formules -->
-        <div class="category-card">
-            <div class="cat-header"><span>⚠️</span> Obligation / Interdiction</div>
-            <div class="word-cloud">
-                <div class="word-tile">je dois<span class="tooltip-custom"><strong>я должен</strong> Je dois étudier pour le test.<i>👉 Я должен готовиться к тесту.</i></span></div>
-                <div class="word-tile">C'est interdit<span class="tooltip-custom"><strong>Запрещено</strong> C'est interdit de fumer ici.<i>👉 Здесь курить запрещено.</i></span></div>
-                <div class="word-tile">Ne pas utiliser<span class="tooltip-custom"><strong>Не использовать</strong> Ne pas utiliser le téléphone en classe.<i>👉 Не пользуйтесь телефоном в классе.</i></span></div>
-                <div class="word-tile">Tu peux<span class="tooltip-custom"><strong>Ты можешь / можно</strong> Tu peux inviter un ami.<i>👉 Ты можешь пригласить друга.</i></span></div>
-                <div class="word-tile">Pardon<span class="tooltip-custom"><strong>Извините</strong> Pardon, je suis en retard.<i>👉 Извините, я опоздал.</i></span></div>
+        <!-- 12. MÉTÉO, NATURE, ANIMAUX -->
+        <div class="node">
+            <div class="node-header"><span>⛅</span> Météo & nature</div>
+            <div class="lexique-cluster">
+                <div class="mot">Il fait beau / chaud / froid<span class="tooltip-map"><strong>Хорошая погода / жарко / холодно</strong> Il fait froid, mets ton manteau.<em>👉 Холодно, надень пальто.</em></span></div>
+                <div class="mot">Il pleut / il va pleuvoir<span class="tooltip-map"><strong>Идёт дождь / будет дождь</strong> Prends ton parapluie, il pleut.<em>👉 Возьми зонт, идёт дождь.</em></span></div>
+                <div class="mot">la mer / la plage / la montagne<span class="tooltip-map"><strong>море / пляж / гора</strong> Nous partons à la montagne.<em>👉 Мы едем в горы.</em></span></div>
+                <div class="mot">un chien / un chat / un cheval<span class="tooltip-map"><strong>собака / кошка / лошадь</strong> Mon chien s'appelle Rocky.<em>👉 Мою собаку зовут Рокки.</em></span></div>
+                <div class="mot">une fleur / un arbre / la forêt<span class="tooltip-map"><strong>цветок / дерево / лес</strong> Les fleurs sont magnifiques.<em>👉 Цветы великолепны.</em></span></div>
             </div>
         </div>
 
-        <!-- Temps, rendez-vous, fréquences -->
-        <div class="category-card">
-            <div class="cat-header"><span>⏰</span> Temps & rendez-vous</div>
-            <div class="word-cloud">
-                <div class="word-tile">aujourd'hui<span class="tooltip-custom"><strong>сегодня</strong> Aujourd'hui il y a un contrôle.<i>👉 Сегодня контрольная.</i></span></div>
-                <div class="word-tile">demain<span class="tooltip-custom"><strong>завтра</strong> On se retrouve demain à 15h.<i>👉 Встречаемся завтра в 15:00.</i></span></div>
-                <div class="word-tile">la semaine prochaine<span class="tooltip-custom"><strong>на следующей неделе</strong> La semaine prochaine, je voyage.<i>👉 На следующей неделе я путешествую.</i></span></div>
-                <div class="word-tile">Rendez-vous à 16h<span class="tooltip-custom"><strong>Встреча в 16:00</strong> Rendez-vous devant le cinéma.<i>👉 Встреча у кинотеатра.</i></span></div>
-                <div class="word-tile">tous les samedis<span class="tooltip-custom"><strong>каждую субботу</strong> Je fais du sport tous les samedis.<i>👉 Я занимаюсь спортом каждую субботу.</i></span></div>
+        <!-- 13. OBLIGATION, INTERDICTION, PERMISSION -->
+        <div class="node">
+            <div class="node-header"><span>⚠️🚫</span> Obligation & interdiction</div>
+            <div class="lexique-cluster">
+                <div class="mot">Je dois / Tu dois<span class="tooltip-map"><strong>Я должен / Ты должен</strong> Je dois étudier ce soir.<em>👉 Я должен учиться сегодня вечером.</em></span></div>
+                <div class="mot">C'est interdit / Il est interdit de<span class="tooltip-map"><strong>Запрещено</strong> Il est interdit de courir dans le couloir.<em>👉 Бегать по коридору запрещено.</em></span></div>
+                <div class="mot">Ne pas utiliser / Ne parlez pas<span class="tooltip-map"><strong>Не использовать / Не разговаривайте</strong> Ne pas utiliser le téléphone en classe.<em>👉 Не пользуйтесь телефоном в классе.</em></span></div>
+                <div class="mot">Tu peux / Vous pouvez<span class="tooltip-map"><strong>Ты можешь / Вы можете</strong> Tu peux inviter un ami.<em>👉 Ты можешь пригласить друга.</em></span></div>
+                <div class="mot">Douche obligatoire<span class="tooltip-map"><strong>Душ обязателен</strong> Douche obligatoire après le sport.<em>👉 Душ обязателен после спорта.</em></span></div>
             </div>
         </div>
 
-        <!-- Actions & demandes polies -->
-        <div class="category-card">
-            <div class="cat-header"><span>💬</span> Parler & communiquer</div>
-            <div class="word-cloud">
-                <div class="word-tile">Merci beaucoup<span class="tooltip-custom"><strong>Большое спасибо</strong> Merci beaucoup pour votre aide.<i>👉 Большое спасибо за вашу помощь.</i></span></div>
-                <div class="word-tile">S'il te plaît<span class="tooltip-custom"><strong>Пожалуйста (просьба)</strong> Envoie un message, s'il te plaît.<i>👉 Пожалуйста, отправь сообщение.</i></span></div>
-                <div class="word-tile">Bravo<span class="tooltip-custom"><strong>Браво, молодец</strong> Bravo, tu as très bien joué !<i>👉 Браво, ты отлично сыграл!</i></span></div>
-                <div class="word-tile">Vous pouvez répéter ?<span class="tooltip-custom"><strong>Можете повторить?</strong> Vous pouvez répéter s'il vous plaît ?<i>👉 Повторите, пожалуйста?</i></span></div>
-                <div class="word-tile">D'accord<span class="tooltip-custom"><strong>Согласен / Договорились</strong> D'accord, on se voit à 18h.<i>👉 Договорились, увидимся в 18:00.</i></span></div>
+        <!-- 14. COMMUNICATION : RENDEZ-VOUS, REMERCIER, EXCUSER -->
+        <div class="node">
+            <div class="node-header"><span>💬</span> Actes de parole & formules</div>
+            <div class="lexique-cluster">
+                <div class="mot">D'accord / OK<span class="tooltip-map"><strong>Согласен / Договорились</strong> On se retrouve à 16h ? D'accord.<em>👉 Встречаемся в 16:00? Договорились.</em></span></div>
+                <div class="mot">Merci beaucoup / Je suis désolé(e)<span class="tooltip-map"><strong>Большое спасибо / Извините</strong> Merci beaucoup pour votre aide.<em>👉 Спасибо большое за помощь.</em></span></div>
+                <div class="mot">Pardon / Excusez-moi<span class="tooltip-map"><strong>Извините / Прошу прощения</strong> Pardon, je suis en retard.<em>👉 Извините, я опоздал.</em></span></div>
+                <div class="mot">Rendez-vous / On se retrouve<span class="tooltip-map"><strong>Встреча / Увидимся</strong> Rendez-vous devant le cinéma.<em>👉 Встреча у кинотеатра.</em></span></div>
+                <div class="mot">Bravo / Félicitations<span class="tooltip-map"><strong>Браво / Поздравляю</strong> Bravo, tu as réussi !<em>👉 Браво, у тебя получилось!</em></span></div>
+                <div class="mot">Bon appétit / Bon voyage<span class="tooltip-map"><strong>Приятного аппетита / Счастливого пути</strong> Bon appétit à tous !<em>👉 Всем приятного аппетита!</em></span></div>
+                <div class="mot">Appelle-moi / Envoie un message<span class="tooltip-map"><strong>Позвони мне / Отправь сообщение</strong> Appelle-moi ce soir stp.<em>👉 Позвони мне сегодня вечером.</em></span></div>
+            </div>
+        </div>
+
+        <!-- 15. TEMPS, FRÉQUENCE, ÉVÉNEMENTS -->
+        <div class="node">
+            <div class="node-header"><span>📅</span> Situer dans le temps</div>
+            <div class="lexique-cluster">
+                <div class="mot">aujourd'hui / demain / hier<span class="tooltip-map"><strong>сегодня / завтра / вчера</strong> Hier, il y a eu une fête.<em>👉 Вчера был праздник.</em></span></div>
+                <div class="mot">la semaine prochaine / le mois dernier<span class="tooltip-map"><strong>на следующей неделе / в прошлом месяце</strong> La semaine prochaine, contrôle.<em>👉 На следующей неделе контрольная.</em></span></div>
+                <div class="mot">lundi, mardi, mercredi...<span class="tooltip-map"><strong>дни недели</strong> On se voit vendredi.<em>👉 Увидимся в пятницу.</em></span></div>
+                <div class="mot">janvier, février, mars...<span class="tooltip-map"><strong>месяцы</strong> Mon anniversaire est en mai.<em>👉 У меня день рождения в мае.</em></span></div>
+                <div class="mot">à 15h / de 9h à 19h<span class="tooltip-map"><strong>в 15:00 / с 9 до 19</strong> Le zoo est ouvert de 9h à 19h.<em>👉 Зоопарк открыт с 9 до 19.</em></span></div>
+                <div class="mot">une fête d'anniversaire / un mariage / un carnaval<span class="tooltip-map"><strong>день рождения / свадьба / карнавал</strong> Je t'invite à ma fête d'anniversaire.<em>👉 Приглашаю тебя на мой день рождения.</em></span></div>
+            </div>
+        </div>
+
+        <!-- 16. SANTÉ, PROFESSIONS, MÉDIAS -->
+        <div class="node">
+            <div class="node-header"><span>🏥💼</span> Santé, métiers & technologie</div>
+            <div class="lexique-cluster">
+                <div class="mot">avoir de la fièvre / mal à la tête<span class="tooltip-map"><strong>иметь температуру / головная боль</strong> J'ai mal à la tête et de la fièvre.<em>👉 У меня болит голова и температура.</em></span></div>
+                <div class="mot">un médicament / une pharmacie<span class="tooltip-map"><strong>лекарство / аптека</strong> Où est la pharmacie ?<em>👉 Где находится аптека?</em></span></div>
+                <div class="mot">un professeur / un policier / un pompier<span class="tooltip-map"><strong>учитель / полицейский / пожарный</strong> Mon père est pompier.<em>👉 Мой отец пожарный.</em></span></div>
+                <div class="mot">un ordinateur / un téléphone portable / une montre connectée<span class="tooltip-map"><strong>компьютер / мобильный телефон / умные часы</strong> J'utilise l'ordinateur pour mes recherches.<em>👉 Я использую компьютер для поиска.</em></span></div>
+                <div class="mot">Internet / un site web / un blog<span class="tooltip-map"><strong>Интернет / сайт / блог</strong> Je lis un blog de voyage.<em>👉 Я читаю блог о путешествиях.</em></span></div>
             </div>
         </div>
     </div>
+
     <footer>
-        🌟 Mind-map DELF A1 — наведите курсор на любое слово, чтобы увидеть перевод и живой пример. <br>
-        📖 Лексика из официального lexique + акты речи. Apprenez en s'amusant !
+        🌟 Carte mentale interactive — DELF A1 (lexique complet + actes de parole) <br>
+        📚 Passez la souris sur n'importe quel mot ou expression → traduction en russe + exemple concret.<br>
+        ✅ Plus de 530 cartes de vocabulaire, reprises du fichier original « DELFA1_lexique.pdf »
     </footer>
 </div>
 </body>
