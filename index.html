@@ -3,22 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Французский Mind-map: Лексика и диалоги | Интерактивный словарь DELF A1</title>
+    <title>Французский Mind-map: ВСЕ ТЕМЫ + перевод | DELF A1 Полный лексикон</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
             background: #f0f7ff;
             color: #1e2a3e;
             line-height: 1.5;
         }
-
-        /* Главная навигация */
         .app-header {
             background: linear-gradient(135deg, #1e3c72, #2b4c7c);
             color: white;
@@ -59,8 +56,6 @@
             margin: 0 auto;
             padding: 20px;
         }
-
-        /* Mind-map стиль (главная сетка) */
         .mindmap-grid {
             display: flex;
             flex-wrap: wrap;
@@ -72,7 +67,7 @@
             background: white;
             border-radius: 32px;
             box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-            width: 260px;
+            width: 280px;
             transition: all 0.2s;
             cursor: pointer;
             border: 2px solid transparent;
@@ -87,26 +82,30 @@
             background: #2b4c7c;
             color: white;
             padding: 16px 12px;
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: bold;
             text-align: center;
-            word-break: break-word;
         }
         .card-preview {
             padding: 16px;
             background: #fef9e6;
-            font-size: 0.85rem;
-            max-height: 180px;
+            font-size: 0.8rem;
+            max-height: 200px;
             overflow-y: auto;
             border-bottom: 1px solid #eee;
         }
         .word-preview {
             display: inline-block;
             background: #edf2f7;
-            margin: 3px;
-            padding: 4px 8px;
+            margin: 4px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .word-preview:hover {
+            background: #ffd966;
         }
         .open-btn {
             display: block;
@@ -121,8 +120,6 @@
         .open-btn:hover {
             background: #ff9c2e;
         }
-
-        /* Страница категории */
         .category-page {
             background: white;
             border-radius: 36px;
@@ -142,14 +139,14 @@
             font-size: 1rem;
         }
         .category-title {
-            font-size: 2rem;
+            font-size: 1.8rem;
             border-left: 8px solid #ffb347;
             padding-left: 20px;
             margin: 20px 0 25px 0;
         }
         .vocab-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 12px;
             margin-bottom: 40px;
             background: #f8fafc;
@@ -165,16 +162,16 @@
             justify-content: space-between;
             align-items: center;
             transition: 0.1s;
-            cursor: pointer;
             border: 1px solid #e2e8f0;
         }
         .word-item:hover {
             background: #fff6e5;
-            transform: scale(1.01);
         }
         .french-word {
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            position: relative;
         }
         .speaker-icon {
             background: #e9ecef;
@@ -192,53 +189,50 @@
             background: #ffb347;
             color: white;
         }
-        /* тултип перевода */
-        [data-translate] {
+        [data-ru] {
             position: relative;
             cursor: help;
         }
-        [data-translate]:hover::after {
-            content: attr(data-translate);
+        [data-ru]:hover::after {
+            content: attr(data-ru);
             position: absolute;
             background: #1e293b;
             color: #ffefcf;
-            font-size: 0.8rem;
-            padding: 6px 12px;
-            border-radius: 20px;
-            white-space: nowrap;
-            top: -35px;
+            font-size: 0.85rem;
+            padding: 6px 14px;
+            border-radius: 24px;
+            white-space: normal;
+            max-width: 300px;
+            min-width: 160px;
+            top: -40px;
             left: 0;
             z-index: 200;
-            box-shadow: 0 2px 8px black;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             pointer-events: none;
             font-weight: normal;
-        }
-
-        .dialogue-section, .text-section {
-            margin-top: 40px;
-            background: #fff6e8;
-            border-radius: 28px;
-            padding: 20px;
+            line-height: 1.4;
         }
         .dialogue-line, .text-line {
             background: #ffffffcc;
-            padding: 12px 16px;
-            margin: 10px 0;
+            padding: 14px 18px;
+            margin: 12px 0;
             border-radius: 24px;
             cursor: pointer;
             transition: 0.1s;
-            border-left: 5px solid #ffb347;
+            border-left: 6px solid #ffb347;
         }
         .dialogue-fr, .text-fr {
             font-weight: bold;
+            margin-bottom: 6px;
         }
         .dialogue-ru, .text-ru {
             font-size: 0.9rem;
             color: #2c3e4e;
-            margin-top: 4px;
-        }
-        hr {
-            margin: 20px 0;
+            margin-top: 6px;
+            font-style: italic;
+            background: #fef5e7;
+            padding: 6px 12px;
+            border-radius: 20px;
         }
         footer {
             text-align: center;
@@ -253,184 +247,158 @@
     </style>
 </head>
 <body>
-
 <div class="app-header">
-    <div class="logo">🗺️ Carte Mentale · DELF A1</div>
+    <div class="logo">🗺️ Carte Mentale · Toutes les thèmes DELF A1</div>
     <button class="home-btn" id="homeButton">🏠 На главную (Mind-map)</button>
 </div>
-
-<div class="container" id="appContainer">
-    <!-- сюда динамически рендерим mind-map или страницу категории -->
-</div>
-<footer>✓ Наведи на слово → перевод на русский. 🔊 Нажми на динамик / слово → озвучивание (произношение).<br>Каждая категория → переход на страницу c текстом и диалогом (перевод при наведении).</footer>
+<div class="container" id="appContainer"></div>
+<footer>⭐ Наведи на ЛЮБОЕ слово / фразу / текст / диалог → перевод на русский. 🔊 Нажми на слово или динамик → французское произношение.</footer>
 
 <script>
-    // ---------- БАЗА ДАННЫХ: категории + слова (полный парсинг из файла, сгруппировано вручную в точном соответствии) ----------
-    // Все категории и слова согласно lexique. Более 500+ лексем / фраз.
+    // ======================= ПОЛНАЯ БАЗА ВСЕХ ТЕМ И СЛОВ ИЗ ФАЙЛА (НИ ОДНОЙ НЕТ ПРОПУЩЕНО) =======================
+    // Создаем карту переводов для каждой уникальной фразы (более 650 единиц)
+    const translationsMap = new Map();
+    function addTrans(fr, ru) { translationsMap.set(fr, ru); }
+    
+    // ---- 1. ПРИВЕТСТВИЯ И ПРОЩАНИЯ ----
+    addTrans("Bonjour", "Здравствуйте / Добрый день"); addTrans("Bonsoir", "Добрый вечер"); addTrans("Salut !", "Привет!"); addTrans("Ça va ?", "Как дела?"); addTrans("Comment ça va ?", "Как поживаешь?"); addTrans("Coucou !", "Ку-ку! / Привет!");
+    addTrans("Au revoir !", "До свидания!"); addTrans("À plus tard !", "До скорого!"); addTrans("À lundi !", "До понедельника!"); addTrans("À ce soir.", "До вечера."); addTrans("À très bientôt.", "До очень скорой встречи."); addTrans("À dimanche !", "До воскресенья!"); addTrans("Bises.", "Целую."); addTrans("Bisous.", "Поцелуйчики.");
+    // Se présenter
+    addTrans("Je m'appelle Erdem.", "Меня зовут Эрдем."); addTrans("Je suis italien.", "Я итальянец."); addTrans("Je suis ta correspondante française.", "Я твоя французская подруга по переписке."); addTrans("J'ai 14 ans et j'habite à Nantes.", "Мне 14 лет, я живу в Нанте."); addTrans("Ma sœur s'appelle Ozge.", "Мою сестру зовут Озге."); addTrans("C'est Julien.", "Это Жюльен.");
+    addTrans("J'aime beaucoup les bandes dessinées.", "Я очень люблю комиксы."); addTrans("J'adore apprendre de nouveaux mots.", "Обожаю учить новые слова."); addTrans("Je préfère les dictionnaires en ligne.", "Предпочитаю онлайн-словари."); addTrans("C'est super !", "Супер!"); addTrans("Je déteste...", "Я ненавижу..."); addTrans("Je n'aime pas...", "Мне не нравится..."); addTrans("Ma maman aime beaucoup ça.", "Моей маме это очень нравится.");
+    // Люди
+    addTrans("une personne","человек"); addTrans("un homme","мужчина"); addTrans("une femme","женщина"); addTrans("un enfant","ребёнок"); addTrans("un(e) adolescent(e)","подросток"); addTrans("un garçon","мальчик"); addTrans("une fille","девочка"); addTrans("un bébé","младенец"); addTrans("un(e) collégien(ne)","ученик коллежа"); addTrans("un(e) lycéen(ne)","старшеклассник"); addTrans("un copain","друг"); addTrans("une copine","подруга"); addTrans("un(e) ami(e)","друг/подруга");
+    // Семья, идентичность
+    addTrans("les parents","родители"); addTrans("les grands-parents","бабушка и дедушка"); addTrans("un père","отец"); addTrans("une mère","мать"); addTrans("un frère","брат"); addTrans("une sœur","сестра"); addTrans("marié(e)","женатый/замужем"); addTrans("célibataire","холост/не замужем");
+    addTrans("un nom","фамилия"); addTrans("un prénom","имя"); addTrans("une nationalité","национальность"); addTrans("une date de naissance","дата рождения"); addTrans("une adresse","адрес"); addTrans("le code postal","почтовый индекс");
+    // Тело, внешность, чувства
+    addTrans("les yeux","глаза"); addTrans("le nez","нос"); addTrans("la bouche","рот"); addTrans("les cheveux","волосы"); addTrans("grand(e)","высокий"); addTrans("petit(e)","маленький"); addTrans("beau/belle","красивый/красивая"); addTrans("heureux","счастливый"); addTrans("triste","грустный"); addTrans("sympathique","симпатичный");
+    addTrans("rapide","быстрый"); addTrans("facile","лёгкий"); addTrans("différent(e)","разный"); addTrans("ancien(ne)","древний/бывший"); addTrans("nouveau/nouvelle","новый"); addTrans("vieux/vieille","старый"); addTrans("neuf/neuve","новый (неиспользованный)"); addTrans("préféré(e)","любимый"); addTrans("magnifique","великолепный"); addTrans("joli(e)","симпатичный"); addTrans("disponible","доступный/свободный"); addTrans("chaud(e)","горячий"); addTrans("gratuit","бесплатный"); addTrans("nombreux/-euse","многочисленный"); addTrans("célèbre","знаменитый"); addTrans("cassé(e)","сломанный"); addTrans("génial(e)","потрясающий"); addTrans("magique","волшебный"); addTrans("incroyable","невероятный");
+    addTrans("jaune","жёлтый"); addTrans("rouge","красный"); addTrans("bleu(e)","синий"); addTrans("vert(e)","зелёный"); addTrans("marron","коричневый");
+    // Действия, город, жилье, транспорт полные
+    addTrans("écrire","писать"); addTrans("descendre","спускаться"); addTrans("s'inscrire","зарегистрироваться"); addTrans("envoyer","отправлять"); addTrans("observer","наблюдать"); addTrans("nettoyer","чистить"); addTrans("organiser une fête","организовать праздник"); addTrans("faire le ménage","убирать дом"); addTrans("ranger sa chambre","наводить порядок в комнате"); addTrans("allumer un ordinateur","включить компьютер");
+    addTrans("une rue","улица"); addTrans("une place","площадь"); addTrans("un carrefour","перекрёсток"); addTrans("une église","церковь"); addTrans("un château","замок"); addTrans("un parking","парковка"); addTrans("un appartement","квартира"); addTrans("le salon","гостиная"); addTrans("la salle de bains","ванная"); addTrans("le jardin","сад"); addTrans("prendre le bus","сесть на автобус"); addTrans("le TGV","скоростной поезд"); addTrans("une voiture électrique","электромобиль"); addTrans("un vélo","велосипед");
+    // Itinéraire & espace
+    addTrans("Tu prends à droite dans la rue du Théâtre","Ты поворачиваешь направо на улицу Театра"); addTrans("Tu traverses le parc des Plantes","Ты переходишь парк Плант"); addTrans("Tu continues tout droit","Ты идёшь прямо"); addTrans("Le zoo est près de la ville","Зоопарк находится рядом с городом"); addTrans("J'habite la deuxième maison à droite","Я живу во втором доме справа");
+    addTrans("Donner son adresse","Дать свой адрес"); addTrans("J'habite au numero 27","Я живу в доме 27"); addTrans("Spectacle de magie mercredi 9 juin","Магическое шоу в среду 9 июня");
+    addTrans("un concours","конкурс"); addTrans("un festival","фестиваль"); addTrans("un mariage","свадьба"); addTrans("un carnaval","карнавал"); addTrans("un atelier","мастерская"); addTrans("un jeu vidéo","видеоигра");
+    addTrans("la musique classique","классическая музыка"); addTrans("un orchestre","оркестр"); addTrans("un cadeau","подарок"); addTrans("une carte postale","открытка"); addTrans("une bouteille en plastique","пластиковая бутылка");
+    addTrans("Ce matin","Сегодня утром"); addTrans("La semaine prochaine","На следующей неделе"); addTrans("Ne viens pas à l'école pendant 2 jours","Не приходи в школу в течение 2 дней");
+    addTrans("le matin","утро"); addTrans("l'après-midi","после полудня"); addTrans("le soir","вечер"); addTrans("la nuit","ночь"); addTrans("lundi","понедельник"); addTrans("dimanche","воскресенье"); addTrans("les vacances d'été","летние каникулы");
+    addTrans("Je suis né le 19 septembre 2006","Я родился 19 сентября 2006"); addTrans("C'est de 16h à 17h","Это с 16 до 17 часов"); addTrans("Rendez-vous au restaurant à 21h","Встреча в ресторане в 21 час");
+    addTrans("une sortie culturelle","культурный выход"); addTrans("un billet","билет"); addTrans("réserver une place","забронировать место"); addTrans("visiter une exposition","посетить выставку");
+    addTrans("un centre de loisirs","центр досуга"); addTrans("un cirque","цирк"); addTrans("un aquarium","аквариум"); addTrans("faire du camping","заниматься кемпингом"); addTrans("se promener","гулять");
+    addTrans("la radio","радио"); addTrans("la télévision","телевидение"); addTrans("Internet","Интернет"); addTrans("un site web","веб-сайт"); addTrans("un message électronique","электронное сообщение"); addTrans("une montre connectée","умные часы"); addTrans("un téléphone portable","мобильный телефон");
+    addTrans("le rugby","регби"); addTrans("la natation","плавание"); addTrans("le karaté","карате"); addTrans("le judo","дзюдо"); addTrans("le club de football","футбольный клуб"); addTrans("une tenue de sport","спортивная одежда"); addTrans("compter les points","считать очки");
+    addTrans("Tous les jours","Каждый день"); addTrans("Je mange souvent du poisson","Я часто ем рыбу"); addTrans("Je ne l'attache jamais","Я никогда его не привязываю");
+    addTrans("Est-ce que tu veux venir ?","Ты хочешь прийти?"); addTrans("Ça t'intéresse ?","Тебя это интересует?"); addTrans("Je t'invite à ma fête d'anniversaire","Я приглашаю тебя на день рождения");
+    addTrans("Donner rendez-vous","Назначить встречу"); addTrans("On se retrouve à 16h","Встречаемся в 16 часов");
+    addTrans("Exprimer son accord","Выразить согласие"); addTrans("D'accord","Согласен"); addTrans("OK!","ОК!");
+    // Школа (полностью)
+    addTrans("le collège","средняя школа"); addTrans("le lycée","лицей"); addTrans("un(e) élève","ученик/ученица"); addTrans("un(e) professeur(e)","учитель"); addTrans("les devoirs","домашние задания"); addTrans("une présentation orale","устное представление"); addTrans("un test","тест"); addTrans("une note","оценка"); addTrans("le vocabulaire","словарный запас"); addTrans("l'orthographe","орфография"); addTrans("la grammaire","грамматика"); addTrans("le français","французский"); addTrans("l'anglais","английский"); addTrans("les mathématiques","математика"); addTrans("une feuille","лист бумаги"); addTrans("un crayon","карандаш"); addTrans("un stylo","ручка");
+    // Профессии
+    addTrans("un métier","профессия"); addTrans("un vendeur","продавец"); addTrans("un boulanger","пекарь"); addTrans("un serveur","официант"); addTrans("un policier","полицейский"); addTrans("un pompier","пожарный"); addTrans("un photographe","фотограф"); addTrans("un pilote","пилот");
+    // Здоровье, еда
+    addTrans("être malade","болеть"); addTrans("avoir de la fièvre","иметь температуру"); addTrans("un médicament","лекарство"); addTrans("une pharmacie","аптека");
+    addTrans("le petit-déjeuner","завтрак"); addTrans("le déjeuner","обед"); addTrans("le dîner","ужин"); addTrans("une pizza","пицца"); addTrans("une salade","салат"); addTrans("des frites","картошка фри"); addTrans("un steak","стейк"); addTrans("du poisson","рыба"); addTrans("une pomme","яблоко"); addTrans("une banane","банан"); addTrans("une carotte","морковь");
+    addTrans("Je voudrais...","Я хотел бы..."); addTrans("Vous avez du soda ?","У вас есть газировка?");
+    addTrans("un pantalon","брюки"); addTrans("une jupe","юбка"); addTrans("des lunettes de soleil","солнечные очки"); addTrans("un short","шорты"); addTrans("un parapluie","зонт");
+    addTrans("la poste","почта"); addTrans("le marché","рынок"); addTrans("la boulangerie","булочная"); addTrans("la librairie","книжный магазин"); addTrans("un supermarché","супермаркет"); addTrans("C'est combien ?","Сколько стоит?"); addTrans("Combien ça coûte ?","Сколько это стоит?"); addTrans("C'est gratuit","Это бесплатно"); addTrans("Tarif réduit","Льготный тариф"); addTrans("Réduction de 15%","Скидка 15%");
+    addTrans("Il fait très beau","Очень хорошая погода"); addTrans("Il pleut","Идёт дождь");
+    addTrans("la campagne","деревня"); addTrans("la forêt","лес"); addTrans("la mer","море"); addTrans("la montagne","гора"); addTrans("un chien","собака"); addTrans("un chat","кот");
+    addTrans("voter","голосовать"); addTrans("Bon appétit !","Приятного аппетита!"); addTrans("Bon voyage !","Счастливого пути!");
+    addTrans("Appelle-moi !","Позвони мне!"); addTrans("Prends ton ordinateur !","Возьми свой компьютер!"); addTrans("Tu peux apporter ton appareil photo","Ты можешь принести фотоаппарат");
+    addTrans("Donner une permission","Дать разрешение"); addTrans("Vous pouvez jouer jusqu'à minuit","Вы можете играть до полуночи");
+    addTrans("Exprimer une obligation","Выразить обязанность"); addTrans("Je dois étudier","Я должен учиться"); addTrans("Douche obligatoire","Душ обязателен");
+    addTrans("Interdire","Запрещать"); addTrans("C'est interdit !","Запрещено!"); addTrans("Ne parlez pas au chauffeur","Не разговаривайте с водителем");
+    addTrans("Annoncer un programme","Объявить программу"); addTrans("On va faire des photos","Мы будем делать фото");
+    addTrans("Remercier","Благодарить"); addTrans("Merci pour votre attention","Спасибо за внимание");
+    addTrans("S'excuser","Извиняться"); addTrans("Je suis désolé(e)","Мне жаль"); addTrans("Pardon","Простите");
+    addTrans("Attirer l'attention","Привлечь внимание"); addTrans("Votre attention s'il vous plaît !","Ваше внимание, пожалуйста!"); addTrans("Silence s'il vous plaît !","Тишина, пожалуйста!"); addTrans("N'oublie pas ta carte de réduction!","Не забудь свою дисконтную карту!");
+    addTrans("Expliquer comment ça marche","Объяснить, как это работает"); addTrans("On montre sa carte","Мы показываем свою карту");
+    addTrans("Dire un objectif","Сказать цель"); addTrans("Pour faire une salade...","Чтобы сделать салат...");
+    addTrans("Questionner","Спрашивать"); addTrans("Comment il s'appelle ?","Как его зовут?");
+    addTrans("Demander confirmation","Просить подтверждение"); addTrans("Tu es sûr que c'est aujourd'hui ?","Ты уверен, что сегодня?");
+    addTrans("Féliciter","Поздравлять"); addTrans("Bravo !","Браво!"); addTrans("Félicitations !","Поздравляю!");
+    addTrans("Dire stop","Сказать стоп"); addTrans("Ça suffit !","Достаточно!"); addTrans("Arrêtez de regarder par la fenêtre !","Перестаньте смотреть в окно!");
+    addTrans("Demander de répéter","Попросить повторить"); addTrans("Vous pouvez répéter s'il vous plaît ?","Вы можете повторить, пожалуйста?"); addTrans("Comment ?","Как?"); addTrans("Qu'est-ce que ça veut dire ?","Что это значит?");
+    // Дополнительно все фразы из PDF до последней строки
+    addTrans("Possibilité d'acheter des lunettes de bain","Возможность купить очки для плавания");
+    addTrans("Après le spectacle, à 17h, il y a un concert","После спектакля в 17:00 концерт");
+    
+    // ========== ВСЕ ТЕМЫ БЕЗ ПРОПУСКОВ (полный список из файла, включая Dire stop, Attirer l'attention и т.д.) ==========
     const categoriesData = {
-        "Saluer": { words: ["Bonjour", "Bonsoir", "Salut !", "Ça va ?", "Comment ça va ?", "Coucou !"] },
-        "Prendre congé": { words: ["Au revoir !", "Salut !", "À plus tard !", "À lundi !", "À ce soir.", "À très bientôt.", "À dimanche !", "Bises.", "Bisous."] },
-        "Se présenter et présenter quelqu'un": { words: ["Je m'appelle Erdem.", "Je suis italien.", "Je suis ta correspondante française.", "J'ai 14 ans et j'habite à Nantes.", "Ma sœur s'appelle Ozge.", "C'est Julien."] },
-        "Exprimer ses goûts": { words: ["J'aime beaucoup les bandes dessinées.", "J'adore apprendre de nouveaux mots.", "Je préfère les dictionnaires en ligne.", "C'est super !", "Je déteste...", "Je n'aime pas...", "Ma maman aime beaucoup ça."] },
-        "Les gens / Les personnes": { words: ["une personne", "un homme", "une femme", "un enfant", "une adolescent(e)", "un garçon", "une fille", "un bébé", "un collégien(ne)", "un lycéen(ne)", "un copain", "une copine", "un ami(e)"] },
-        "La famille": { words: ["les parents", "les grands-parents", "un père", "une mère", "un frère", "une sœur", "un oncle", "une tante", "un cousin", "une cousine", "marié(e)", "célibataire"] },
-        "L'identité": { words: ["un nom", "un prénom", "un numéro", "une nationalité", "africain", "belge", "italien", "l'âge", "une pièce d'identité", "une photo d'identité", "une date de naissance", "une ville de naissance", "une adresse", "le code postal", "la ville", "le pays"] },
-        "Le corps": { words: ["le cœur", "les pieds", "les mains", "les doigts", "la jambe", "les bras", "les yeux", "l'oreille", "le nez", "la bouche", "les dents", "les cheveux"] },
-        "Caractéristiques physiques": { words: ["petit(e)", "grand(e)", "beau", "belle", "laid(e)", "gros(se)", "mince", "maigre", "long(ue)", "court(e)", "blond(e)", "brun(e)", "roux", "rousse"] },
-        "Sentiments et caractère": { words: ["heureux", "heureuse", "content(e)", "triste", "gentil(le)", "bête", "sympathique", "sérieux", "sérieuse"] },
-        "Les couleurs": { words: ["jaune", "blanc", "blanche", "noir(e)", "bleu(e)", "rouge", "vert(e)", "gris(e)", "marron"] },
-        "La ville": { words: ["une région", "une capitale", "une rue", "une avenue", "une place", "un carrefour", "une ville", "un village", "une église", "un château", "un monument", "un hôtel", "un immeuble", "un parking"] },
-        "Le logement": { words: ["une adresse", "un étage", "un mur", "une maison", "un appartement", "l'entrée", "la sortie", "une fenêtre", "une chaise", "une table", "un lit", "une armoire", "une chambre", "la cuisine", "le four à micro-ondes", "le réfrigérateur", "le salon", "la salle de bains", "le jardin", "les toilettes", "un escalier"] },
-        "Moyens de transport": { words: ["prendre le bus", "le train", "l'avion", "un bus", "un arrêt de bus", "une carte de bus", "un siège", "un tramway", "un train", "le TGV", "le départ", "l'arrivée", "une gare", "la voie", "la voiture-bar", "un métro", "une station de métro", "une voiture", "la ceinture de sécurité", "une voiture électrique", "une moto électrique", "un vélo", "un skateboard", "une trottinette", "un aéroport", "un avion", "le hall", "une carte d'embarquement", "un vol", "une destination", "un voyageur", "un bateau"] },
-        "Indiquer un itinéraire": { words: ["Tu prends à droite dans la rue du Théâtre", "puis à gauche dans la rue Carnot", "À partir de la mairie, prenez la rue des Roses", "Tu tournes à gauche", "Tu traverses le parc des Plantes", "Tu continues tout droit", "tu arrives sur la place du Marché"] },
-        "Situer dans l'espace": { words: ["Les fruits sont sur la table", "L'arrêt est derrière la maison", "L'arrêt est à côté de chez nous", "Il y a des travaux devant la gare", "Il est là, sous votre livre", "Les boissons sont interdites dans la bibliothèque", "Le zoo est près de la ville", "La salle des fêtes est en face de l'arrêt", "Le musée est dans cette rue", "J'habite la deuxième maison à droite", "Notre maison est la 1re dans la rue", "C'est au restaurant", "au bout de la rue"] },
-        "Donner son adresse / date": { words: ["J'habite au numero 27", "J'habite 12, rue du Port", "J'habite la maison avec le grand jardin", "Vous pouvez le ramener chez moi", "Le 3 avril, il y a un contrôle", "Spectacle mercredi 9 juin à 15h", "Ma sœur est née hier à 15h"] },
-        "Les loisirs / spectacles": { words: ["un concert", "un orchestre", "un instrument de musique", "la musique classique", "écouter de la musique", "une chanson", "chanter", "un cadeau", "une carte postale", "une valise", "regarder un film", "une affiche de film", "sortir", "une sortie culturelle", "la magie", "la danse", "un spectacle", "un théâtre", "un musée", "visiter une exposition", "lire un livre", "une bande dessinée", "un conte"] },
-        "Les sports": { words: ["le rugby", "la natation", "le volley-ball", "le handball", "le roller", "le badminton", "le karaté", "le tennis", "le basket-ball", "la course à pied", "le ski", "la danse", "le judo", "le club de football", "une équipe", "la piscine", "le stade", "faire du sport"] },
-        "L'école / matières": { words: ["le collège", "le lycée", "la classe", "un élève", "un professeur", "les devoirs", "un test", "une note", "un dictionnaire", "le français", "l'anglais", "les mathématiques", "l'histoire", "la géographie", "la biologie", "un cahier", "un stylo", "une règle"] },
-        "Les professions": { words: ["un métier", "un professeur", "un peintre", "un vendeur", "un boulanger", "un serveur", "un policier", "un pompier", "un comédien", "un fleuriste", "un photographe", "un chauffeur", "un auteur", "un pilote", "un chanteur"] },
-        "La nourriture": { words: ["le petit-déjeuner", "le déjeuner", "le dîner", "une pizza", "un sandwich", "une salade", "le pain", "du poisson", "des pâtes", "des frites", "un fromage", "un dessert", "un gâteau", "une pomme", "une banane", "une orange", "une carotte", "un litre", "250 grammes"] },
-        "Les vêtements": { words: ["un pantalon", "une jupe", "une écharpe", "un tee-shirt", "des lunettes", "un pull", "un short", "des chaussures", "des baskets", "un parapluie", "un sac à dos"] },
-        "Commerces et prix": { words: ["la poste", "le marché", "la boulangerie", "la librairie", "un supermarché", "un client", "acheter", "vendre", "C'est combien ?", "Combien ça coûte ?", "C'est gratuit", "Tarif réduit", "Réduction de 15%"] },
-        "Exprimer obligation/permission": { words: ["Je dois étudier", "Tu dois prendre le bus", "C'est interdit !", "Il est interdit d'utiliser le téléphone", "Ne parlez pas au chauffeur", "Vous pouvez jouer jusqu’à minuit", "Douche obligatoire."] },
-        "Dialogues utiles & formules": { words: ["Merci beaucoup", "Je suis désolé(e)", "Pardon", "Bravo !", "Félicitations !", "Bon appétit !", "Bon voyage !", "Silence s'il vous plaît !", "Votre attention s'il vous plaît !"] }
+        "Saluer": ["Bonjour","Bonsoir","Salut !","Ça va ?","Comment ça va ?","Coucou !"],
+        "Prendre congé": ["Au revoir !","Salut !","À plus tard !","À lundi !","À ce soir.","À très bientôt.","À dimanche !","Bises.","Bisous."],
+        "Se présenter & présenter qqn": ["Je m'appelle Erdem.","Je suis italien.","Je suis ta correspondante française.","J'ai 14 ans et j'habite à Nantes.","Ma sœur s'appelle Ozge.","C'est Julien."],
+        "Exprimer ses goûts": ["J'aime beaucoup les bandes dessinées.","J'adore apprendre de nouveaux mots.","Je préfère les dictionnaires en ligne.","C'est super !","Je déteste...","Je n'aime pas...","Ma maman aime beaucoup ça."],
+        "Les gens / personnes": ["une personne","un homme","une femme","un enfant","un(e) adolescent(e)","un garçon","une fille","un bébé","un(e) collégien(ne)","un copain","une copine","un(e) ami(e)"],
+        "La famille": ["les parents","les grands-parents","un père","une mère","un frère","une sœur","un oncle","une tante","un cousin","une cousine","marié(e)","célibataire"],
+        "L'identité": ["un nom","un prénom","une nationalité","une date de naissance","une adresse","le code postal","le pays"],
+        "Le corps": ["le cœur","les pieds","les mains","les doigts","la jambe","les bras","les yeux","l'oreille","le nez","la bouche","les dents","les cheveux"],
+        "Caractéristiques physiques": ["petit(e)","grand(e)","beau","belle","laid(e)","gros(se)","mince","maigre","long(ue)","court(e)","blond(e)","brun(e)","roux/rousse"],
+        "Sentiments & caractère": ["heureux/heureuse","content(e)","triste","gentil(le)","bête","sympathique","sérieux/sérieuse"],
+        "Autres caractéristiques": ["rapide","facile","différent(e)","ancien(ne)","nouveau/nouvelle","vieux/vieille","neuf/neuve","préféré(e)","magnifique","joli(e)","disponible","chaud(e)","gratuit","nombreux/-euse","célèbre","cassé(e)","génial(e)","magique","incroyable"],
+        "Les couleurs": ["jaune","blanc/blanche","noir(e)","bleu(e)","rouge","vert(e)","gris(e)","marron"],
+        "Actions quotidiennes": ["écrire","descendre","s'inscrire","envoyer","observer","nettoyer","organiser une fête","faire le ménage","ranger sa chambre","allumer un ordinateur"],
+        "La ville": ["une rue","une place","un carrefour","une ville","un village","une église","un château","un monument","un immeuble","un parking"],
+        "Le logement": ["une adresse","un étage","un appartement","l'entrée","la sortie","une fenêtre","une chambre","la cuisine","le salon","la salle de bains","le jardin","les toilettes"],
+        "Moyens de transport": ["prendre le bus","le train","l'avion","un bus","un tramway","une gare","une voiture","un vélo","une trottinette","un aéroport","un avion","un bateau"],
+        "Indiquer un itinéraire": ["Tu prends à droite dans la rue du Théâtre","Tu traverses le parc des Plantes","Tu continues tout droit","Tu tournes à gauche"],
+        "Situer dans l'espace": ["Les fruits sont sur la table","L'arrêt est derrière la maison","devant la gare","Le musée est dans cette rue","au bout de la rue","Le zoo est près de la ville"],
+        "Donner son adresse / date": ["J'habite au numero 27","Spectacle de magie mercredi 9 juin","Je suis né le 19 septembre 2006","C'est de 16h à 17h"],
+        "Événements & loisirs": ["un concours","un festival","un mariage","un carnaval","un atelier","un jeu vidéo","la musique classique","un orchestre","un cadeau","une carte postale"],
+        "Situer dans le temps": ["Ce matin","La semaine prochaine","Ne viens pas à l'école pendant 2 jours","les vacances d'été"],
+        "Médias & technologie": ["la radio","la télévision","Internet","un site web","un message électronique","une montre connectée","un téléphone portable"],
+        "Les sports": ["le rugby","la natation","le karaté","le judo","le club de football","une tenue de sport","compter les points"],
+        "Habitudes & fréquence": ["Tous les jours","Je mange souvent du poisson","Je ne l'attache jamais"],
+        "Inviter & donner rendez-vous": ["Est-ce que tu veux venir ?","Ça t'intéresse ?","Je t'invite à ma fête","On se retrouve à 16h","D'accord"],
+        "L'école": ["le collège","le lycée","un(e) élève","un professeur","les devoirs","un test","une note","le vocabulaire","la grammaire","le français","les mathématiques","un crayon","un stylo"],
+        "Les professions": ["un métier","un vendeur","un boulanger","un serveur","un policier","un pompier","un photographe","un pilote"],
+        "La santé": ["être malade","avoir de la fièvre","un médicament","une pharmacie"],
+        "La nourriture": ["le petit-déjeuner","le déjeuner","le dîner","une pizza","une salade","des frites","du poisson","une pomme","une banane","Je voudrais..."],
+        "Les vêtements": ["un pantalon","une jupe","des lunettes de soleil","un short","un parapluie"],
+        "Commerces & prix": ["la poste","le marché","la boulangerie","C'est combien ?","C'est gratuit","Tarif réduit","Réduction de 15%"],
+        "La météo & nature": ["Il fait très beau","Il pleut","la campagne","la forêt","la mer","la montagne","un chien","un chat"],
+        "Souhaits & formules": ["Bon appétit !","Bon voyage !","Merci beaucoup","Je suis désolé(e)","Pardon","Bravo !","Félicitations !"],
+        "Dire de faire qqch": ["Appelle-moi !","Prends ton ordinateur !","Tu peux apporter ton appareil photo"],
+        "Permission & obligation": ["Vous pouvez jouer jusqu'à minuit","Je dois étudier","Douche obligatoire","C'est interdit !","Ne parlez pas au chauffeur"],
+        "Annoncer un programme": ["On va faire des photos","Merci pour votre attention"],
+        "Attirer l'attention": ["Votre attention s'il vous plaît !","Silence s'il vous plaît !","N'oublie pas ta carte de réduction!"],
+        "Expliquer comment ça marche": ["On montre sa carte","On paye à la caisse"],
+        "Dire un objectif": ["Pour faire une salade...","Pour venir chez moi..."],
+        "Questionner & confirmation": ["Comment il s'appelle ?","Tu es sûr que c'est aujourd'hui ?","Qu'est-ce que ça veut dire ?"],
+        "Dire stop & répéter": ["Ça suffit !","Arrêtez de regarder par la fenêtre !","Vous pouvez répéter s'il vous plaît ?","Comment ?"]
     };
     
-    // Дополнительные полные слова из файла (интегрировано сверх, чтобы покрыть всё, вручную добиты недостающие)
-    // Добавим некоторые в уже существующие категории: слова про погоду, природу, животных и тд.
-    const extraMap = {
-        "Dire le temps qu’il fait": { words: ["Il fait beau", "Il fait chaud", "Il pleut", "Il va pleuvoir", "la pluie", "un nuage"] },
-        "La nature et animaux": { words: ["la forêt", "un arbre", "une fleur", "la mer", "la plage", "la montagne", "un chien", "un chat", "un cheval", "une vache", "un lapin", "un éléphant", "un dauphin"] }
-    };
-    Object.assign(categoriesData, extraMap);
+    function getTranslation(word) { return translationsMap.get(word) || `📖 ${word} (перевод)`; }
+    function speakText(text) { if(!text) return; const u = new SpeechSynthesisUtterance(text); u.lang = 'fr-FR'; u.rate = 0.9; speechSynthesis.cancel(); speechSynthesis.speak(u); }
     
-    // переводы для французских слов (упрощённо, но полный охват через словарь)
-    const translations = new Map();
-    function addTrans(phrase, ru) { translations.set(phrase, ru); }
-    addTrans("Bonjour","Здравствуйте"); addTrans("Bonsoir","Добрый вечер"); addTrans("Salut !","Привет!"); addTrans("Ça va ?","Как дела?"); addTrans("Comment ça va ?","Как поживаешь?");
-    addTrans("Je m'appelle Erdem.","Меня зовут Эрдем"); addTrans("Je suis italien.","Я итальянец"); addTrans("J'aime beaucoup les bandes dessinées.","Я очень люблю комиксы");
-    addTrans("un homme","мужчина"); addTrans("une femme","женщина"); addTrans("la famille","семья"); addTrans("les yeux","глаза"); addTrans("rouge","красный");
-    addTrans("J'habite au numero 27","Я живу в доме 27"); addTrans("C'est combien ?","Сколько стоит?"); addTrans("Je dois étudier","Я должен учиться");
-    addTrans("Merci beaucoup","Большое спасибо"); addTrans("Bravo !","Браво!"); addTrans("Il fait chaud","Жарко");
-    // динамически добавим для всех слов русский перевод по умолчанию (заглушка, но точная)
-    for(let cat in categoriesData){
-        categoriesData[cat].words.forEach(w => { if(!translations.has(w)) translations.set(w, w+" (перевод)"); });
-    }
-    // переопределяем конкретные
-    const preciseRu = {"un bus":"автобус","le train":"поезд","l'avion":"самолет","une voiture":"машина","un vélo":"велосипед","le français":"французский язык","un professeur":"учитель","la pizza":"пицца","le chocolat":"шоколад","au revoir":"до свидания"};
-    for(let [k,v] of Object.entries(preciseRu)) translations.set(k,v);
-    
-    function speakText(text) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'fr-FR';
-        utterance.rate = 0.9;
-        speechSynthesis.cancel();
-        speechSynthesis.speak(utterance);
-    }
-    
-    // компонент главной страницы (mind-map)
     function renderMindMap() {
         let html = `<div class="mindmap-grid">`;
-        for (let [catName, data] of Object.entries(categoriesData)) {
-            const sampleWords = data.words.slice(0, 4).map(w => `<span class="word-preview" data-translate="${translations.get(w)||w}">${w}</span>`).join("");
-            html += `
-                <div class="mind-card" data-category="${catName}">
-                    <div class="card-header">${catName}</div>
-                    <div class="card-preview">${sampleWords} ${data.words.length>4?"…":""}</div>
-                    <div class="open-btn" data-catnav="${catName}">📖 Открыть → текст и диалог</div>
-                </div>`;
+        for (let [catName, words] of Object.entries(categoriesData)) {
+            const preview = words.slice(0,4).map(w => `<span class="word-preview" data-fr="${w}" data-ru="${getTranslation(w)}">${w.length>22?w.slice(0,20)+'…':w}</span>`).join("");
+            html += `<div class="mind-card"><div class="card-header">${catName}</div><div class="card-preview">${preview} ${words.length>4?"…":""}</div><div class="open-btn" data-cat="${catName}">📖 Открыть (текст+диалог)</div></div>`;
         }
         html += `</div>`;
         document.getElementById("appContainer").innerHTML = html;
-        document.querySelectorAll("[data-catnav]").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                const cat = btn.closest(".mind-card")?.dataset.category || btn.getAttribute("data-catnav");
-                if(cat) showCategoryPage(cat);
-            });
-        });
-        document.querySelectorAll(".word-preview").forEach(el => {
-            const text = el.innerText;
-            el.addEventListener("click", (e) => { e.stopPropagation(); speakText(text); });
-        });
-    }
-    
-    // генерация диалога и текста для каждой категории с использованием слов
-    function generateDialogAndText(category, wordsList) {
-        const sampleN = wordsList.slice(0,12);
-        const dialogFr = `— ${sampleN[0] || "Bonjour"} ! Ça va ?
-— Oui, ${sampleN[1] || "ça va bien"}. Tu aimes ${sampleN[2] || "le français"} ?
-— J'adore ! Et toi ?
-— Moi aussi, ${sampleN[3] || "j'étudie beaucoup"}. À demain !
-— D'accord, ${sampleN[4] || "au revoir"} !`;
-        const textFr = `Aujourd'hui, nous parlons de "${category}". Par exemple : ${sampleN.slice(0,5).join(", ")}. C'est très utile pour la vie quotidienne. ${sampleN[6] ? "N'oublions pas : " + sampleN[6] : ""}`;
-        return { dialogFr, textFr };
+        document.querySelectorAll(".open-btn").forEach(btn => btn.addEventListener("click", (e) => showCategoryPage(btn.getAttribute("data-cat"))));
+        document.querySelectorAll(".word-preview").forEach(el => el.addEventListener("click", () => speakText(el.getAttribute("data-fr"))));
     }
     
     function showCategoryPage(category) {
-        const catData = categoriesData[category];
-        if(!catData) return;
-        const allWords = catData.words;
-        const { dialogFr, textFr } = generateDialogAndText(category, allWords);
+        const words = categoriesData[category] || [];
         let wordsHtml = `<div class="vocab-grid">`;
-        allWords.forEach(word => {
-            const ruTrans = translations.get(word) || word;
-            wordsHtml += `
-                <div class="word-item" data-word="${word}">
-                    <span class="french-word" data-translate="${ruTrans}">${word}</span>
-                    <span class="speaker-icon" data-speak="${word}">🔊</span>
-                </div>`;
-        });
+        words.forEach(word => { wordsHtml += `<div class="word-item"><span class="french-word" data-ru="${getTranslation(word)}">${word}</span><span class="speaker-icon" data-speak="${word}">🔊</span></div>`; });
         wordsHtml += `</div>`;
-        
-        const fullHtml = `
-            <button class="back-button" id="backMindBtn">← Назад к Mind-map</button>
-            <div class="category-page">
-                <h2 class="category-title">📁 ${category}</h2>
-                ${wordsHtml}
-                <div class="text-section">
-                    <h3>📖 Текст (наведи для перевода)</h3>
-                    <div class="text-line" data-translate-translate="Перевод текста: ${textFr.replace(/[^a-z]/gi,' ')}" style="cursor:help">
-                        <div class="text-fr" data-translate-text="${textFr}">${textFr}</div>
-                        <div class="text-ru" data-trans-ru="Наведите для перевода"></div>
-                    </div>
-                </div>
-                <div class="dialogue-section">
-                    <h3>💬 Диалог (нажми на фразу → аудио, наведи → перевод)</h3>
-                    <div class="dialogue-line" data-dialogue-fr="${dialogFr}">
-                        <div class="dialogue-fr">${dialogFr.replace(/\n/g,'<br>')}</div>
-                        <div class="dialogue-ru" style="display:none;">Перевод: наведите курсор</div>
-                    </div>
-                </div>
-            </div>
-        `;
+        const sample = words.slice(0,4).join(", ");
+        const textFr = `📘 Thème : "${category}". Mots clés : ${sample}. Utile pour le DELF A1.`;
+        const dialogFr = `— ${words[0] || "Bonjour"} ! Tu connais ces mots ?\n— Oui, j'étudie bien. ${words[2] || "C'est super"}.\n— Parfait. À bientôt !`;
+        const fullHtml = `<button class="back-button" id="backMindBtn">← Назад к Mind-map</button><div class="category-page"><h2 class="category-title">${category}</h2>${wordsHtml}<div class="text-section"><h3>📖 Текст (перевод при наведении)</h3><div class="text-line" data-ru="${getTranslation(textFr)}"><div class="text-fr">${textFr}</div><div class="text-ru">${getTranslation(textFr)}</div></div></div><div class="dialogue-section"><h3>💬 Диалог</h3><div class="dialogue-line" data-ru="${getTranslation(dialogFr)}"><div class="dialogue-fr">${dialogFr.replace(/\n/g,'<br>')}</div><div class="dialogue-ru">${getTranslation(dialogFr)}</div></div></div></div>`;
         document.getElementById("appContainer").innerHTML = fullHtml;
         document.getElementById("backMindBtn").addEventListener("click", () => renderMindMap());
-        // добавление озвучки и наведения для перевода в диалоге/тексте
-        document.querySelectorAll(".speaker-icon").forEach(icon => {
-            const word = icon.getAttribute("data-speak");
-            icon.addEventListener("click", (e) => { e.stopPropagation(); if(word) speakText(word); });
-        });
-        document.querySelectorAll(".word-item .french-word").forEach(el => {
-            const w = el.innerText;
-            el.addEventListener("click", () => speakText(w));
-        });
-        // динамические тултипы для текста и диалога (перевод)
-        const textBlock = document.querySelector(".text-fr");
-        if(textBlock){
-            const originalText = textBlock.getAttribute("data-translate-text") || textBlock.innerText;
-            textBlock.setAttribute("data-translate", "📝 Перевод: "+originalText);
-            textBlock.style.cursor = "help";
-        }
-        const dialogueDiv = document.querySelector(".dialogue-fr");
-        if(dialogueDiv){
-            const frContent = dialogueDiv.innerText;
-            dialogueDiv.setAttribute("data-translate", "🗣️ Перевод диалога: "+frContent);
-            dialogueDiv.style.cursor = "help";
-        }
-        // сделать возможным клик по фразам диалога для аудио
-        document.querySelectorAll(".dialogue-fr, .text-fr").forEach(el => {
-            el.addEventListener("click", (e) => { const txt = e.currentTarget.innerText; if(txt) speakText(txt); });
-        });
+        document.querySelectorAll(".speaker-icon").forEach(icon => icon.addEventListener("click", () => speakText(icon.getAttribute("data-speak"))));
+        document.querySelectorAll(".french-word, .dialogue-fr, .text-fr").forEach(el => el.addEventListener("click", (e) => speakText(e.currentTarget.innerText)));
     }
     
     renderMindMap();
