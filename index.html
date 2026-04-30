@@ -1,408 +1,676 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Французский Mind-map: ВСЕ ТЕМЫ + перевод | DELF A1 Полный лексикон</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-            background: #f0f7ff;
-            color: #1e2a3e;
-            line-height: 1.5;
-        }
-        .app-header {
-            background: linear-gradient(135deg, #1e3c72, #2b4c7c);
-            color: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            font-weight: bold;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .home-btn {
-            background: #ffb347;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: bold;
-            color: #1e2a3e;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.9rem;
-        }
-        .home-btn:hover {
-            background: #ff9f1c;
-            transform: scale(1.02);
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .mindmap-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 24px;
-            margin: 30px 0;
-        }
-        .mind-card {
-            background: white;
-            border-radius: 32px;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-            width: 280px;
-            transition: all 0.2s;
-            cursor: pointer;
-            border: 2px solid transparent;
-            overflow: hidden;
-        }
-        .mind-card:hover {
-            transform: translateY(-8px);
-            border-color: #ffb347;
-            box-shadow: 0 20px 28px rgba(0,0,0,0.12);
-        }
-        .card-header {
-            background: #2b4c7c;
-            color: white;
-            padding: 16px 12px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-align: center;
-        }
-        .card-preview {
-            padding: 16px;
-            background: #fef9e6;
-            font-size: 0.8rem;
-            max-height: 200px;
-            overflow-y: auto;
-            border-bottom: 1px solid #eee;
-        }
-        .word-preview {
-            display: inline-block;
-            background: #edf2f7;
-            margin: 4px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .word-preview:hover {
-            background: #ffd966;
-        }
-        .open-btn {
-            display: block;
-            background: #ffb347;
-            text-align: center;
-            padding: 10px;
-            font-weight: bold;
-            color: #1e2a3e;
-            text-decoration: none;
-            transition: 0.2s;
-        }
-        .open-btn:hover {
-            background: #ff9c2e;
-        }
-        .category-page {
-            background: white;
-            border-radius: 36px;
-            padding: 24px 28px;
-            margin: 20px 0;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-        .back-button {
-            background: #1e3c72;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 20px;
-            font-size: 1rem;
-        }
-        .category-title {
-            font-size: 1.8rem;
-            border-left: 8px solid #ffb347;
-            padding-left: 20px;
-            margin: 20px 0 25px 0;
-        }
-        .vocab-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 12px;
-            margin-bottom: 40px;
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 28px;
-        }
-        .word-item {
-            background: white;
-            border-radius: 60px;
-            padding: 8px 16px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: 0.1s;
-            border: 1px solid #e2e8f0;
-        }
-        .word-item:hover {
-            background: #fff6e5;
-        }
-        .french-word {
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            position: relative;
-        }
-        .speaker-icon {
-            background: #e9ecef;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.1s;
-            font-size: 1.2rem;
-        }
-        .speaker-icon:hover {
-            background: #ffb347;
-            color: white;
-        }
-        [data-ru] {
-            position: relative;
-            cursor: help;
-        }
-        [data-ru]:hover::after {
-            content: attr(data-ru);
-            position: absolute;
-            background: #1e293b;
-            color: #ffefcf;
-            font-size: 0.85rem;
-            padding: 6px 14px;
-            border-radius: 24px;
-            white-space: normal;
-            max-width: 300px;
-            min-width: 160px;
-            top: -40px;
-            left: 0;
-            z-index: 200;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            pointer-events: none;
-            font-weight: normal;
-            line-height: 1.4;
-        }
-        .dialogue-line, .text-line {
-            background: #ffffffcc;
-            padding: 14px 18px;
-            margin: 12px 0;
-            border-radius: 24px;
-            cursor: pointer;
-            transition: 0.1s;
-            border-left: 6px solid #ffb347;
-        }
-        .dialogue-fr, .text-fr {
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-        .dialogue-ru, .text-ru {
-            font-size: 0.9rem;
-            color: #2c3e4e;
-            margin-top: 6px;
-            font-style: italic;
-            background: #fef5e7;
-            padding: 6px 12px;
-            border-radius: 20px;
-        }
-        footer {
-            text-align: center;
-            margin: 30px;
-            font-size: 0.8rem;
-            color: #5a6e7c;
-        }
-        @media (max-width: 700px) {
-            .vocab-grid { grid-template-columns: 1fr; }
-            .mind-card { width: 100%; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word → Moodle XML</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: #d8d6cc;
+    --text: #1a1917;
+    --muted: #6b6a64;
+    --accent: #2a5caa;
+    --accent-light: #e8eef8;
+    --accent-dark: #1a3d7a;
+    --success: #1e7a4a;
+    --success-bg: #e6f4ed;
+    --danger: #c0392b;
+    --warning: #d68910;
+    --warning-bg: #fef9e7;
+    --radius: 10px;
+    --mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px; letter-spacing: -0.5px;
+  }
+  header h1 { font-size: 17px; font-weight: 600; }
+  header p { font-size: 13px; color: var(--muted); }
+  .badge {
+    margin-left: auto;
+    font-size: 11px; font-weight: 600;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto 1fr;
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  /* Upload zone */
+  .upload-zone {
+    grid-column: 1 / -1;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-icon {
+    width: 48px; height: 48px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 22px;
+  }
+  .upload-zone h2 { font-size: 16px; font-weight: 600; margin-bottom: 0.4rem; }
+  .upload-zone p { font-size: 13px; color: var(--muted); }
+
+  /* Settings */
+  .settings-card { grid-column: 1 / -1; }
+  .settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .field label {
+    display: block;
+    font-size: 12px; font-weight: 500; color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .field input, .field select {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: var(--sans);
+    background: var(--surface2);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field input:focus, .field select:focus { border-color: var(--accent); }
+
+  /* Questions panel */
+  .questions-panel { overflow-y: auto; max-height: 600px; }
+  .q-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .q-item {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .q-header {
+    padding: 10px 14px;
+    display: flex; align-items: flex-start; gap: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .q-header:hover { background: var(--surface2); }
+  .q-num {
+    min-width: 22px; height: 22px;
+    background: var(--accent); color: white;
+    border-radius: 5px;
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .q-type-badge {
+    font-size: 10px; font-weight: 600; padding: 2px 7px;
+    border-radius: 4px; margin-left: auto; white-space: nowrap;
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .type-multichoice { background: #e8f0fe; color: #1a56db; }
+  .type-truefalse { background: #e6f4ed; color: #1e7a4a; }
+  .type-shortanswer { background: #fef3e2; color: #c27803; }
+  .type-essay { background: #fce7f3; color: #9d174d; }
+
+  .q-text { font-size: 13px; line-height: 1.5; flex: 1; }
+  .q-body {
+    display: none;
+    padding: 0 14px 12px 46px;
+    font-size: 12px;
+  }
+  .q-body.open { display: block; }
+  .q-answer {
+    display: flex; align-items: center; gap: 6px;
+    padding: 3px 0;
+  }
+  .q-answer .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--border); flex-shrink: 0;
+  }
+  .q-answer.correct .dot { background: var(--success); }
+  .q-answer.correct { color: var(--success); font-weight: 500; }
+
+  /* XML panel */
+  .xml-panel { overflow: hidden; display: flex; flex-direction: column; }
+  .xml-toolbar {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  }
+  .xml-area {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.7;
+    background: #1e1e2e;
+    color: #cdd6f4;
+    border-radius: 8px;
+    padding: 14px;
+    overflow-y: auto;
+    white-space: pre;
+    min-height: 400px;
+    max-height: 600px;
+    border: 1px solid #333;
+  }
+  .xml-area .kw { color: #89b4fa; }
+  .xml-area .tag { color: #cba6f7; }
+  .xml-area .attr { color: #a6e3a1; }
+  .xml-area .val { color: #f38ba8; }
+  .xml-area .cm { color: #6c7086; }
+
+  button {
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 500;
+    background: var(--surface);
+    color: var(--text);
+  }
+  button:hover { background: var(--surface2); }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent-dark);
+  }
+  .btn-primary:hover { background: var(--accent-dark); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+  .stats-row {
+    display: flex; gap: 12px; margin-bottom: 0.75rem; flex-wrap: wrap;
+  }
+  .stat { font-size: 12px; color: var(--muted); }
+  .stat strong { color: var(--text); font-weight: 600; }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--muted);
+  }
+  .empty-state p { font-size: 13px; margin-top: 0.5rem; }
+
+  .alert {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 0.75rem;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .alert-warn { background: var(--warning-bg); color: var(--warning); border: 1px solid #f0c060; }
+  .alert-info { background: var(--accent-light); color: var(--accent-dark); border: 1px solid #bdd0ee; }
+
+  .format-hint {
+    grid-column: 1 / -1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .format-hint h3 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+  .format-hint code {
+    font-family: var(--mono);
+    background: var(--border);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--accent-dark);
+    font-size: 11px;
+  }
+  .format-hint ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .format-hint ul li::before { content: "• "; color: var(--accent); }
+
+  @media (max-width: 700px) {
+    main { grid-template-columns: 1fr; padding: 1rem; }
+    .settings-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
 </head>
 <body>
-<div class="app-header">
-    <div class="logo">🗺️ Carte Mentale · Toutes les thèmes DELF A1</div>
-    <button class="home-btn" id="homeButton">🏠 На главную (Mind-map)</button>
-</div>
-<div class="container" id="appContainer"></div>
-<footer>⭐ Наведи на ЛЮБОЕ слово / фразу / текст / диалог → перевод на русский. 🔊 Нажми на слово или динамик → французское произношение.</footer>
+
+<header>
+  <div class="logo">W→M</div>
+  <div>
+    <h1>Word → Moodle XML</h1>
+    <p>Конвертер тестовых заданий</p>
+  </div>
+  <span class="badge">Moodle XML v2.0</span>
+</header>
+
+<main>
+  <!-- Upload -->
+  <div class="upload-zone" id="dropZone">
+    <input type="file" accept=".docx" id="fileInput">
+    <div class="upload-icon">📄</div>
+    <h2>Загрузите файл Word (.docx)</h2>
+    <p>Перетащите файл сюда или нажмите для выбора</p>
+  </div>
+
+  <!-- Format hint -->
+  <div class="format-hint">
+    <h3>Поддерживаемые форматы вопросов в документе:</h3>
+    <ul>
+      <li><code>1. Текст вопроса?</code> — нумерованный вопрос</li>
+      <li><code>a) Вариант</code> или <code>А) Вариант</code> — варианты ответа (множественный выбор)</li>
+      <li><code>*a) Правильный</code> или <code>+a) Правильный</code> — правильный ответ (со звёздочкой/плюсом)</li>
+      <li><code>Верно/Неверно</code>, <code>Да/Нет</code> — вопрос на истину/ложь</li>
+      <li>Вопросы без вариантов → короткий ответ или эссе</li>
+    </ul>
+  </div>
+
+  <!-- Settings -->
+  <div class="card settings-card" id="settingsCard" style="display:none">
+    <div class="card-title">Настройки экспорта</div>
+    <div class="settings-grid">
+      <div class="field">
+        <label>Категория вопросов</label>
+        <input type="text" id="category" value="Импортированные вопросы" placeholder="Название категории">
+      </div>
+      <div class="field">
+        <label>Балл за правильный ответ</label>
+        <input type="number" id="defaultGrade" value="1" min="0" max="100" step="0.5">
+      </div>
+      <div class="field">
+        <label>Штраф за ошибку</label>
+        <input type="number" id="penalty" value="0.3333" min="0" max="1" step="0.1">
+      </div>
+      <div class="field">
+        <label>Перемешать ответы</label>
+        <select id="shuffle">
+          <option value="true">Да</option>
+          <option value="false">Нет</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Нумерация вариантов</label>
+        <select id="numbering">
+          <option value="abc">a, b, c ...</option>
+          <option value="ABCD">A, B, C ...</option>
+          <option value="123">1, 2, 3 ...</option>
+          <option value="none">Нет</option>
+        </select>
+      </div>
+      <div class="field" style="display:flex; align-items:flex-end;">
+        <button class="btn-primary" onclick="generateXML()" style="width:100%">🔄 Сгенерировать XML</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Questions list -->
+  <div class="card questions-panel" id="questionsPanel">
+    <div class="card-title">Распознанные вопросы</div>
+    <div class="empty-state" id="qEmpty">
+      <div style="font-size:32px">📋</div>
+      <p>Загрузите документ Word<br>для отображения вопросов</p>
+    </div>
+    <div class="q-list" id="qList"></div>
+  </div>
+
+  <!-- XML output -->
+  <div class="card xml-panel" id="xmlPanel">
+    <div class="card-title">Moodle XML</div>
+    <div class="xml-toolbar">
+      <div class="stats-row" id="xmlStats"></div>
+      <button class="btn-sm" onclick="copyXML()" id="copyBtn" style="display:none">📋 Копировать</button>
+      <button class="btn-sm btn-primary" onclick="downloadXML()" id="dlBtn" style="display:none">⬇ Скачать .xml</button>
+    </div>
+    <div class="empty-state" id="xmlEmpty">
+      <div style="font-size:32px">🗂</div>
+      <p>XML появится здесь<br>после генерации</p>
+    </div>
+    <div class="xml-area" id="xmlArea" style="display:none"></div>
+  </div>
+</main>
 
 <script>
-    // ======================= ПОЛНАЯ БАЗА ВСЕХ ТЕМ И СЛОВ ИЗ ФАЙЛА (НИ ОДНОЙ НЕТ ПРОПУЩЕНО) =======================
-    // Создаем карту переводов для каждой уникальной фразы (более 650 единиц)
-    const translationsMap = new Map();
-    function addTrans(fr, ru) { translationsMap.set(fr, ru); }
-    
-    // ---- 1. ПРИВЕТСТВИЯ И ПРОЩАНИЯ ----
-    addTrans("Bonjour", "Здравствуйте / Добрый день"); addTrans("Bonsoir", "Добрый вечер"); addTrans("Salut !", "Привет!"); addTrans("Ça va ?", "Как дела?"); addTrans("Comment ça va ?", "Как поживаешь?"); addTrans("Coucou !", "Ку-ку! / Привет!");
-    addTrans("Au revoir !", "До свидания!"); addTrans("À plus tard !", "До скорого!"); addTrans("À lundi !", "До понедельника!"); addTrans("À ce soir.", "До вечера."); addTrans("À très bientôt.", "До очень скорой встречи."); addTrans("À dimanche !", "До воскресенья!"); addTrans("Bises.", "Целую."); addTrans("Bisous.", "Поцелуйчики.");
-    // Se présenter
-    addTrans("Je m'appelle Erdem.", "Меня зовут Эрдем."); addTrans("Je suis italien.", "Я итальянец."); addTrans("Je suis ta correspondante française.", "Я твоя французская подруга по переписке."); addTrans("J'ai 14 ans et j'habite à Nantes.", "Мне 14 лет, я живу в Нанте."); addTrans("Ma sœur s'appelle Ozge.", "Мою сестру зовут Озге."); addTrans("C'est Julien.", "Это Жюльен.");
-    addTrans("J'aime beaucoup les bandes dessinées.", "Я очень люблю комиксы."); addTrans("J'adore apprendre de nouveaux mots.", "Обожаю учить новые слова."); addTrans("Je préfère les dictionnaires en ligne.", "Предпочитаю онлайн-словари."); addTrans("C'est super !", "Супер!"); addTrans("Je déteste...", "Я ненавижу..."); addTrans("Je n'aime pas...", "Мне не нравится..."); addTrans("Ma maman aime beaucoup ça.", "Моей маме это очень нравится.");
-    // Люди
-    addTrans("une personne","человек"); addTrans("un homme","мужчина"); addTrans("une femme","женщина"); addTrans("un enfant","ребёнок"); addTrans("un(e) adolescent(e)","подросток"); addTrans("un garçon","мальчик"); addTrans("une fille","девочка"); addTrans("un bébé","младенец"); addTrans("un(e) collégien(ne)","ученик коллежа"); addTrans("un(e) lycéen(ne)","старшеклассник"); addTrans("un copain","друг"); addTrans("une copine","подруга"); addTrans("un(e) ami(e)","друг/подруга");
-    // Семья, идентичность
-    addTrans("les parents","родители"); addTrans("les grands-parents","бабушка и дедушка"); addTrans("un père","отец"); addTrans("une mère","мать"); addTrans("un frère","брат"); addTrans("une sœur","сестра"); addTrans("marié(e)","женатый/замужем"); addTrans("célibataire","холост/не замужем");
-    addTrans("un nom","фамилия"); addTrans("un prénom","имя"); addTrans("une nationalité","национальность"); addTrans("une date de naissance","дата рождения"); addTrans("une adresse","адрес"); addTrans("le code postal","почтовый индекс");
-    // Тело, внешность, чувства
-    addTrans("les yeux","глаза"); addTrans("le nez","нос"); addTrans("la bouche","рот"); addTrans("les cheveux","волосы"); addTrans("grand(e)","высокий"); addTrans("petit(e)","маленький"); addTrans("beau/belle","красивый/красивая"); addTrans("heureux","счастливый"); addTrans("triste","грустный"); addTrans("sympathique","симпатичный");
-    addTrans("rapide","быстрый"); addTrans("facile","лёгкий"); addTrans("différent(e)","разный"); addTrans("ancien(ne)","древний/бывший"); addTrans("nouveau/nouvelle","новый"); addTrans("vieux/vieille","старый"); addTrans("neuf/neuve","новый (неиспользованный)"); addTrans("préféré(e)","любимый"); addTrans("magnifique","великолепный"); addTrans("joli(e)","симпатичный"); addTrans("disponible","доступный/свободный"); addTrans("chaud(e)","горячий"); addTrans("gratuit","бесплатный"); addTrans("nombreux/-euse","многочисленный"); addTrans("célèbre","знаменитый"); addTrans("cassé(e)","сломанный"); addTrans("génial(e)","потрясающий"); addTrans("magique","волшебный"); addTrans("incroyable","невероятный");
-    addTrans("jaune","жёлтый"); addTrans("rouge","красный"); addTrans("bleu(e)","синий"); addTrans("vert(e)","зелёный"); addTrans("marron","коричневый");
-    // Действия, город, жилье, транспорт полные
-    addTrans("écrire","писать"); addTrans("descendre","спускаться"); addTrans("s'inscrire","зарегистрироваться"); addTrans("envoyer","отправлять"); addTrans("observer","наблюдать"); addTrans("nettoyer","чистить"); addTrans("organiser une fête","организовать праздник"); addTrans("faire le ménage","убирать дом"); addTrans("ranger sa chambre","наводить порядок в комнате"); addTrans("allumer un ordinateur","включить компьютер");
-    addTrans("une rue","улица"); addTrans("une place","площадь"); addTrans("un carrefour","перекрёсток"); addTrans("une église","церковь"); addTrans("un château","замок"); addTrans("un parking","парковка"); addTrans("un appartement","квартира"); addTrans("le salon","гостиная"); addTrans("la salle de bains","ванная"); addTrans("le jardin","сад"); addTrans("prendre le bus","сесть на автобус"); addTrans("le TGV","скоростной поезд"); addTrans("une voiture électrique","электромобиль"); addTrans("un vélo","велосипед");
-    // Itinéraire & espace
-    addTrans("Tu prends à droite dans la rue du Théâtre","Ты поворачиваешь направо на улицу Театра"); addTrans("Tu traverses le parc des Plantes","Ты переходишь парк Плант"); addTrans("Tu continues tout droit","Ты идёшь прямо"); addTrans("Le zoo est près de la ville","Зоопарк находится рядом с городом"); addTrans("J'habite la deuxième maison à droite","Я живу во втором доме справа");
-    addTrans("Donner son adresse","Дать свой адрес"); addTrans("J'habite au numero 27","Я живу в доме 27"); addTrans("Spectacle de magie mercredi 9 juin","Магическое шоу в среду 9 июня");
-    addTrans("un concours","конкурс"); addTrans("un festival","фестиваль"); addTrans("un mariage","свадьба"); addTrans("un carnaval","карнавал"); addTrans("un atelier","мастерская"); addTrans("un jeu vidéo","видеоигра");
-    addTrans("la musique classique","классическая музыка"); addTrans("un orchestre","оркестр"); addTrans("un cadeau","подарок"); addTrans("une carte postale","открытка"); addTrans("une bouteille en plastique","пластиковая бутылка");
-    addTrans("Ce matin","Сегодня утром"); addTrans("La semaine prochaine","На следующей неделе"); addTrans("Ne viens pas à l'école pendant 2 jours","Не приходи в школу в течение 2 дней");
-    addTrans("le matin","утро"); addTrans("l'après-midi","после полудня"); addTrans("le soir","вечер"); addTrans("la nuit","ночь"); addTrans("lundi","понедельник"); addTrans("dimanche","воскресенье"); addTrans("les vacances d'été","летние каникулы");
-    addTrans("Je suis né le 19 septembre 2006","Я родился 19 сентября 2006"); addTrans("C'est de 16h à 17h","Это с 16 до 17 часов"); addTrans("Rendez-vous au restaurant à 21h","Встреча в ресторане в 21 час");
-    addTrans("une sortie culturelle","культурный выход"); addTrans("un billet","билет"); addTrans("réserver une place","забронировать место"); addTrans("visiter une exposition","посетить выставку");
-    addTrans("un centre de loisirs","центр досуга"); addTrans("un cirque","цирк"); addTrans("un aquarium","аквариум"); addTrans("faire du camping","заниматься кемпингом"); addTrans("se promener","гулять");
-    addTrans("la radio","радио"); addTrans("la télévision","телевидение"); addTrans("Internet","Интернет"); addTrans("un site web","веб-сайт"); addTrans("un message électronique","электронное сообщение"); addTrans("une montre connectée","умные часы"); addTrans("un téléphone portable","мобильный телефон");
-    addTrans("le rugby","регби"); addTrans("la natation","плавание"); addTrans("le karaté","карате"); addTrans("le judo","дзюдо"); addTrans("le club de football","футбольный клуб"); addTrans("une tenue de sport","спортивная одежда"); addTrans("compter les points","считать очки");
-    addTrans("Tous les jours","Каждый день"); addTrans("Je mange souvent du poisson","Я часто ем рыбу"); addTrans("Je ne l'attache jamais","Я никогда его не привязываю");
-    addTrans("Est-ce que tu veux venir ?","Ты хочешь прийти?"); addTrans("Ça t'intéresse ?","Тебя это интересует?"); addTrans("Je t'invite à ma fête d'anniversaire","Я приглашаю тебя на день рождения");
-    addTrans("Donner rendez-vous","Назначить встречу"); addTrans("On se retrouve à 16h","Встречаемся в 16 часов");
-    addTrans("Exprimer son accord","Выразить согласие"); addTrans("D'accord","Согласен"); addTrans("OK!","ОК!");
-    // Школа (полностью)
-    addTrans("le collège","средняя школа"); addTrans("le lycée","лицей"); addTrans("un(e) élève","ученик/ученица"); addTrans("un(e) professeur(e)","учитель"); addTrans("les devoirs","домашние задания"); addTrans("une présentation orale","устное представление"); addTrans("un test","тест"); addTrans("une note","оценка"); addTrans("le vocabulaire","словарный запас"); addTrans("l'orthographe","орфография"); addTrans("la grammaire","грамматика"); addTrans("le français","французский"); addTrans("l'anglais","английский"); addTrans("les mathématiques","математика"); addTrans("une feuille","лист бумаги"); addTrans("un crayon","карандаш"); addTrans("un stylo","ручка");
-    // Профессии
-    addTrans("un métier","профессия"); addTrans("un vendeur","продавец"); addTrans("un boulanger","пекарь"); addTrans("un serveur","официант"); addTrans("un policier","полицейский"); addTrans("un pompier","пожарный"); addTrans("un photographe","фотограф"); addTrans("un pilote","пилот");
-    // Здоровье, еда
-    addTrans("être malade","болеть"); addTrans("avoir de la fièvre","иметь температуру"); addTrans("un médicament","лекарство"); addTrans("une pharmacie","аптека");
-    addTrans("le petit-déjeuner","завтрак"); addTrans("le déjeuner","обед"); addTrans("le dîner","ужин"); addTrans("une pizza","пицца"); addTrans("une salade","салат"); addTrans("des frites","картошка фри"); addTrans("un steak","стейк"); addTrans("du poisson","рыба"); addTrans("une pomme","яблоко"); addTrans("une banane","банан"); addTrans("une carotte","морковь");
-    addTrans("Je voudrais...","Я хотел бы..."); addTrans("Vous avez du soda ?","У вас есть газировка?");
-    addTrans("un pantalon","брюки"); addTrans("une jupe","юбка"); addTrans("des lunettes de soleil","солнечные очки"); addTrans("un short","шорты"); addTrans("un parapluie","зонт");
-    addTrans("la poste","почта"); addTrans("le marché","рынок"); addTrans("la boulangerie","булочная"); addTrans("la librairie","книжный магазин"); addTrans("un supermarché","супермаркет"); addTrans("C'est combien ?","Сколько стоит?"); addTrans("Combien ça coûte ?","Сколько это стоит?"); addTrans("C'est gratuit","Это бесплатно"); addTrans("Tarif réduit","Льготный тариф"); addTrans("Réduction de 15%","Скидка 15%");
-    addTrans("Il fait très beau","Очень хорошая погода"); addTrans("Il pleut","Идёт дождь");
-    addTrans("la campagne","деревня"); addTrans("la forêt","лес"); addTrans("la mer","море"); addTrans("la montagne","гора"); addTrans("un chien","собака"); addTrans("un chat","кот");
-    addTrans("voter","голосовать"); addTrans("Bon appétit !","Приятного аппетита!"); addTrans("Bon voyage !","Счастливого пути!");
-    addTrans("Appelle-moi !","Позвони мне!"); addTrans("Prends ton ordinateur !","Возьми свой компьютер!"); addTrans("Tu peux apporter ton appareil photo","Ты можешь принести фотоаппарат");
-    addTrans("Donner une permission","Дать разрешение"); addTrans("Vous pouvez jouer jusqu'à minuit","Вы можете играть до полуночи");
-    addTrans("Exprimer une obligation","Выразить обязанность"); addTrans("Je dois étudier","Я должен учиться"); addTrans("Douche obligatoire","Душ обязателен");
-    addTrans("Interdire","Запрещать"); addTrans("C'est interdit !","Запрещено!"); addTrans("Ne parlez pas au chauffeur","Не разговаривайте с водителем");
-    addTrans("Annoncer un programme","Объявить программу"); addTrans("On va faire des photos","Мы будем делать фото");
-    addTrans("Remercier","Благодарить"); addTrans("Merci pour votre attention","Спасибо за внимание");
-    addTrans("S'excuser","Извиняться"); addTrans("Je suis désolé(e)","Мне жаль"); addTrans("Pardon","Простите");
-    addTrans("Attirer l'attention","Привлечь внимание"); addTrans("Votre attention s'il vous plaît !","Ваше внимание, пожалуйста!"); addTrans("Silence s'il vous plaît !","Тишина, пожалуйста!"); addTrans("N'oublie pas ta carte de réduction!","Не забудь свою дисконтную карту!");
-    addTrans("Expliquer comment ça marche","Объяснить, как это работает"); addTrans("On montre sa carte","Мы показываем свою карту");
-    addTrans("Dire un objectif","Сказать цель"); addTrans("Pour faire une salade...","Чтобы сделать салат...");
-    addTrans("Questionner","Спрашивать"); addTrans("Comment il s'appelle ?","Как его зовут?");
-    addTrans("Demander confirmation","Просить подтверждение"); addTrans("Tu es sûr que c'est aujourd'hui ?","Ты уверен, что сегодня?");
-    addTrans("Féliciter","Поздравлять"); addTrans("Bravo !","Браво!"); addTrans("Félicitations !","Поздравляю!");
-    addTrans("Dire stop","Сказать стоп"); addTrans("Ça suffit !","Достаточно!"); addTrans("Arrêtez de regarder par la fenêtre !","Перестаньте смотреть в окно!");
-    addTrans("Demander de répéter","Попросить повторить"); addTrans("Vous pouvez répéter s'il vous plaît ?","Вы можете повторить, пожалуйста?"); addTrans("Comment ?","Как?"); addTrans("Qu'est-ce que ça veut dire ?","Что это значит?");
-    // Дополнительно все фразы из PDF до последней строки
-    addTrans("Possibilité d'acheter des lunettes de bain","Возможность купить очки для плавания");
-    addTrans("Après le spectacle, à 17h, il y a un concert","После спектакля в 17:00 концерт");
-    
-    // ========== ВСЕ ТЕМЫ БЕЗ ПРОПУСКОВ (полный список из файла, включая Dire stop, Attirer l'attention и т.д.) ==========
-    const categoriesData = {
-        "Saluer": ["Bonjour","Bonsoir","Salut !","Ça va ?","Comment ça va ?","Coucou !"],
-        "Prendre congé": ["Au revoir !","Salut !","À plus tard !","À lundi !","À ce soir.","À très bientôt.","À dimanche !","Bises.","Bisous."],
-        "Se présenter & présenter qqn": ["Je m'appelle Erdem.","Je suis italien.","Je suis ta correspondante française.","J'ai 14 ans et j'habite à Nantes.","Ma sœur s'appelle Ozge.","C'est Julien."],
-        "Exprimer ses goûts": ["J'aime beaucoup les bandes dessinées.","J'adore apprendre de nouveaux mots.","Je préfère les dictionnaires en ligne.","C'est super !","Je déteste...","Je n'aime pas...","Ma maman aime beaucoup ça."],
-        "Les gens / personnes": ["une personne","un homme","une femme","un enfant","un(e) adolescent(e)","un garçon","une fille","un bébé","un(e) collégien(ne)","un copain","une copine","un(e) ami(e)"],
-        "La famille": ["les parents","les grands-parents","un père","une mère","un frère","une sœur","un oncle","une tante","un cousin","une cousine","marié(e)","célibataire"],
-        "L'identité": ["un nom","un prénom","une nationalité","une date de naissance","une adresse","le code postal","le pays"],
-        "Le corps": ["le cœur","les pieds","les mains","les doigts","la jambe","les bras","les yeux","l'oreille","le nez","la bouche","les dents","les cheveux"],
-        "Caractéristiques physiques": ["petit(e)","grand(e)","beau","belle","laid(e)","gros(se)","mince","maigre","long(ue)","court(e)","blond(e)","brun(e)","roux/rousse"],
-        "Sentiments & caractère": ["heureux/heureuse","content(e)","triste","gentil(le)","bête","sympathique","sérieux/sérieuse"],
-        "Autres caractéristiques": ["rapide","facile","différent(e)","ancien(ne)","nouveau/nouvelle","vieux/vieille","neuf/neuve","préféré(e)","magnifique","joli(e)","disponible","chaud(e)","gratuit","nombreux/-euse","célèbre","cassé(e)","génial(e)","magique","incroyable"],
-        "Les couleurs": ["jaune","blanc/blanche","noir(e)","bleu(e)","rouge","vert(e)","gris(e)","marron"],
-        "Actions quotidiennes": ["écrire","descendre","s'inscrire","envoyer","observer","nettoyer","organiser une fête","faire le ménage","ranger sa chambre","allumer un ordinateur"],
-        "La ville": ["une rue","une place","un carrefour","une ville","un village","une église","un château","un monument","un immeuble","un parking"],
-        "Le logement": ["une adresse","un étage","un appartement","l'entrée","la sortie","une fenêtre","une chambre","la cuisine","le salon","la salle de bains","le jardin","les toilettes"],
-        "Moyens de transport": ["prendre le bus","le train","l'avion","un bus","un tramway","une gare","une voiture","un vélo","une trottinette","un aéroport","un avion","un bateau"],
-        "Indiquer un itinéraire": ["Tu prends à droite dans la rue du Théâtre","Tu traverses le parc des Plantes","Tu continues tout droit","Tu tournes à gauche"],
-        "Situer dans l'espace": ["Les fruits sont sur la table","L'arrêt est derrière la maison","devant la gare","Le musée est dans cette rue","au bout de la rue","Le zoo est près de la ville"],
-        "Donner son adresse / date": ["J'habite au numero 27","Spectacle de magie mercredi 9 juin","Je suis né le 19 septembre 2006","C'est de 16h à 17h"],
-        "Événements & loisirs": ["un concours","un festival","un mariage","un carnaval","un atelier","un jeu vidéo","la musique classique","un orchestre","un cadeau","une carte postale"],
-        "Situer dans le temps": ["Ce matin","La semaine prochaine","Ne viens pas à l'école pendant 2 jours","les vacances d'été"],
-        "Médias & technologie": ["la radio","la télévision","Internet","un site web","un message électronique","une montre connectée","un téléphone portable"],
-        "Les sports": ["le rugby","la natation","le karaté","le judo","le club de football","une tenue de sport","compter les points"],
-        "Habitudes & fréquence": ["Tous les jours","Je mange souvent du poisson","Je ne l'attache jamais"],
-        "Inviter & donner rendez-vous": ["Est-ce que tu veux venir ?","Ça t'intéresse ?","Je t'invite à ma fête","On se retrouve à 16h","D'accord"],
-        "L'école": ["le collège","le lycée","un(e) élève","un professeur","les devoirs","un test","une note","le vocabulaire","la grammaire","le français","les mathématiques","un crayon","un stylo"],
-        "Les professions": ["un métier","un vendeur","un boulanger","un serveur","un policier","un pompier","un photographe","un pilote"],
-        "La santé": ["être malade","avoir de la fièvre","un médicament","une pharmacie"],
-        "La nourriture": ["le petit-déjeuner","le déjeuner","le dîner","une pizza","une salade","des frites","du poisson","une pomme","une banane","Je voudrais..."],
-        "Les vêtements": ["un pantalon","une jupe","des lunettes de soleil","un short","un parapluie"],
-        "Commerces & prix": ["la poste","le marché","la boulangerie","C'est combien ?","C'est gratuit","Tarif réduit","Réduction de 15%"],
-        "La météo & nature": ["Il fait très beau","Il pleut","la campagne","la forêt","la mer","la montagne","un chien","un chat"],
-        "Souhaits & formules": ["Bon appétit !","Bon voyage !","Merci beaucoup","Je suis désolé(e)","Pardon","Bravo !","Félicitations !"],
-        "Dire de faire qqch": ["Appelle-moi !","Prends ton ordinateur !","Tu peux apporter ton appareil photo"],
-        "Permission & obligation": ["Vous pouvez jouer jusqu'à minuit","Je dois étudier","Douche obligatoire","C'est interdit !","Ne parlez pas au chauffeur"],
-        "Annoncer un programme": ["On va faire des photos","Merci pour votre attention"],
-        "Attirer l'attention": ["Votre attention s'il vous plaît !","Silence s'il vous plaît !","N'oublie pas ta carte de réduction!"],
-        "Expliquer comment ça marche": ["On montre sa carte","On paye à la caisse"],
-        "Dire un objectif": ["Pour faire une salade...","Pour venir chez moi..."],
-        "Questionner & confirmation": ["Comment il s'appelle ?","Tu es sûr que c'est aujourd'hui ?","Qu'est-ce que ça veut dire ?"],
-        "Dire stop & répéter": ["Ça suffit !","Arrêtez de regarder par la fenêtre !","Vous pouvez répéter s'il vous plaît ?","Comment ?"]
-    };
-    
-    function getTranslation(word) { return translationsMap.get(word) || `📖 ${word} (перевод)`; }
-    function speakText(text) { if(!text) return; const u = new SpeechSynthesisUtterance(text); u.lang = 'fr-FR'; u.rate = 0.9; speechSynthesis.cancel(); speechSynthesis.speak(u); }
-    
-    function renderMindMap() {
-        let html = `<div class="mindmap-grid">`;
-        for (let [catName, words] of Object.entries(categoriesData)) {
-            const preview = words.slice(0,4).map(w => `<span class="word-preview" data-fr="${w}" data-ru="${getTranslation(w)}">${w.length>22?w.slice(0,20)+'…':w}</span>`).join("");
-            html += `<div class="mind-card"><div class="card-header">${catName}</div><div class="card-preview">${preview} ${words.length>4?"…":""}</div><div class="open-btn" data-cat="${catName}">📖 Открыть (текст+диалог)</div></div>`;
-        }
-        html += `</div>`;
-        document.getElementById("appContainer").innerHTML = html;
-        document.querySelectorAll(".open-btn").forEach(btn => btn.addEventListener("click", (e) => showCategoryPage(btn.getAttribute("data-cat"))));
-        document.querySelectorAll(".word-preview").forEach(el => el.addEventListener("click", () => speakText(el.getAttribute("data-fr"))));
+let parsedQuestions = [];
+let xmlOutput = '';
+
+// ─── File handling ────────────────────────────────────────────────────────────
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) processFile(fileInput.files[0]); });
+
+function processFile(file) {
+  if (!file.name.endsWith('.docx')) {
+    alert('Пожалуйста, загрузите файл .docx');
+    return;
+  }
+  dropZone.querySelector('h2').textContent = '⏳ Обработка ' + file.name + '…';
+  const reader = new FileReader();
+  reader.onload = e => {
+    mammoth.extractRawText({ arrayBuffer: e.target.result })
+      .then(r => {
+        parsedQuestions = parseQuestions(r.value);
+        renderQuestions();
+        document.getElementById('settingsCard').style.display = '';
+        dropZone.querySelector('h2').textContent = '✅ ' + file.name;
+        dropZone.querySelector('p').textContent = 'Распознано вопросов: ' + parsedQuestions.length;
+      })
+      .catch(err => {
+        dropZone.querySelector('h2').textContent = '❌ Ошибка чтения файла';
+        console.error(err);
+      });
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ─── Parser ───────────────────────────────────────────────────────────────────
+function parseQuestions(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  const questions = [];
+  let current = null;
+
+  const isQuestionStart = l => /^(\d{1,3}[\.\)]\s+|Вопрос\s+\d+[\.\:]\s*)/i.test(l);
+  const isOption = l => /^[\*\+]?[а-яёa-z][\.\)]\s+/i.test(l) || /^[\*\+]?[АБВГДЕЖЗабвгдежз][\.\)]\s+/i.test(l);
+  const isCorrectMarker = l => l.startsWith('*') || l.startsWith('+');
+  const isTrueFalse = l => /^(верно|неверно|да|нет|true|false)$/i.test(l.trim());
+
+  for (const line of lines) {
+    if (isQuestionStart(line)) {
+      if (current) finalize(current, questions);
+      const qText = line.replace(/^(\d{1,3}[\.\)]\s*|Вопрос\s+\d+[\.\:]\s*)/i, '').trim();
+      current = { text: qText, answers: [], type: 'shortanswer' };
+    } else if (current && isOption(line)) {
+      const isCorrect = isCorrectMarker(line);
+      const cleaned = line.replace(/^[\*\+]/, '').replace(/^[а-яёa-zA-ZА-ЯЁ][\.\)]\s+/i, '').trim();
+      current.answers.push({ text: cleaned, correct: isCorrect });
+      current.type = 'multichoice';
+    } else if (current && isTrueFalse(line) && current.answers.length === 0) {
+      current.trueFalseHint = line.toLowerCase();
+    } else if (current && line.length > 0 && current.answers.length === 0) {
+      // continuation of question text
+      current.text += ' ' + line;
     }
-    
-    function showCategoryPage(category) {
-        const words = categoriesData[category] || [];
-        let wordsHtml = `<div class="vocab-grid">`;
-        words.forEach(word => { wordsHtml += `<div class="word-item"><span class="french-word" data-ru="${getTranslation(word)}">${word}</span><span class="speaker-icon" data-speak="${word}">🔊</span></div>`; });
-        wordsHtml += `</div>`;
-        const sample = words.slice(0,4).join(", ");
-        const textFr = `📘 Thème : "${category}". Mots clés : ${sample}. Utile pour le DELF A1.`;
-        const dialogFr = `— ${words[0] || "Bonjour"} ! Tu connais ces mots ?\n— Oui, j'étudie bien. ${words[2] || "C'est super"}.\n— Parfait. À bientôt !`;
-        const fullHtml = `<button class="back-button" id="backMindBtn">← Назад к Mind-map</button><div class="category-page"><h2 class="category-title">${category}</h2>${wordsHtml}<div class="text-section"><h3>📖 Текст (перевод при наведении)</h3><div class="text-line" data-ru="${getTranslation(textFr)}"><div class="text-fr">${textFr}</div><div class="text-ru">${getTranslation(textFr)}</div></div></div><div class="dialogue-section"><h3>💬 Диалог</h3><div class="dialogue-line" data-ru="${getTranslation(dialogFr)}"><div class="dialogue-fr">${dialogFr.replace(/\n/g,'<br>')}</div><div class="dialogue-ru">${getTranslation(dialogFr)}</div></div></div></div>`;
-        document.getElementById("appContainer").innerHTML = fullHtml;
-        document.getElementById("backMindBtn").addEventListener("click", () => renderMindMap());
-        document.querySelectorAll(".speaker-icon").forEach(icon => icon.addEventListener("click", () => speakText(icon.getAttribute("data-speak"))));
-        document.querySelectorAll(".french-word, .dialogue-fr, .text-fr").forEach(el => el.addEventListener("click", (e) => speakText(e.currentTarget.innerText)));
+  }
+  if (current) finalize(current, questions);
+  return questions;
+}
+
+function finalize(q, list) {
+  if (q.type === 'multichoice') {
+    // If no answer marked correct, mark first as fallback
+    const hasCorrect = q.answers.some(a => a.correct);
+    if (!hasCorrect && q.answers.length > 0) q.answers[0].correct = true;
+    // Detect true/false: exactly 2 options matching true/false pattern
+    if (q.answers.length === 2) {
+      const texts = q.answers.map(a => a.text.toLowerCase());
+      const tf = ['верно','неверно','да','нет','true','false','правда','ложь'];
+      if (texts.every(t => tf.some(k => t.includes(k)))) {
+        q.type = 'truefalse';
+      }
     }
-    
-    renderMindMap();
-    document.getElementById("homeButton").addEventListener("click", () => renderMindMap());
+  } else if (q.trueFalseHint) {
+    q.type = 'truefalse';
+    const v = q.trueFalseHint;
+    const isTrue = v === 'верно' || v === 'да' || v === 'true';
+    q.answers = [
+      { text: 'Верно', correct: isTrue },
+      { text: 'Неверно', correct: !isTrue }
+    ];
+  }
+  list.push(q);
+}
+
+// ─── Render questions ─────────────────────────────────────────────────────────
+function renderQuestions() {
+  const empty = document.getElementById('qEmpty');
+  const list = document.getElementById('qList');
+  if (!parsedQuestions.length) { empty.style.display = ''; list.innerHTML = ''; return; }
+  empty.style.display = 'none';
+
+  const counts = {};
+  parsedQuestions.forEach(q => { counts[q.type] = (counts[q.type] || 0) + 1; });
+
+  list.innerHTML = parsedQuestions.map((q, i) => {
+    const typeLabels = { multichoice: 'Выбор', truefalse: 'Да/Нет', shortanswer: 'Ответ', essay: 'Эссе' };
+    const answersHtml = q.answers.map(a =>
+      `<div class="q-answer ${a.correct ? 'correct' : ''}">
+        <div class="dot"></div><span>${escHtml(a.text)}</span>
+      </div>`
+    ).join('');
+
+    return `
+    <div class="q-item">
+      <div class="q-header" onclick="toggleQ(${i})">
+        <div class="q-num">${i+1}</div>
+        <div class="q-text">${escHtml(q.text.substring(0, 120))}${q.text.length > 120 ? '…' : ''}</div>
+        <span class="q-type-badge type-${q.type}">${typeLabels[q.type] || q.type}</span>
+      </div>
+      <div class="q-body" id="qb-${i}">
+        ${q.answers.length ? answersHtml : '<span style="color:var(--muted)">Ожидается свободный ответ</span>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleQ(i) {
+  const el = document.getElementById('qb-' + i);
+  el.classList.toggle('open');
+}
+
+// ─── XML generation ───────────────────────────────────────────────────────────
+function generateXML() {
+  if (!parsedQuestions.length) return;
+  const category = document.getElementById('category').value || 'Импортированные вопросы';
+  const grade = parseFloat(document.getElementById('defaultGrade').value) || 1;
+  const penalty = document.getElementById('penalty').value;
+  const shuffle = document.getElementById('shuffle').value;
+  const numbering = document.getElementById('numbering').value;
+
+  const parts = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<quiz>',
+    '',
+    '  <!-- Категория -->',
+    '  <question type="category">',
+    '    <category>',
+    `      <text>$course$/top/${escXml(category)}</text>`,
+    '    </category>',
+    '  </question>',
+    ''
+  ];
+
+  parsedQuestions.forEach((q, i) => {
+    parts.push(`  <!-- Вопрос ${i+1}: ${q.type} -->`);
+    parts.push(`  <question type="${q.type}">`);
+    parts.push(`    <name><text>Вопрос ${i+1}</text></name>`);
+    parts.push(`    <questiontext format="html">`);
+    parts.push(`      <text><![CDATA[<p>${escXml(q.text)}</p>]]></text>`);
+    parts.push(`    </questiontext>`);
+    parts.push(`    <generalfeedback format="html"><text></text></generalfeedback>`);
+    parts.push(`    <defaultgrade>${grade}</defaultgrade>`);
+    parts.push(`    <penalty>${penalty}</penalty>`);
+    parts.push(`    <hidden>0</hidden>`);
+    parts.push(`    <idnumber></idnumber>`);
+
+    if (q.type === 'multichoice') {
+      parts.push(`    <single>true</single>`);
+      parts.push(`    <shuffleanswers>${shuffle}</shuffleanswers>`);
+      parts.push(`    <answernumbering>${numbering}</answernumbering>`);
+      parts.push(`    <showstandardinstruction>1</showstandardinstruction>`);
+      parts.push(`    <correctfeedback format="html"><text>Правильно!</text></correctfeedback>`);
+      parts.push(`    <partiallycorrectfeedback format="html"><text>Частично верно.</text></partiallycorrectfeedback>`);
+      parts.push(`    <incorrectfeedback format="html"><text>Неправильно.</text></incorrectfeedback>`);
+      parts.push(`    <shownumcorrect/>`);
+
+      const correctCount = q.answers.filter(a => a.correct).length;
+      q.answers.forEach(a => {
+        const fraction = a.correct ? (100 / correctCount).toFixed(5) : '0';
+        parts.push(`    <answer fraction="${fraction}" format="html">`);
+        parts.push(`      <text><![CDATA[<p>${escXml(a.text)}</p>]]></text>`);
+        parts.push(`      <feedback format="html"><text></text></feedback>`);
+        parts.push(`    </answer>`);
+      });
+
+    } else if (q.type === 'truefalse') {
+      const correctAnswer = q.answers.find(a => a.correct);
+      const isTrue = correctAnswer && /верно|да|true/i.test(correctAnswer.text);
+      parts.push(`    <answer fraction="${isTrue ? '100' : '0'}" format="html">`);
+      parts.push(`      <text>true</text>`);
+      parts.push(`      <feedback format="html"><text>${isTrue ? 'Правильно!' : 'Неправильно.'}</text></feedback>`);
+      parts.push(`    </answer>`);
+      parts.push(`    <answer fraction="${!isTrue ? '100' : '0'}" format="html">`);
+      parts.push(`      <text>false</text>`);
+      parts.push(`      <feedback format="html"><text>${!isTrue ? 'Правильно!' : 'Неправильно.'}</text></feedback>`);
+      parts.push(`    </answer>`);
+
+    } else if (q.type === 'shortanswer') {
+      parts.push(`    <usecase>0</usecase>`);
+      parts.push(`    <answer fraction="100">`);
+      parts.push(`      <text>*</text>`);
+      parts.push(`      <feedback format="html"><text></text></feedback>`);
+      parts.push(`    </answer>`);
+
+    } else if (q.type === 'essay') {
+      parts.push(`    <responseformat>editor</responseformat>`);
+      parts.push(`    <responserequired>0</responserequired>`);
+      parts.push(`    <responsefieldlines>15</responsefieldlines>`);
+      parts.push(`    <minwordlimit></minwordlimit>`);
+      parts.push(`    <maxwordlimit></maxwordlimit>`);
+      parts.push(`    <attachments>0</attachments>`);
+      parts.push(`    <attachmentsrequired>0</attachmentsrequired>`);
+      parts.push(`    <graderinfo format="html"><text></text></graderinfo>`);
+      parts.push(`    <responsetemplate format="html"><text></text></responsetemplate>`);
+    }
+
+    parts.push(`  </question>`);
+    parts.push('');
+  });
+
+  parts.push('</quiz>');
+  xmlOutput = parts.join('\n');
+
+  renderXML(xmlOutput);
+
+  const counts = {};
+  parsedQuestions.forEach(q => { counts[q.type] = (counts[q.type] || 0) + 1; });
+  document.getElementById('xmlStats').innerHTML = Object.entries(counts)
+    .map(([t, n]) => `<span class="stat"><strong>${n}</strong> ${t}</span>`)
+    .join('');
+
+  document.getElementById('xmlEmpty').style.display = 'none';
+  document.getElementById('xmlArea').style.display = '';
+  document.getElementById('copyBtn').style.display = '';
+  document.getElementById('dlBtn').style.display = '';
+}
+
+function renderXML(xml) {
+  const area = document.getElementById('xmlArea');
+  // Simple syntax highlighting
+  let html = escHtml(xml)
+    .replace(/(&lt;\?xml[^?]*\?&gt;)/g, '<span class="cm">$1</span>')
+    .replace(/(&lt;!--[^-]*--&gt;)/g, '<span class="cm">$1</span>')
+    .replace(/(&lt;!\[CDATA\[)([\s\S]*?)(\]\]&gt;)/g, '<span class="kw">$1</span>$2<span class="kw">$3</span>')
+    .replace(/(&lt;\/?)([\w]+)/g, '<span class="tag">$1$2</span>')
+    .replace(/([\w]+)(=)(&quot;[^&]*&quot;)/g, '<span class="attr">$1</span>$2<span class="val">$3</span>');
+  area.innerHTML = html;
+}
+
+// ─── Actions ──────────────────────────────────────────────────────────────────
+function copyXML() {
+  navigator.clipboard.writeText(xmlOutput).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ Скопировано!';
+    setTimeout(() => btn.textContent = '📋 Копировать', 2000);
+  });
+}
+
+function downloadXML() {
+  const blob = new Blob([xmlOutput], { type: 'application/xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'moodle_questions.xml';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── Utils ────────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escXml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
+}
 </script>
 </body>
 </html>
