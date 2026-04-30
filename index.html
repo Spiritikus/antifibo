@@ -3,48 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>French Mind Map - Интерактивный лексикон DELF A1</title>
+    <title>🗺️ Французский Mind map | DELF A1 — Лексика + перевод</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none; /* for better drag prevention on mind-map */
         }
 
         body {
-            font-family: 'Segoe UI', 'Roboto', 'Noto Sans', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(145deg, #f5f7fc 0%, #eef2f5 100%);
+            font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+            background: #f0f4f8;
             min-height: 100vh;
-            color: #1a2c3e;
+            color: #1e2f3e;
         }
 
-        /* Header & Navigation */
+        /* Header */
         .header {
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(12px);
+            background: white;
             padding: 1rem 2rem;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border-bottom: 1px solid #e2e8f0;
             display: flex;
             align-items: baseline;
             justify-content: space-between;
             flex-wrap: wrap;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 50;
+            backdrop-filter: blur(8px);
+            background: rgba(255,255,255,0.92);
         }
         h1 {
-            font-size: 1.7rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #1E5A7D, #2A9D8F);
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e5a6b, #2d8f7a);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -0.3px;
         }
         .sub {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #4a627a;
             margin-top: 4px;
         }
@@ -52,127 +50,115 @@
             background: #2c7da0;
             color: white;
             border: none;
-            padding: 8px 18px;
-            border-radius: 60px;
-            font-weight: 500;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 0.9rem;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            transition: 0.2s;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .home-btn:hover {
             background: #1f5e7a;
             transform: scale(0.97);
         }
 
-        /* main container */
         .app-container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 1.5rem;
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
         }
 
-        /* Mind Map Layout using CSS Grid (radial style) */
+        /* MIND MAP GRID */
         .mind-map {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 2rem;
-            margin: 2rem 0 3rem;
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
         }
-        .category-node {
+        .card {
             background: white;
-            border-radius: 36px;
-            padding: 1rem 1.5rem;
-            min-width: 150px;
-            text-align: center;
+            border-radius: 2rem;
+            padding: 1.4rem 1.2rem;
+            width: 260px;
             cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            box-shadow: 0 10px 18px -8px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.02);
-            backdrop-filter: blur(2px);
-            border: 1px solid rgba(255,255,255,0.7);
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.03);
         }
-        .category-node:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 20px 28px -12px rgba(0,0,0,0.2);
-            background: #fffef7;
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 28px -8px rgba(0,0,0,0.15);
+            background: #fffdf7;
             border-color: #ffcd94;
         }
-        .category-title {
+        .card-title {
+            font-size: 1.35rem;
             font-weight: 700;
-            font-size: 1.3rem;
             color: #1e6091;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #ffb74d;
-            display: inline-block;
-            padding-bottom: 4px;
+            border-left: 4px solid #f4a261;
+            padding-left: 12px;
+            margin-bottom: 12px;
         }
         .word-cloud {
-            margin-top: 12px;
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px 12px;
+            gap: 8px;
+            margin-top: 10px;
         }
-        .word-tag {
-            font-size: 0.85rem;
-            background: #f0f4f9;
-            padding: 4px 10px;
-            border-radius: 40px;
-            transition: all 0.1s ease;
+        .word-badge {
+            background: #edf2f7;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #1e3a4d;
+            transition: 0.05s linear;
             cursor: default;
             position: relative;
-            color: #1f3b4c;
-            font-weight: 500;
+            display: inline-block;
         }
-        /* Tooltip (перевод) */
-        .word-tag[data-ru] {
-            position: relative;
+        /* тултип */
+        .word-badge[data-ru] {
+            cursor: help;
         }
-        .word-tag[data-ru]:hover::after {
+        .word-badge[data-ru]:hover::after {
             content: attr(data-ru);
             position: absolute;
             bottom: 130%;
             left: 50%;
             transform: translateX(-50%);
-            background: #1e2a36e6;
-            backdrop-filter: blur(8px);
-            color: #fff3e0;
+            background: #1f2d35e6;
+            color: #fff2df;
             padding: 6px 12px;
-            border-radius: 24px;
-            font-size: 0.75rem;
+            border-radius: 28px;
+            font-size: 0.7rem;
             white-space: nowrap;
             z-index: 200;
             font-weight: normal;
             letter-spacing: 0.3px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            backdrop-filter: blur(4px);
             pointer-events: none;
             font-family: monospace;
         }
-        /* responsive */
-        @media (max-width: 780px) {
-            .mind-map { gap: 1rem; }
-            .category-node { min-width: 120px; padding: 0.8rem 1rem; }
-            .word-tag { font-size: 0.7rem; }
-        }
 
-        /* страница детализации (текст + диалог) */
+        /* страница детализации */
         .detail-page {
             background: white;
             border-radius: 2rem;
             padding: 2rem;
-            margin-top: 1rem;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-            animation: fadeSlide 0.3s ease;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+            animation: fade 0.25s ease;
         }
-        @keyframes fadeSlide {
-            from { opacity: 0; transform: translateY(12px);}
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(8px);}
             to { opacity: 1; transform: translateY(0);}
         }
         .back-btn {
             background: none;
             border: none;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: #2a9d8f;
             cursor: pointer;
@@ -183,37 +169,57 @@
             padding: 6px 0;
         }
         .detail-title {
-            font-size: 2rem;
+            font-size: 1.9rem;
+            font-weight: 700;
             color: #1e6091;
             margin-bottom: 1rem;
-            border-left: 6px solid #f4a261;
+            border-left: 5px solid #f4a261;
             padding-left: 1rem;
         }
-        .text-sample, .dialog-sample {
-            background: #f8f9fa;
-            padding: 1.2rem;
+        .sample-box {
+            background: #f9fafc;
+            padding: 1.2rem 1.5rem;
             border-radius: 1.5rem;
             margin: 1.5rem 0;
             line-height: 1.5;
         }
-        .dialog-sample {
-            background: #e9f5f2;
+        .dialog-box {
+            background: #eef6f3;
             border-left: 6px solid #2a9d8f;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.5rem;
+            margin: 1.5rem 0;
+            white-space: pre-line;
         }
         h3 {
-            margin: 1rem 0 0.5rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
-            color: #2c3e50;
+            color: #1e3a5f;
+        }
+        .all-words-container {
+            background: #f8fafc;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            max-height: 280px;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
         }
         hr {
             margin: 1rem 0;
-            border-color: #dee2e6;
+            border-color: #dfe6ed;
         }
         .footer-note {
             text-align: center;
             font-size: 0.75rem;
+            color: #5b6f82;
             margin-top: 2rem;
-            color: #6c757d;
+        }
+        @media (max-width: 680px) {
+            .card { width: 100%; max-width: 280px; }
+            .app-container { padding: 0 1rem; }
         }
     </style>
 </head>
@@ -221,239 +227,237 @@
 <div class="header">
     <div>
         <h1>🗺️ Carte Mentale • DELF A1</h1>
-        <div class="sub">⭐ наведи на слово — перевод | кликни на категорию → текст + диалог</div>
+        <div class="sub">⭐ наведи на слово — перевод | клик на категорию → текст + диалог</div>
     </div>
-    <button class="home-btn" id="homeBtn">🏠 На главную (mind-map)</button>
+    <button class="home-btn" id="globalHomeBtn">🏠 На главную</button>
 </div>
-<div class="app-container" id="appRoot">
-    <!-- динамическая отрисовка: mind-map или детальная страница -->
-</div>
+<div class="app-container" id="appRoot"></div>
 
 <script>
-    // ---------- ПОЛНЫЙ ЛЕКСИКОН ИЗ ФАЙЛА с переводом на русский (собраны все группы) ----------
-    // Категории и все слова (оригинал -> перевод)
-    // Структура: ключ категории: { title: "Название", words: { "французское слово": "перевод", ... } }
-    const lexicon = {
+    // --------------------------------------------------------------
+    // ПОЛНЫЙ ЛЕКСИКОН ИЗ ФАЙЛА (все слова, разбитые по категориям)
+    // --------------------------------------------------------------
+    const DATA = {
         salutations: {
-            title: "👋 Saluer & Prendre congé",
+            title: "👋 Saluer / Prendre congé",
             words: {
-                "Bonjour": "Здравствуйте / Добрый день", "Bonsoir": "Добрый вечер", "Salut": "Привет", "Ça va": "Как дела?", "Comment ça va": "Как поживаешь?", "Coucou": "Ку-ку (приветствие)",
-                "Au revoir": "До свидания", "À plus tard": "До скорого", "À lundi": "До понедельника", "À ce soir": "До вечера", "À très bientôt": "До очень скорой встречи", "À dimanche": "До воскресенья", "Bises": "Целую", "Bisous": "Поцелуйчики"
+                "Bonjour": "Здравствуйте", "Bonsoir": "Добрый вечер", "Salut": "Привет", "Ça va ?": "Как дела?", "Comment ça va": "Как поживаешь?", "Coucou": "Ку-ку", "Au revoir": "До свидания", "À plus tard": "До скорого", "À lundi": "До понедельника", "À ce soir": "До вечера", "À très bientôt": "До скорой встречи", "À dimanche": "До воскресенья", "Bises": "Целую", "Bisous": "Поцелуйчики"
             }
         },
-        sePresenter: {
-            title: "🙋 Se présenter & famille",
+        presentation: {
+            title: "🙋 Présentation & Famille",
             words: {
-                "Je m'appelle": "Меня зовут", "Je suis italien": "Я итальянец", "correspondant": "корреспондент", "J'ai 14 ans": "Мне 14 лет", "j'habite à": "я живу в", "la famille": "семья", "les parents": "родители", "père": "отец", "mère": "мать", "frère": "брат", "sœur": "сестра", "oncle": "дядя", "tante": "тётя", "cousin/cousine": "двоюродный брат/сестра", "marié": "женатый/замужем", "célibataire": "холост/не замужем", "un enfant": "ребёнок", "un adolescent": "подросток", "un garçon": "мальчик", "une fille": "девочка", "un bébé": "младенец", "collégien": "ученик коллежа", "lycéen": "старшеклассник", "copain/copine": "друг/подруга", "ami(e)": "друг/подруга"
+                "Je m'appelle": "Меня зовут", "Je suis italien/ienne": "Я итальянец/итальянка", "correspondant(e)": "корреспондент", "J'ai 14 ans": "Мне 14 лет", "j'habite à": "я живу в", "la famille": "семья", "le père": "отец", "la mère": "мать", "le frère": "брат", "la sœur": "сестра", "l'oncle": "дядя", "la tante": "тётя", "le cousin": "двоюродный брат", "la cousine": "двоюродная сестра", "marié(e)": "женат/замужем", "célibataire": "холост/не замужем", "un enfant": "ребёнок", "un adolescent": "подросток", "un garçon": "мальчик", "une fille": "девочка", "un bébé": "младенец", "un(e) ami(e)": "друг/подруга"
             }
         },
-        loisirsGouts: {
+        gouts_loisirs: {
             title: "🎨 Goûts & Loisirs",
             words: {
-                "J'aime": "Я люблю", "J'adore": "Обожаю", "Je préfère": "Предпочитаю", "Je déteste": "Ненавижу", "la bande dessinée": "комиксы", "apprendre des mots": "учить слова", "dictionnaire en ligne": "онлайн-словарь", "c'est super": "это супер", "la musique": "музыка", "écouter de la musique": "слушать музыку", "chanter": "петь", "concert": "концерт", "instrument de musique": "музыкальный инструмент", "danse": "танец", "magie": "магия", "cinéma": "кино", "lire": "читать", "roman": "роман", "manga": "манга", "jeu vidéo": "видеоигра", "faire du sport": "заниматься спортом"
+                "J'aime": "Я люблю", "J'adore": "Обожаю", "Je préfère": "Предпочитаю", "Je déteste": "Ненавижу", "la bande dessinée": "комикс", "écouter de la musique": "слушать музыку", "chanter": "петь", "le concert": "концерт", "lire un roman": "читать роман", "le manga": "манга", "le jeu vidéo": "видеоигра", "faire du sport": "заниматься спортом", "la danse": "танец", "la magie": "магия", "le cinéma": "кино", "regarder un film": "смотреть фильм"
             }
         },
-        corpsCaract: {
+        corps_caractere: {
             title: "🧬 Corps & Caractère",
             words: {
-                "le cœur": "сердце", "les pieds": "ступни", "les mains": "руки", "la jambe": "нога", "les bras": "руки (от плеча)", "les yeux": "глаза", "l'oreille": "ухо", "le nez": "нос", "la bouche": "рот", "les cheveux": "волосы", "grand(e)": "высокий/ая", "petit(e)": "маленький", "beau/belle": "красивый", "blond/brun": "блондин/брюнет", "heureux": "счастливый", "triste": "грустный", "sympathique": "симпатичный", "sérieux": "серьёзный", "gentil": "добрый"
+                "le cœur": "сердце", "les pieds": "ступни", "les mains": "руки", "la jambe": "нога", "les bras": "руки", "les yeux": "глаза", "le nez": "нос", "la bouche": "рот", "les cheveux": "волосы", "grand(e)": "высокий/ая", "petit(e)": "маленький", "beau/belle": "красивый", "blond/brun": "блондин/брюнет", "heureux": "счастливый", "triste": "грустный", "sympathique": "симпатичный", "gentil(le)": "добрый", "sérieux/sérieuse": "серьёзный"
             }
         },
-        villeLogement: {
+        ville_logement: {
             title: "🏙️ Ville & Logement",
             words: {
-                "une rue": "улица", "une avenue": "проспект", "une place": "площадь", "un immeuble": "здание", "un appartement": "квартира", "une maison": "дом", "une chambre": "комната", "la cuisine": "кухня", "le salon": "гостиная", "salle de bains": "ванная", "jardin": "сад", "escalier": "лестница", "fenêtre": "окно", "table": "стол", "lit": "кровать", "armoire": "шкаф", "adresse": "адрес", "code postal": "почтовый индекс"
+                "la rue": "улица", "l'avenue": "проспект", "la place": "площадь", "l'immeuble": "здание", "l'appartement": "квартира", "la maison": "дом", "la chambre": "комната", "la cuisine": "кухня", "le salon": "гостиная", "la salle de bains": "ванная", "le jardin": "сад", "l'escalier": "лестница", "la fenêtre": "окно", "la table": "стол", "le lit": "кровать", "l'armoire": "шкаф", "l'adresse": "адрес", "le code postal": "почтовый индекс"
             }
         },
-        transportItineraire: {
+        transports_itineraire: {
             title: "🚌 Transports & Itinéraire",
             words: {
-                "prendre le bus": "сесть на автобус", "le train": "поезд", "l'avion": "самолёт", "le métro": "метро", "un vélo": "велосипед", "une voiture": "машина", "une moto": "мотоцикл", "un tramway": "трамвай", "une gare": "вокзал", "un arrêt": "остановка", "tourner à droite": "повернуть направо", "à gauche": "налево", "tout droit": "прямо", "traverser": "пересечь", "devant": "перед", "derrière": "позади", "à côté de": "рядом с"
+                "prendre le bus": "сесть на автобус", "le train": "поезд", "l'avion": "самолёт", "le métro": "метро", "le vélo": "велосипед", "la voiture": "машина", "la moto": "мотоцикл", "le tramway": "трамвай", "la gare": "вокзал", "l'arrêt": "остановка", "tourner à droite": "повернуть направо", "à gauche": "налево", "tout droit": "прямо", "traverser": "пересечь", "devant": "перед", "derrière": "позади", "à côté de": "рядом с"
             }
         },
-        temporaliteEvenements: {
+        temps_evenements: {
             title: "📅 Temps & Événements",
             words: {
-                "lundi": "понедельник", "mardi": "вторник", "mercredi": "среда", "jeudi": "четверг", "vendredi": "пятница", "samedi": "суббота", "dimanche": "воскресенье", "janvier": "январь", "février": "февраль", "mars": "март", "avril": "апрель", "mai": "май", "juin": "июнь", "juillet": "июль", "août": "август", "septembre": "сентябрь", "octobre": "октябрь", "novembre": "ноябрь", "décembre": "декабрь", "aujourd'hui": "сегодня", "demain": "завтра", "la semaine prochaine": "на следующей неделе", "l'après-midi": "после полудня", "le soir": "вечером", "anniversaire": "день рождения", "concert": "концерт", "fête": "праздник"
+                "lundi": "понедельник", "mardi": "вторник", "mercredi": "среда", "jeudi": "четверг", "vendredi": "пятница", "samedi": "суббота", "dimanche": "воскресенье", "janvier": "январь", "février": "февраль", "mars": "март", "avril": "апрель", "mai": "май", "juin": "июнь", "juillet": "июль", "août": "август", "septembre": "сентябрь", "octobre": "октябрь", "novembre": "ноябрь", "décembre": "декабрь", "aujourd'hui": "сегодня", "demain": "завтра", "la semaine prochaine": "на следующей неделе", "l'anniversaire": "день рождения", "la fête": "праздник"
             }
         },
-        ecoleCours: {
+        ecole_cours: {
             title: "📚 École & Cours",
             words: {
-                "le collège": "коллеж", "le lycée": "лицей", "un professeur": "учитель", "un élève": "ученик", "les devoirs": "домашние задания", "une leçon": "урок", "un examen": "экзамен", "une note": "оценка", "le dictionnaire": "словарь", "le vocabulaire": "лексика", "une phrase": "фраза", "un verbe": "глагол", "l'orthographe": "орфография", "la bibliothèque": "библиотека"
+                "le collège": "коллеж", "le lycée": "лицей", "le professeur": "учитель", "l'élève": "ученик", "les devoirs": "домашние задания", "la leçon": "урок", "l'examen": "экзамен", "la note": "оценка", "le dictionnaire": "словарь", "le vocabulaire": "лексика", "la phrase": "фраза", "le verbe": "глагол", "l'orthographe": "орфография", "la bibliothèque": "библиотека"
             }
         },
-        vetementsCommerces: {
+        vetements_commerces: {
             title: "🛍️ Vêtements & Commerces",
             words: {
-                "un pantalon": "брюки", "une jupe": "юбка", "un tee-shirt": "футболка", "des chaussures": "обувь", "un pull": "свитер", "des lunettes": "очки", "un sac à dos": "рюкзак", "la boulangerie": "булочная", "le marché": "рынок", "le supermarché": "супермаркет", "acheter": "покупать", "vendre": "продавать", "C'est combien": "Сколько стоит", "euro": "евро", "gratuit": "бесплатно"
+                "le pantalon": "брюки", "la jupe": "юбка", "le tee-shirt": "футболка", "les chaussures": "обувь", "le pull": "свитер", "les lunettes": "очки", "le sac à dos": "рюкзак", "la boulangerie": "булочная", "le marché": "рынок", "le supermarché": "супермаркет", "acheter": "покупать", "vendre": "продавать", "C'est combien ?": "Сколько стоит?", "l'euro": "евро", "gratuit": "бесплатно", "la réduction": "скидка"
             }
         },
-        meteoNature: {
+        meteo_nature: {
             title: "☀️ Météo & Nature",
             words: {
-                "Il fait beau": "Хорошая погода", "Il pleut": "Идёт дождь", "la pluie": "дождь", "le soleil": "солнце", "la neige": "снег", "la montagne": "гора", "la forêt": "лес", "la mer": "море", "la plage": "пляж", "un arbre": "дерево", "une fleur": "цветок", "un animal": "животное", "un chien": "собака", "un chat": "кот"
+                "Il fait beau": "Хорошая погода", "Il pleut": "Идёт дождь", "la pluie": "дождь", "le soleil": "солнце", "la montagne": "гора", "la forêt": "лес", "la mer": "море", "la plage": "пляж", "l'arbre": "дерево", "la fleur": "цветок", "le chien": "собака", "le chat": "кот"
             }
         },
-        actionsConsignes: {
+        actions_consignes: {
             title: "⚡ Actions & Consignes",
             words: {
-                "écrire": "писать", "lire": "читать", "organiser": "организовывать", "aider": "помогать", "nettoyer": "убирать", "ranger": "наводить порядок", "allumer l'ordinateur": "включить компьютер", "faire des recherches": "искать информацию", "Appelle-moi": "Позвони мне", "Tu peux": "Ты можешь", "Je dois": "Я должен", "C'est interdit": "Запрещено", "Merci": "Спасибо", "Pardon": "Извините"
+                "écrire": "писать", "lire": "читать", "organiser": "организовывать", "aider": "помогать", "nettoyer": "убирать", "ranger": "наводить порядок", "allumer l'ordinateur": "включить компьютер", "Appelle-moi": "Позвони мне", "Tu peux": "Ты можешь", "Je dois": "Я должен", "C'est interdit": "Запрещено", "Merci": "Спасибо", "Pardon": "Извините", "Bravo": "Браво"
             }
         }
     };
-    
-    // ---- ДОПОЛНИТЕЛЬНЫЕ СЛОВА которые были в PDF, но для полноты распределим их в уже имеющиеся категории (все слова!)
-    const extraWordsMap = {
-        "une personne": "человек", "un homme": "мужчина", "une femme": "женщина", "un numéro": "номер", "une nationalité": "национальность", "l'âge": "возраст", "une date de naissance": "дата рождения", "une photo d'identité": "фото на документы",
-        "rapide": "быстрый", "facile": "лёгкий", "différent": "разный", "nouveau": "новый", "vieux": "старый", "magnifique": "великолепный", "génial": "классный", "incroyable": "невероятный",
-        "jaune": "жёлтый", "blanc": "белый", "noir": "чёрный", "rouge": "красный", "vert": "зелёный", "bleu": "синий",
-        "descendre": "спускаться", "s'inscrire": "зарегистрироваться", "envoyer": "отправлять", "observer": "наблюдать", "préparer une fête": "готовить вечеринку", "faire le ménage": "делать уборку", 
-        "une exposition": "выставка", "un billet": "билет", "un théâtre": "театр", "un orchestre": "оркестр", "un match": "матч", "la natation": "плавание", "le tennis": "теннис",
-        "Tous les jours": "Каждый день", "souvent": "часто", "Est-ce que tu veux venir": "Хочешь пойти", "Rendez-vous": "Встреча", "Bravo": "Браво", "Félicitations": "Поздравления"
-    };
-    // Добавим дополнительные слова в релевантные категории
-    lexicon.sePresenter.words["une personne"] = "человек";
-    lexicon.sePresenter.words["un homme"] = "мужчина";
-    lexicon.sePresenter.words["une femme"] = "женщина";
-    lexicon.sePresenter.words["l'âge"] = "возраст";
-    lexicon.corpsCaract.words["rapide"] = "быстрый";
-    lexicon.corpsCaract.words["facile"] = "лёгкий";
-    lexicon.corpsCaract.words["magnifique"] = "великолепный";
-    lexicon.corpsCaract.words["génial"] = "классный";
-    lexicon.vetementsCommerces.words["jaune"] = "жёлтый";
-    lexicon.vetementsCommerces.words["rouge"] = "красный";
-    lexicon.actionsConsignes.words["descendre"] = "спускаться";
-    lexicon.actionsConsignes.words["s'inscrire"] = "регистрироваться";
-    lexicon.loisirsGouts.words["une exposition"] = "выставка";
-    lexicon.loisirsGouts.words["un billet"] = "билет";
-    lexicon.transportItineraire.words["Tous les jours"] = "каждый день";
-    lexicon.actionsConsignes.words["Bravo"] = "Браво!";
-    
-    // СОБИРАЕМ mind-map отображение всех категорий
+
+    // Дополнительно добавим недостающие слова из файла (чтобы использовать максимально)
+    DATA.vetements_commerces.words["la couleur jaune"] = "жёлтый цвет";
+    DATA.vetements_commerces.words["rouge"] = "красный";
+    DATA.ville_logement.words["le parking"] = "парковка";
+    DATA.actions_consignes.words["Veuillez répéter"] = "Повторите пожалуйста";
+    DATA.gouts_loisirs.words["l'exposition"] = "выставка";
+    DATA.transports_itineraire.words["Tous les jours"] = "Каждый день";
+    DATA.salutations.words["Bonne journée"] = "Хорошего дня";
+
+    // Подсчёт общего количества слов
+    function getTotalWords() {
+        let total = 0;
+        for(let k in DATA) total += Object.keys(DATA[k].words).length;
+        return total;
+    }
+
+    // ---------- ОТРИСОВКА MIND-MAP ----------
     function renderMindMap() {
         let html = `<div class="mind-map">`;
-        for (let [key, cat] of Object.entries(lexicon)) {
-            // Покажем первые 6-8 слов в превью
-            const wordEntries = Object.entries(cat.words);
-            const previewWords = wordEntries.slice(0, 7);
+        for (let [key, cat] of Object.entries(DATA)) {
+            const entries = Object.entries(cat.words);
+            const preview = entries.slice(0, 7);
             html += `
-                <div class="category-node" data-category="${key}">
-                    <div class="category-title">${cat.title}</div>
+                <div class="card" data-cat="${key}">
+                    <div class="card-title">${cat.title}</div>
                     <div class="word-cloud">
-                        ${previewWords.map(([fr, ru]) => `<span class="word-tag" data-ru="${ru}">${fr}</span>`).join('')}
-                        ${wordEntries.length > 7 ? `<span class="word-tag" style="background:#e2eaf1">+${wordEntries.length-7} слов</span>` : ''}
+                        ${preview.map(([fr, ru]) => `<span class="word-badge" data-ru="${ru}">${fr}</span>`).join('')}
+                        ${entries.length > 7 ? `<span class="word-badge" style="background:#e4eaf1">+${entries.length-7}</span>` : ''}
                     </div>
-                    <div style="font-size:0.7rem; margin-top:8px; opacity:0.7;">✨ нажми для текста+диалога</div>
+                    <div style="font-size:0.65rem; margin-top:10px; color:#4f7e9e;">🔍 нажми для диалога+текста</div>
                 </div>
             `;
         }
-        html += `</div><div class="footer-note">🧠 Всего слов: ${countAllWords()} • наведи на слово → перевод • клик по категории → практика</div>`;
+        html += `</div><div class="footer-note">📚 Всего слов: ${getTotalWords()} • наведи на французское слово → перевод • клик по карточке → практика</div>`;
         return html;
     }
-    
-    function countAllWords() {
-        let total = 0;
-        for(let cat of Object.values(lexicon)) total += Object.keys(cat.words).length;
-        return total;
-    }
-    
-    // Генерация текста и диалога ДЛЯ КАТЕГОРИИ (используя слова из этой категории + немного смежных)
-    function generateDetailPage(categoryKey) {
-        const category = lexicon[categoryKey];
-        if(!category) return "<div>Ошибка</div>";
-        const wordsList = Object.keys(category.words).slice(0, 18);
-        const exemplePhrases = [];
-        // строим осмысленный текст из слов категории
+
+    // Генерация текста и диалога для категории
+    function getDetailPage(categoryKey) {
+        const cat = DATA[categoryKey];
+        if (!cat) return "<div>Ошибка</div>";
+        const wordsList = Object.keys(cat.words);
+        
         let text = "";
-        if(categoryKey === "salutations") {
-            text = "Le matin, on dit « Bonjour » à son professeur. Avec les copains, on dit « Salut, ça va ? » Le soir, on dit « Bonsoir ». Pour quitter, « Au revoir, à demain ! » « Bises » à la famille.";
-        } else if(categoryKey === "sePresenter") {
-            text = "Je m'appelle Lucie, j'ai 14 ans. Mon père s'appelle Marc, ma mère s'appelle Élodie. J'ai un frère et une sœur. Ma famille habite à Lyon. Je suis française et célibataire ! Mon cousin est italien.";
-        } else if(categoryKey === "villeLogement") {
-            text = "J'habite dans un appartement au 3e étage. Ma rue est calme, il y a un jardin et une fenêtre dans la cuisine. La salle de bains est à côté de la chambre. Mon adresse : 12 rue des Lilas, code postal 75001.";
-        } else if(categoryKey === "transportItineraire") {
-            text = "Pour aller au collège, je prends le bus. Puis je tourne à gauche, je traverse le parc. Le métro est devant la gare. Mon vélo est à côté de l'arrêt. Tu vas tout droit et tu arrives.";
-        } else if(categoryKey === "ecoleCours") {
-            text = "Au collège, j'ai un professeur de français. Nous faisons des exercices et nous apprenons une leçon. J'utilise le dictionnaire pour le vocabulaire. Les devoirs sont à rendre lundi. La bibliothèque est géniale !";
-        } else {
-            text = `Dans la catégorie « ${category.title} », on utilise des mots comme : ${wordsList.slice(0,7).join(', ')}... Par exemple : « ${wordsList[0]} » est très utile au quotidien. « ${wordsList[1] || 'sympa'} » permet d'exprimer ses goûts. Les francophones les emploient souvent.`;
-        }
-        // ДИАЛОГ используя слова категории
         let dialog = "";
-        if(categoryKey === "salutations") {
-            dialog = "— Salut Léo, ça va ?\n— Oui, ça va très bien, merci ! Et toi ?\n— Coucou, ça va. À plus tard !\n— Oui, à ce soir, bises !";
-        } else if(categoryKey === "transportItineraire") {
-            dialog = "— Excuse-moi, pour aller à la gare, s'il te plaît ?\n— Tu prends à droite, puis tout droit. Tu traverses la place.\n— Merci ! Et le bus ?\n— Le bus numéro 5, arrêt devant le parc. Bonne route !";
-        } else if(categoryKey === "loisirsGouts") {
-            dialog = "— Tu aimes la musique ?\n— J'adore, j'écoute du classique et je chante souvent. Et toi ?\n— Je préfère les jeux vidéo et les bandes dessinées. C'est super !\n— Moi aussi, j'aime lire des mangas.";
-        } else if(categoryKey === "vetementsCommerces") {
-            dialog = "— Bonjour, ce pantalon coûte combien ?\n— Il est à 39 euros, mais il y a une réduction 15% aujourd'hui.\n— Super ! Et ce tee-shirt ?\n— 12 euros. Vous payez à la caisse.";
-        } else {
-            dialog = `— Tu connais le mot « ${wordsList[0]} » ? Ça veut dire quoi ?\n— Oui, ${category.words[wordsList[0]] || 'c'est utile'} ! On l'utilise en français.\n— Et « ${wordsList[1] || 'sympa'} » ?\n— C'est très courant. Bravo pour ton apprentissage !`;
+        
+        // Уникальные тексты и диалоги под каждую тему
+        switch(categoryKey) {
+            case "salutations":
+                text = "Le matin, je dis « Bonjour » à mes camarades. Le soir, je dis « Bonsoir ». Quand je quitte un ami, « À plus tard ! » ou « Salut ! ». Avec ma famille, « Bises » et « Bisous ». C'est poli et sympathique.";
+                dialog = "— Salut Marie, ça va ?\n— Oui, ça va très bien, merci, et toi ?\n— Coucou, ça va. À ce soir au cinéma ?\n— D'accord, à ce soir ! Bisous !";
+                break;
+            case "presentation":
+                text = "Je m'appelle Léa, j'ai 13 ans. Je suis française. Mon père s'appelle Thomas, ma mère s'appelle Claire. J'ai un frère, Lucas, et une sœur, Emma. Mes grands-parents habitent à Nice. Je suis célibataire et j'adore ma famille !";
+                dialog = "— Tu t'appelles comment ?\n— Je m'appelle Erdem, je suis italien. Et toi ?\n— Moi, c'est Lucie, je suis ta correspondante française. J'habite à Nantes.\n— Enchanté ! Ma sœur s'appelle Ozge.";
+                break;
+            case "gouts_loisirs":
+                text = "J'adore la musique classique et je joue du piano. Je préfère les bandes dessinées aux romans. Je déteste le bruit. Mon frère aime les jeux vidéo. Nous allons souvent au concert. C'est super !";
+                dialog = "— Qu'est-ce que tu aimes faire ?\n— J'aime beaucoup écouter de la musique et lire des mangas.\n— Moi, je préfère le cinéma et la danse. Tu veux venir au spectacle de magie ?\n— Avec plaisir !";
+                break;
+            case "ville_logement":
+                text = "J'habite dans un appartement au 2e étage. Il y a une cuisine, un salon, deux chambres et une salle de bains. Ma rue est calme. Devant mon immeuble, il y a un petit jardin. Mon adresse est 15 rue des Roses, code postal 75012.";
+                dialog = "— Où habites-tu ?\n— J'habite au 27, rue du Port, dans une maison avec jardin. Et toi ?\n— Mon appartement est au 4e étage, sans ascenseur. La salle de bains est petite mais moderne.";
+                break;
+            case "transports_itineraire":
+                text = "Pour aller au collège, je prends le bus numéro 51. Ensuite, je traverse le parc, puis je tourne à gauche. La gare est devant le musée. Mon vélo est à côté de l'arrêt de tramway.";
+                dialog = "— Excusez-moi, pour aller à la gare ?\n— Vous prenez à droite dans la rue Carnot, puis vous continuez tout droit.\n— Merci ! Et le métro ?\n— Le métro est derrière la poste. Bonne route !";
+                break;
+            case "ecole_cours":
+                text = "Au collège, nous avons un professeur de français très sympa. Nous lisons des textes, apprenons une leçon et faisons des exercices. Les devoirs sont à rendre vendredi. J'utilise le dictionnaire pour le vocabulaire.";
+                dialog = "— Tu as fait tes devoirs ?\n— Oui, j'ai appris la leçon et j'ai écrit une phrase avec chaque verbe nouveau.\n— Bravo ! Tu as une bonne note ?\n— Oui, j'ai eu 18 sur 20. Félicitations !";
+                break;
+            case "vetements_commerces":
+                text = "Au supermarché, il y a une promotion sur les tee-shirts. Ce pantalon coûte 39 euros. Les lunettes de soleil sont à 15 euros. Je vais à la boulangerie acheter une baguette. La réduction de 20% est valable aujourd'hui.";
+                dialog = "— Bonjour, combien coûte ce pull ?\n— 29 euros, mais avec la carte de fidélité, réduction 15%.\n— Super ! Et ces baskets ?\n— Elles sont à 45 euros. Vous payez à la caisse.";
+                break;
+            default:
+                text = `Dans la catégorie « ${cat.title} », les mots utiles: ${wordsList.slice(0,5).join(', ')}... Exemple : « ${wordsList[0]} » est très courant en français. Essayez de les utiliser au quotidien.`;
+                dialog = `— Tu connais le mot « ${wordsList[0]} » ?\n— Oui, ça veut dire : ${cat.words[wordsList[0]] || 'très utile'}.\n— Et « ${wordsList[1] || 'sympa'} » ?\n— Parfait, merci pour ton aide !`;
         }
+        
+        // Все слова категории (кликабельные баджи)
+        const allWordsHtml = Object.entries(cat.words).map(([fr, ru]) => `<span class="word-badge" data-ru="${ru}" style="background:#e2eaf1;">${fr}</span>`).join('');
         
         return `
             <div class="detail-page">
-                <button class="back-btn" id="backToMapBtn">← Вернуться к Mind-map</button>
-                <div class="detail-title">📖 ${category.title}</div>
-                <div class="text-sample">
-                    <h3>📝 Текст (применение слов)</h3>
-                    <p>${text.replace(/\n/g, '<br>')}</p>
+                <button class="back-btn" id="backBtn">← Вернуться к mind-map</button>
+                <div class="detail-title">📖 ${cat.title}</div>
+                <div class="sample-box">
+                    <h3>📘 Текст (слова из темы)</h3>
+                    <p>${text}</p>
                 </div>
-                <div class="dialog-sample">
+                <div class="dialog-box">
                     <h3>💬 Диалог</h3>
-                    <p style="white-space: pre-line;">${dialog}</p>
+                    <p style="white-space: pre-wrap;">${dialog}</p>
                 </div>
                 <hr>
-                <div><strong>✨ Все слова категории (${Object.keys(category.words).length} слов):</strong> ${Object.entries(category.words).map(([fr,ru]) => `<span class="word-tag" data-ru="${ru}" style="display:inline-block; margin:4px;">${fr}</span>`).join('')}</div>
-                <div class="footer-note" style="margin-top:1rem;">✔️ Наведи на любое слово, чтобы увидеть перевод.</div>
+                <div><strong>📌 Все слова категории (${wordsList.length} слов):</strong></div>
+                <div class="all-words-container">${allWordsHtml}</div>
+                <div class="footer-note">✨ Наведи на любое слово — появится перевод на русский ✨</div>
             </div>
         `;
     }
-    
-    let currentView = "map"; // 'map' or 'detail'
-    let currentCategory = null;
-    
-    const root = document.getElementById("appRoot");
+
+    // ------ Управление состоянием ------
+    let viewState = "map";   // "map" or "detail"
+    let activeCategory = null;
+    const rootEl = document.getElementById("appRoot");
     
     function render() {
-        if(currentView === "map") {
-            root.innerHTML = renderMindMap();
-            // добавить слушатели на категории
-            document.querySelectorAll('.category-node').forEach(node => {
-                node.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const cat = node.dataset.category;
-                    if(cat) {
-                        currentCategory = cat;
-                        currentView = "detail";
+        if (viewState === "map") {
+            rootEl.innerHTML = renderMindMap();
+            // добавить слушатели на карточки
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const cat = card.getAttribute('data-cat');
+                    if (cat && DATA[cat]) {
+                        activeCategory = cat;
+                        viewState = "detail";
                         render();
                     }
                 });
             });
-            // активировать тултипы уже работают через css, но также для динамических элементов
-        } else if(currentView === "detail" && currentCategory) {
-            root.innerHTML = generateDetailPage(currentCategory);
-            const backBtn = document.getElementById("backToMapBtn");
-            if(backBtn) backBtn.addEventListener('click', () => {
-                currentView = "map";
-                currentCategory = null;
-                render();
-            });
+        } 
+        else if (viewState === "detail" && activeCategory) {
+            rootEl.innerHTML = getDetailPage(activeCategory);
+            const backBtn = document.getElementById("backBtn");
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    viewState = "map";
+                    activeCategory = null;
+                    render();
+                });
+            }
         } else {
-            currentView = "map";
+            // fallback
+            viewState = "map";
             render();
         }
+        // тултипы работают через css, но динамические элементы уже имеют data-ru
     }
     
-    document.getElementById("homeBtn")?.addEventListener('click', () => {
-        currentView = "map";
-        currentCategory = null;
-        render();
-    });
+    // Глобальная кнопка "На главную"
+    const homeBtn = document.getElementById("globalHomeBtn");
+    if(homeBtn) {
+        homeBtn.addEventListener('click', () => {
+            viewState = "map";
+            activeCategory = null;
+            render();
+        });
+    }
     
-    // Инициализация
     render();
 </script>
 </body>
