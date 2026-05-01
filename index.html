@@ -1,65 +1,612 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DELF A1 — Lexique Interactif</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0d0f14;
-    --surface: #161921;
-    --card: #1e2230;
-    --border: #2a3048;
-    --accent1: #e8b86d;
-    --accent2: #7eb8d4;
-    --accent3: #c47fc4;
-    --accent4: #6ecf9e;
-    --accent5: #e07c7c;
-    --accent6: #7cb8e0;
-    --text: #e8e4d9;
-    --muted: #8b8fa8;
-    --line: rgba(232,184,109,0.15);
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Конвертер вопросов LaTeX в Moodle XML</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background-color: #f0f7f0;
+            margin: 0;
+            padding: 20px;
+            color: #1a2c1f;
+        }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Crimson Pro', Georgia, serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
 
-  /* ── STAR BACKGROUND ── */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background: radial-gradient(ellipse at 20% 20%, rgba(126,184,212,0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(196,127,196,0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(232,184,109,0.03) 0%, transparent 70%);
-    pointer-events: none; z-index: 0;
-  }
+        header {
+            background: #2c5e2e;
+            color: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 4px solid #f4b400;
+        }
 
-  /* ── HEADER ── */
-  header {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 18px 40px;
-    display: flex; align-items: center; justify-content: space-between;
-    background: rgba(13,15,20,0.92);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-  }
+        header h1 {
+            margin: 0 0 0.4rem 0;
+            font-weight: 600;
+            font-size: 1.9rem;
+        }
 
-  .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    font-weight: 900;
-    letter-spacing: 0.08em;
-    color: var(--accent1);
-  }
+        header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .two-columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0;
+        }
+
+        .panel {
+            flex: 1 1 50%;
+            padding: 1.8rem;
+            background: #ffffff;
+            border-right: 1px solid #e0e7e0;
+        }
+
+        .panel:last-child {
+            border-right: none;
+        }
+
+        .panel h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: #1e3a1e;
+            border-left: 5px solid #f4b400;
+            padding-left: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 380px;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 16px;
+            border: 1px solid #cbdccb;
+            border-radius: 20px;
+            background: #fefef7;
+            resize: vertical;
+            transition: 0.1s;
+        }
+
+        textarea:focus {
+            border-color: #2c5e2e;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(44, 94, 46, 0.2);
+        }
+
+        .toolbar {
+            margin-top: 1rem;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        button {
+            background-color: #2c5e2e;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: #1f451f;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px -6px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary {
+            background-color: #5a626e;
+        }
+
+        .btn-secondary:hover {
+            background-color: #454e53;
+        }
+
+        .btn-warning {
+            background-color: #b8860b;
+        }
+
+        .btn-warning:hover {
+            background-color: #9a6e09;
+        }
+
+        .status {
+            margin-top: 1rem;
+            padding: 8px 12px;
+            background: #eef4ee;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            color: #1f3b21;
+            font-family: monospace;
+        }
+
+        .preview-xml {
+            background: #faf9f2;
+            border-radius: 20px;
+            padding: 12px;
+            margin-top: 1rem;
+            border: 1px solid #dde4dd;
+        }
+
+        .preview-xml h3 {
+            margin: 0 0 8px 0;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .xml-box {
+            background: #1e2a1a;
+            color: #e2f0da;
+            font-family: monospace;
+            font-size: 12px;
+            padding: 16px;
+            border-radius: 16px;
+            max-height: 450px;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .download-area {
+            margin-top: 18px;
+            text-align: right;
+        }
+
+        .example {
+            font-size: 0.8rem;
+            background: #f8f9ed;
+            padding: 12px;
+            border-radius: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #f4b400;
+        }
+
+        hr {
+            margin: 20px 0;
+            border-color: #d9e3d9;
+        }
+
+        footer {
+            background: #eaf3ea;
+            padding: 1rem 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #2d572c;
+            border-top: 1px solid #cbe2cb;
+        }
+
+        @media (max-width: 860px) {
+            .two-columns {
+                flex-direction: column;
+            }
+            .panel {
+                border-right: none;
+                border-bottom: 1px solid #e0e7e0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📄 Конвертер LaTeX → Moodle XML</h1>
+        <p>Преобразует вопросы в формате \question ... \begin{randomizechoices}...\correctchoice... в формат импорта Moodle (multichoice)</p>
+    </header>
+    <div class="two-columns">
+        <div class="panel">
+            <h2>📥 Исходные вопросы (LaTeX)</h2>
+            <textarea id="latexInput" placeholder='Вставьте один или несколько вопросов в формате:
+
+\question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
+\begin{randomizechoices}
+	\choice металл координационно связан с лигандом через атом с неподеленной парой.
+	\correctchoice заполненная орбиталь лиганда (например, C-H $\sigma$-связь) донирует электронную плотность на вакантную орбиталь металла (трехцентровая двухэлектронная связь M...H-C).
+	\choice металл и лиганд обмениваются протонами.
+	\choice образуется металл-металлическая связь.
+\end{randomizechoices}
+
+\question Другой вопрос ...'></textarea>
+            <div class="toolbar">
+                <button id="convertBtn">✨ Конвертировать в Moodle XML</button>
+                <button id="clearBtn" class="btn-secondary">🗑 Очистить</button>
+                <button id="sampleBtn" class="btn-warning">📋 Загрузить пример</button>
+            </div>
+            <div class="status" id="statusMsg">✅ Ожидание ввода. Нажмите "Конвертировать".</div>
+            <div class="example">
+                <strong>📌 Формат вопроса:</strong> Каждый вопрос начинается с <code>\question</code> (текст вопроса до 
+                <code>\begin{randomizechoices}</code>). Внутри окружения — варианты через <code>\choice</code>, правильный 
+                отмечен <code>\correctchoice</code>. Поддерживается LaTeX-разметка внутри (например, <code>$\sigma$</code>).
+                Правило: <code>\correctchoice</code> преобразуется в fraction=100, остальные — 0.
+            </div>
+        </div>
+        <div class="panel">
+            <h2>📤 Результат: Moodle XML</h2>
+            <div class="preview-xml">
+                <h3>🔍 Превью XML (первые строки)</h3>
+                <div class="xml-box" id="xmlPreview">— Сгенерированный XML появится здесь —</div>
+                <div class="download-area">
+                    <button id="downloadBtn" style="background:#eb6f3e;">⬇️ Скачать как questions.xml</button>
+                </div>
+                <div style="font-size: 0.75rem; margin-top: 8px; color: #4c6b4a;">
+                    ⚡ Файл полностью соответствует структуре Moodle: multichoice, одиночный выбор, перемешивание ответов true, нумерация none, штраф 0.3333333, стандартный балл 1.
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        🧪 Конвертер поддерживает множественные вопросы в одном файле. Правильный ответ помечен \correctchoice. Автоматическая экранизация и CDATA для сохранения LaTeX.
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // DOM elements
+        const latexInput = document.getElementById('latexInput');
+        const convertBtn = document.getElementById('convertBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const sampleBtn = document.getElementById('sampleBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const xmlPreview = document.getElementById('xmlPreview');
+        const statusMsg = document.getElementById('statusMsg');
+
+        // вспомогательные функции: экранирование для CDATA (в целом помещаем внутрь CDATA, но нужно закрыть ]]> если оно встретится)
+        function escapeCDATA(str) {
+            // если внутри есть "]]>", разрываем CDATA безопасно
+            return str.replace(/\]\]>/g, ']]]]><![CDATA[>');
+        }
+
+        // Функция оборачивает текст в <![CDATA[ ... ]]> с коррекцией
+        function wrapCDATA(content) {
+            let safeContent = escapeCDATA(content);
+            return `<![CDATA[${safeContent}]]>`;
+        }
+
+        // Очистка и подготовка текста вопроса / варианта: перевод в HTML-формат абзацев,
+        // но сохраняем LaTeX как есть. Чтобы красиво, оборачиваем в <p> ... </p> для Moodle.
+        function formatHtmlText(text) {
+            // удаляем лишние пробелы по краям
+            text = text.trim();
+            if (text === "") return "";
+            // экранируем потенциально опасные символы (но для CDATA не обязательно, но для читаемости)
+            // просто обернем в <p> и сохраним переносы строк как <br/> если есть? В оригинале вопросы однострочные, 
+            // но для надёжности разбиваем \n на <br> внутри текста вопроса/ответа.
+            // Однако moodle принимает произвольный html внутри CDATA.
+            let withBreaks = text.replace(/\n/g, '<br/>');
+            return `<p>${withBreaks}</p>`;
+        }
+
+        // Парсинг одного вопроса: вход - строка с содержимым вопроса от \question до \end{randomizechoices}
+        // возвращает объект { questionText, choices: [{text, fraction}] } или null при ошибке
+        function parseSingleQuestion(questionBlock) {
+            // удаляем лишние пробелы в начале и конце блока
+            let block = questionBlock.trim();
+            if (!block) return null;
+            
+            // Извлекаем текст вопроса: после \question до \begin{randomizechoices}
+            // Ищем \question
+            const questionMatch = block.match(/^\\question\s+(.*?)(?=\\begin\{randomizechoices\})/s);
+            if (!questionMatch) {
+                throw new Error("Не найден заголовок \\question или отсутствует \\begin{randomizechoices}");
+            }
+            let rawQuestionText = questionMatch[1].trim();
+            if (!rawQuestionText) {
+                throw new Error("Текст вопроса пуст после \\question");
+            }
+            
+            // Извлекаем блок вариантов между \begin{randomizechoices} и \end{randomizechoices}
+            const choicesRegex = /\\begin\{randomizechoices\}(.*?)\\end\{randomizechoices\}/s;
+            const choicesMatch = block.match(choicesRegex);
+            if (!choicesMatch) {
+                throw new Error("Не найдено окружение randomizechoices");
+            }
+            let choicesContent = choicesMatch[1];
+            
+            // Разбираем варианты: строки вида \choice текст или \correctchoice текст
+            // варианты могут быть на разных строках и иметь отступы
+            const choiceLines = choicesContent.split(/\r?\n/);
+            let choices = [];
+            let currentChoice = null;
+            
+            // Простой парсер: собираем построчно, но команда \choice и \correctchoice может быть в начале строки с пробелами
+            for (let line of choiceLines) {
+                line = line.trim();
+                if (line === "") continue;
+                // Проверяем начало команды
+                if (line.startsWith('\\choice')) {
+                    // сохраняем предыдущий, если есть
+                    if (currentChoice !== null) {
+                        choices.push(currentChoice);
+                    }
+                    let textPart = line.substring('\\choice'.length).trim();
+                    currentChoice = { text: textPart, fraction: 0 };
+                }
+                else if (line.startsWith('\\correctchoice')) {
+                    if (currentChoice !== null) {
+                        choices.push(currentChoice);
+                    }
+                    let textPart = line.substring('\\correctchoice'.length).trim();
+                    currentChoice = { text: textPart, fraction: 100 };
+                }
+                else {
+                    // продолжение предыдущего варианта (многострочный текст)
+                    if (currentChoice !== null) {
+                        currentChoice.text += " " + line;
+                    } else {
+                        // некорректная ситуация: встретили текст до команды, игнорируем или выбросим
+                        // но безопасно пропустим
+                    }
+                }
+            }
+            if (currentChoice !== null) {
+                choices.push(currentChoice);
+            }
+            
+            if (choices.length === 0) {
+                throw new Error("Не найдено ни одного варианта ответа (\\choice или \\correctchoice)");
+            }
+            
+            // Проверим, что есть хотя бы один правильный ответ (fraction=100)
+            const hasCorrect = choices.some(ch => ch.fraction === 100);
+            if (!hasCorrect) {
+                throw new Error("Отсутствует правильный ответ (не найден \\correctchoice)");
+            }
+            
+            // Очищаем текст вопроса: возможные LaTeX-команды оставляем (они будут внутри CDATA)
+            // Дополнительно: экранируем квадратные скобки? Не требуется.
+            return {
+                questionText: rawQuestionText,
+                choices: choices
+            };
+        }
+        
+        // Генерация XML для вопроса
+        function generateQuestionXML(questionObj, index) {
+            const qtextRaw = questionObj.questionText;
+            const questionHtml = formatHtmlText(qtextRaw);
+            
+            // Создаем блоки ответов
+            let answersXml = '';
+            for (let i = 0; i < questionObj.choices.length; i++) {
+                const choice = questionObj.choices[i];
+                const answerHtml = formatHtmlText(choice.text);
+                const fraction = choice.fraction;
+                answersXml += `
+    <answer fraction="${fraction}" format="html">
+      <text>${wrapCDATA(answerHtml)}</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>`;
+            }
+            
+            // Имя вопроса: берем первые 60 символов текста вопроса
+            let shortName = qtextRaw.replace(/\s+/g, ' ').substring(0, 70);
+            if (shortName.length < 3) shortName = `Вопрос ${index+1}`;
+            
+            const uniqueId = Date.now() + index + Math.floor(Math.random() * 10000);
+            
+            const xml = `
+  <!-- question: ${uniqueId} -->
+  <question type="multichoice">
+    <name>
+      <text>${escapeXmlText(shortName)}</text>
+    </name>
+    <questiontext format="html">
+      <text>${wrapCDATA(questionHtml)}</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>1</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <answernumbering>none</answernumbering>
+    <showstandardinstruction>0</showstandardinstruction>
+    <correctfeedback format="html">
+      <text></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text></text>
+    </incorrectfeedback>
+    ${answersXml}
+  </question>`;
+            return xml;
+        }
+        
+        // Вспомогательная функция экранирования XML текста для обычных полей (name)
+        function escapeXmlText(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c; // суррогатные пары оставляем как есть
+            });
+        }
+        
+        // Основная функция конвертации: из полного текста извлекаем все вопросы и генерируем XML
+        function convertAllQuestions(fullText) {
+            // Разделяем вопросы по шаблону: каждый начинается с "\question"
+            // Используем regex для поиска блоков от \question до следующего \question или до конца строки
+            // Ищем позиции всех \question
+            const questionBlocks = [];
+            let searchText = fullText;
+            // Более надёжный способ: найти индексы всех \question
+            const regexStart = /\\question/g;
+            let match;
+            let lastIndex = 0;
+            let starts = [];
+            while ((match = regexStart.exec(searchText)) !== null) {
+                starts.push(match.index);
+            }
+            if (starts.length === 0) {
+                throw new Error("Не найдено ни одного вопроса с командой \\question");
+            }
+            for (let i = 0; i < starts.length; i++) {
+                let begin = starts[i];
+                let end = (i+1 < starts.length) ? starts[i+1] : fullText.length;
+                let rawBlock = fullText.substring(begin, end);
+                questionBlocks.push(rawBlock);
+            }
+            
+            const parsedQuestions = [];
+            for (let idx = 0; idx < questionBlocks.length; idx++) {
+                try {
+                    const parsed = parseSingleQuestion(questionBlocks[idx]);
+                    if (parsed) parsedQuestions.push(parsed);
+                } catch (err) {
+                    throw new Error(`Ошибка в вопросе ${idx+1}: ${err.message}`);
+                }
+            }
+            if (parsedQuestions.length === 0) {
+                throw new Error("Не удалось распарсить ни одного валидного вопроса.");
+            }
+            
+            // Генерируем общий XML
+            let xmlHeader = `<?xml version="1.0" encoding="UTF-8"?>\n<quiz>\n`;
+            let xmlFooter = `\n</quiz>`;
+            let questionsXml = '';
+            for (let i = 0; i < parsedQuestions.length; i++) {
+                questionsXml += generateQuestionXML(parsedQuestions[i], i);
+            }
+            return xmlHeader + questionsXml + xmlFooter;
+        }
+        
+        // финальная функция отображения и обработки
+        function renderConversion() {
+            const source = latexInput.value;
+            if (!source.trim()) {
+                statusMsg.innerHTML = "⚠️ Введите текст с вопросами в формате LaTeX.";
+                xmlPreview.innerText = "— Нет данных для конвертации —";
+                return false;
+            }
+            try {
+                const resultXml = convertAllQuestions(source);
+                xmlPreview.innerText = resultXml;
+                statusMsg.innerHTML = `✅ Успешно сконвертировано ${(resultXml.match(/<question type=/g) || []).length} вопрос(ов). Скачайте файл.`;
+                return resultXml;
+            } catch (err) {
+                statusMsg.innerHTML = `❌ Ошибка: ${err.message}`;
+                xmlPreview.innerText = `Ошибка парсинга:\n${err.message}\n\nПроверьте формат: каждый вопрос должен содержать \\question, окружение randomizechoices и \\correctchoice.`;
+                return null;
+            }
+        }
+        
+        let lastXml = null;
+        
+        function updateAndStore() {
+            const xml = renderConversion();
+            if (xml) lastXml = xml;
+            else lastXml = null;
+        }
+        
+        convertBtn.addEventListener('click', () => {
+            updateAndStore();
+        });
+        
+        clearBtn.addEventListener('click', () => {
+            latexInput.value = '';
+            xmlPreview.innerText = "— Очищено. Вставьте вопросы —";
+            statusMsg.innerHTML = "🧹 Поле очищено. Вставьте новые вопросы.";
+            lastXml = null;
+        });
+        
+        sampleBtn.addEventListener('click', () => {
+            const sampleText = `\\question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
+\\begin{randomizechoices}
+	\\choice металл координационно связан с лигандом через атом с неподеленной парой.
+	\\correctchoice заполненная орбиталь лиганда (например, C-H $\\sigma$-связь) донирует электронную плотность на вакантную орбиталь металла (трехцентровая двухэлектронная связь M...H-C).
+	\\choice металл и лиганд обмениваются протонами.
+	\\choice образуется металл-металлическая связь.
+\\end{randomizechoices}
+
+\\question Что такое эффект транса в координационной химии?
+\\begin{randomizechoices}
+    \\choice Влияние лиганда на скорость замещения транс-лиганда.
+    \\correctchoice Лиганд направляет замещение в транс-положение.
+    \\choice Эффект Яна — Теллера.
+    \\choice Только для платины(II).
+\\end{randomizechoices}`;
+            latexInput.value = sampleText;
+            updateAndStore();
+        });
+        
+        downloadBtn.addEventListener('click', () => {
+            if (!lastXml) {
+                const current = renderConversion();
+                if (!current) {
+                    statusMsg.innerHTML = "❌ Нет валидного XML для скачивания. Проверьте данные.";
+                    return;
+                }
+                lastXml = current;
+            }
+            if (lastXml && lastXml.trim().startsWith('<?xml')) {
+                const blob = new Blob([lastXml], {type: "application/xml"});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "moodle_questions.xml";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                statusMsg.innerHTML = "📁 Файл moodle_questions.xml скачан. Готов к импорту в Moodle.";
+            } else {
+                statusMsg.innerHTML = "⚠️ Некорректный XML. Нажмите 'Конвертировать' сначала.";
+            }
+        });
+        
+        // загрузить пустой (можно пример)
+        latexInput.value = "";
+        xmlPreview.innerText = "— Введите вопросы и нажмите 'Конвертировать' —";
+    })();
+</script>
+</body>
+</html>  }
   .logo span { color: var(--muted); font-weight: 400; font-size: 0.9rem; margin-left: 10px; }
 
   .nav-back {
