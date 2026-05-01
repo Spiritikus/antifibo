@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Конвертер LaTeX в Moodle XML — точное соответствие шаблону</title>
+    <title>Конвертер LaTeX в Moodle XML — поддержка \ce{} и греческих букв</title>
     <style>
         * {
             box-sizing: border-box;
@@ -188,6 +188,13 @@
             border-left: 4px solid #f5b042;
         }
 
+        .example code {
+            background: #e8e0c8;
+            padding: 2px 5px;
+            border-radius: 8px;
+            font-family: monospace;
+        }
+
         footer {
             background: #eaf3ea;
             padding: 1rem 2rem;
@@ -211,58 +218,60 @@
 <body>
 <div class="container">
     <header>
-        <h1>📐 LaTeX → Moodle XML (полный шаблон)</h1>
-        <p>Точное соответствие формату: multichoice, стиль <code>times new roman</code>, CDATA + обёртка &lt;p&gt;&lt;span&gt;...&lt;/span&gt;&lt;/p&gt;, <code>\correctchoice</code> → fraction="100"</p>
+        <h1>🧪 LaTeX → Moodle XML (химия \ce{}, греческие буквы)</h1>
+        <p>Автоматическое преобразование: <code>\ce{ClO4^-}</code> → <code>$$\ce{ClO4^-}$$</code>, <code>$\sigma$</code> → <code>$$\sigma$$</code>. Полное соответствие шаблону Moodle.</p>
     </header>
     <div class="two-columns">
         <div class="panel">
             <h2>📥 Исходные вопросы (LaTeX)</h2>
-            <textarea id="latexInput" placeholder='Пример формата (один или несколько вопросов):
+            <textarea id="latexInput" placeholder='Пример формата с \ce{} и греческими буквами:
 
 \question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
 \begin{randomizechoices}
 	\choice металл координационно связан с лигандом через атом с неподеленной парой.
-	\correctchoice заполненная орбиталь лиганда (например, C-H $\sigma$-связь) донирует электронную плотность на вакантную орбиталь металла (трехцентровая двухэлектронная связь M...H-C).
+	\correctchoice заполненная орбиталь лиганда (например, C-H $\sigma$-связь, \ce{ClO4^-}) донирует электронную плотность на вакантную орбиталь металла (трехцентровая двухэлектронная связь M...H-C).
 	\choice металл и лиганд обмениваются протонами.
 	\choice образуется металл-металлическая связь.
 \end{randomizechoices}
 
-\question Второй вопрос...
+\question Какая формула у перхлорат-иона?
 \begin{randomizechoices}
-    \choice неверный вариант
-    \correctchoice верный вариант
+    \choice \ce{ClO3-}
+    \correctchoice \ce{ClO4-}
+    \choice \ce{ClO2-}
+    \choice \ce{ClO-}
 \end{randomizechoices}'></textarea>
             <div class="toolbar">
                 <button id="convertBtn">✨ Конвертировать в Moodle XML</button>
                 <button id="clearBtn" class="btn-secondary">🗑 Очистить</button>
-                <button id="sampleBtn" class="btn-warning">📋 Загрузить образец (агастическое)</button>
+                <button id="sampleBtn" class="btn-warning">📋 Загрузить образец (химия + греческие)</button>
             </div>
             <div class="status" id="statusMsg">✅ Ожидание ввода. Нажмите «Конвертировать».</div>
             <div class="example">
-                <strong>📌 Требования к формату вопроса:</strong><br>
-                • Каждый вопрос начинается с <code>\question</code> (текст вопроса).<br>
-                • Затем <code>\begin{randomizechoices}</code> ... <code>\end{randomizechoices}</code>.<br>
-                • Варианты: <code>\choice</code> (неверный) и <code>\correctchoice</code> (верный, 100%).<br>
-                • Поддерживается LaTeX-разметка: <code>$\sigma$</code> → преобразуется в <code>$$\sigma$$</code> для совместимости с шаблоном.<br>
-                • Результирующий XML полностью повторяет структуру из вашего шаблона: каждый ответ обёрнут в <code>&lt;p&gt;&lt;span style="font-family: 'times new roman', times, serif; font-size: medium;"&gt;...&lt;/span&gt;&lt;/p&gt;</code>.
+                <strong>📌 Обработка специальных команд:</strong><br>
+                • <code>\ce{формула}</code> → <code>$$\ce{формула}$$</code><br>
+                • <code>$...$</code> (греческие буквы, формулы) → <code>$$...$$</code><br>
+                • Поддерживаются многострочные варианты и несколько вопросов.<br>
+                • Каждый ответ оборачивается в <code>&lt;p&gt;&lt;span style="font-family: 'times new roman', times, serif; font-size: medium;"&gt;...&lt;/span&gt;&lt;/p&gt;</code><br>
+                • <code>\correctchoice</code> → fraction="100"
             </div>
         </div>
         <div class="panel">
             <h2>📤 Результат: Moodle XML</h2>
             <div class="preview-area">
-                <h3>🔍 XML (совместим с Moodle)</h3>
+                <h3>🔍 XML (совместим с Moodle, \ce{} и греческие в двойных $$)</h3>
                 <div class="xml-box" id="xmlPreview">— Сгенерированный XML появится здесь —</div>
                 <div class="download-area">
                     <button id="downloadBtn" style="background:#d96c2b;">⬇️ Скачать как moodle_questions.xml</button>
                 </div>
                 <div style="font-size: 0.75rem; margin-top: 8px; color: #4c6b4a;">
-                    ⚡ Каждый вопрос имеет: shuffleanswers="true", answernumbering="none", penalty="0.3333333", defaultgrade="1". Правильный ответ fraction="100", остальные fraction="0". LaTeX-вставки вида $...$ конвертируются в $$...$$.
+                    ⚡ <strong>Важно:</strong> Команды <code>\ce{}</code> автоматически обрамляются в <code>$$...$$</code>. Греческие буквы вида <code>$\sigma$</code> превращаются в <code>$$\sigma$$</code>.
                 </div>
             </div>
         </div>
     </div>
     <footer>
-        🧪 Полное соответствие шаблону: <strong>&lt;span style="font-family: 'times new roman', times, serif; font-size: medium;"&gt;</strong> для текста вопроса и каждого ответа. Генерация комментария &lt;!-- question: ID --&gt;.
+        🧪 Полное соответствие шаблону: multichoice, shuffleanswers, penalty, стиль times new roman. Поддержка химических формул через \ce{}.
     </footer>
 </div>
 
@@ -277,53 +286,71 @@
         const xmlPreview = document.getElementById('xmlPreview');
         const statusMsg = document.getElementById('statusMsg');
         
-        // Экранирование для CDATA: предотвращаем закрытие CDATA внутри
+        // Экранирование для CDATA
         function escapeCDATA(str) {
             if (!str) return '';
             return str.replace(/\]\]>/g, ']]]]><![CDATA[>');
         }
         
-        // Обёртка CDATA с безопасной вставкой
         function wrapCDATA(content) {
             const safe = escapeCDATA(content);
             return `<![CDATA[${safe}]]>`;
         }
         
-        // Преобразование текста с LaTeX: $...$ → $$...$$ (как в примере: $$\sigma$$)
-        // также обрабатываем возможные вхождения \( ... \) но в выборках обычно $...$
-        function convertLatexDelimiters(text) {
-            // заменяем $формула$ (не доллары вне формул) на $$формула$$
-            // используем глобальную замену, осторожно: не трогаем уже существующие $$
-            // сначала экранируем одиночные доллары, которые не являются частью $$
-            let result = text.replace(/\$([^\$]+?)\$/g, (match, formula) => {
-                // если формула пустая или содержит только пробелы, не меняем
-                if (formula.trim() === "") return match;
-                return `$$${formula}$$`;
+        /**
+         * Расширенная обработка LaTeX команд:
+         * 1. \ce{...} -> $$\ce{...}$$ (оборачиваем в двойные доллары)
+         * 2. $...$ (одиночные доллары, включая греческие буквы) -> $$...$$
+         * 3. При этом уже существующие $$...$$ не трогаем
+         * 4. Обрабатываем как обычный текст, не ломая вложенность
+         */
+        function convertLatexToDisplayMath(text) {
+            if (!text) return text;
+            
+            let result = text;
+            
+            // ШАГ 1: Обработка \ce{...} — оборачиваем в $$ \ce{...} $$
+            // Ищем \ce{...} с возможными вложенными скобками (стандартный синтаксис \ce{...})
+            // Используем регулярное выражение с поиском сбалансированных фигурных скобок (упрощённо: ищем до } но без вложенности)
+            // В реальных формулах \ce{} редко содержит вложенные скобки, поэтому достаточно жадного поиска до ближайшей закрывающей }
+            result = result.replace(/\\ce\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, (match, content) => {
+                // Если уже внутри $$...$$ не оборачиваем повторно, но простая проверка
+                if (match.startsWith('$$') && match.endsWith('$$')) return match;
+                return `$$\\ce{${content}}$$`;
             });
+            
+            // ШАГ 2: Обработка одиночных $...$ (греческие буквы и простые формулы)
+            // Нужно преобразовать $...$ в $$...$$, но не трогать уже существующие $$...$$ и не трогать то, что уже внутри \ce (уже обработано)
+            // Регулярка: ищем $ не перед другим $, затем содержимое без $, затем закрывающий $
+            // Используем негативный просмотр вперёд и назад, чтобы не задеть $$
+            result = result.replace(/(?<!\$)\$(?!\$)([^\$]+?)(?<!\$)\$(?!\$)/g, (match, content) => {
+                // Пропускаем если содержимое пустое
+                if (content.trim() === "") return match;
+                // Не обрабатываем если внутри уже есть \ce (уже обработано на шаге 1, но для безопасности)
+                if (content.includes('\\ce')) return match;
+                return `$$${content}$$`;
+            });
+            
+            // Дополнительно: вариант с $...$ в начале строки или после пробела уже покрыт
+            
             return result;
         }
         
-        // Оформление текста с обязательным span + p в точности по шаблону
-        // Вход: сырой текст из вопроса или ответа (с возможным LaTeX)
-        // Выход: строка вида <p><span style="font-family: 'times new roman', times, serif; font-size: medium;">отформатированный текст</span></p>
+        // Оформление текста с обязательным span + p по шаблону + обработка LaTeX спецкоманд
         function formatWithSpan(rawText) {
             if (!rawText) return '<p><span style="font-family: \'times new roman\', times, serif; font-size: medium;"></span></p>';
             let trimmed = rawText.trim();
-            // Конвертируем LaTeX-разделители $...$ → $$...$$
-            let convertedLatex = convertLatexDelimiters(trimmed);
-            // Дополнительно: убираем лишние переносы, но оставляем пробелы
+            // Преобразуем LaTeX команды \ce{} и $...$ в формат отображения
+            let convertedLatex = convertLatexToDisplayMath(trimmed);
             let finalText = convertedLatex;
-            // Экранирование HTML не требуется, т.к. помещаем в CDATA, но для красоты оставляем как есть (латех символы).
-            // Однако нужно слегка обработать угловые скобки? нет, внутри CDATA всё безопасно.
             return `<p><span style="font-family: 'times new roman', times, serif; font-size: medium;">${finalText}</span></p>`;
         }
         
-        // Парсинг одного вопроса из блока
+        // Парсинг одного вопроса
         function parseSingleQuestion(questionBlock, qIndex) {
             let block = questionBlock.trim();
             if (!block) throw new Error("Пустой блок вопроса");
             
-            // Ищем заголовок \question
             const questionMatch = block.match(/^\\question\s+(.*?)(?=\\begin\{randomizechoices\})/s);
             if (!questionMatch) {
                 throw new Error(`Вопрос ${qIndex+1}: отсутствует \\question или не найдено \\begin{randomizechoices}`);
@@ -331,13 +358,11 @@
             let rawQuestionText = questionMatch[1].trim();
             if (!rawQuestionText) throw new Error(`Вопрос ${qIndex+1}: текст вопроса пуст`);
             
-            // Блок вариантов
             const choicesRegex = /\\begin\{randomizechoices\}([\s\S]*?)\\end\{randomizechoices\}/;
             const choicesMatch = block.match(choicesRegex);
             if (!choicesMatch) throw new Error(`Вопрос ${qIndex+1}: не найдено окружение randomizechoices`);
             let choicesContent = choicesMatch[1];
             
-            // Разбор вариантов: используем потоковый парсинг построчно с учётом многострочных текстов
             const lines = choicesContent.split(/\r?\n/);
             let choices = [];
             let currentChoice = null;
@@ -346,7 +371,6 @@
                 let trimmedLine = line.trim();
                 if (trimmedLine === "") continue;
                 
-                // Проверка на команду \choice или \correctchoice
                 if (trimmedLine.startsWith('\\choice')) {
                     if (currentChoice !== null) choices.push(currentChoice);
                     let textPart = trimmedLine.substring('\\choice'.length).trim();
@@ -358,11 +382,8 @@
                     currentChoice = { text: textPart, fraction: 100 };
                 }
                 else {
-                    // продолжение предыдущего варианта (доп строка)
                     if (currentChoice !== null) {
                         currentChoice.text += " " + trimmedLine;
-                    } else {
-                        // строки вне вариантов игнорируем (например, пустые комментарии)
                     }
                 }
             }
@@ -372,7 +393,6 @@
             const hasCorrect = choices.some(ch => ch.fraction === 100);
             if (!hasCorrect) throw new Error(`Вопрос ${qIndex+1}: отсутствует \\correctchoice (правильный ответ)`);
             
-            // Дополнительная чистка текста вариантов
             choices.forEach(choice => {
                 choice.text = choice.text.replace(/\s+/g, ' ').trim();
             });
@@ -383,7 +403,6 @@
             };
         }
         
-        // Экранирование для поля <name> (просто текст)
         function escapeXmlText(str) {
             if (!str) return '';
             return str.replace(/[&<>]/g, function(m) {
@@ -394,28 +413,24 @@
             });
         }
         
-        // Генерация уникального ID (в духе комментария как в шаблоне)
-        let globalCounter = 33100000;
+        let globalCounter = 33183000;
         function getNextQuestionId() {
             return globalCounter++;
         }
         
-        // Генерация XML для одного вопроса, строго по шаблону
         function generateQuestionXML(questionObj, idx) {
             const questionId = getNextQuestionId();
             const formattedQuestionHtml = formatWithSpan(questionObj.questionText);
             
-            // Имя вопроса: первые 55 символов + возможно обрезаем
             let rawShortName = questionObj.questionText.replace(/\s+/g, ' ').substring(0, 70);
             if (rawShortName.length < 5) rawShortName = `Вопрос ${idx+1}`;
             const nameText = escapeXmlText(rawShortName);
             
-            // Генерируем ответы
             let answersXml = '';
             for (let i = 0; i < questionObj.choices.length; i++) {
                 const choice = questionObj.choices[i];
                 const formattedAnswerHtml = formatWithSpan(choice.text);
-                const fraction = choice.fraction; // 100 или 0
+                const fraction = choice.fraction;
                 answersXml += `
     <answer fraction="${fraction}" format="html">
       <text>${wrapCDATA(formattedAnswerHtml)}</text>
@@ -425,7 +440,6 @@
     </answer>`;
             }
             
-            // Формирование полного XML вопроса (точное копирование структуры из эталона)
             const xml = `
   <!-- question: ${questionId}  -->
   <question type="multichoice">
@@ -459,26 +473,22 @@
             return xml;
         }
         
-        // Главная функция конвертации полного текста
         function convertAllToMoodleXML(fullText) {
             if (!fullText.trim()) throw new Error("Введите текст с вопросами!");
             
-            // Разделяем на блоки вопросов: регулярное выражение находит от \question до следующего \question или до конца
-            // Более точный метод: собираем блоки вручную
-            const blocks = [];
             const regex = /\\question/g;
             let match;
-            let lastIndex = 0;
             const positions = [];
             while ((match = regex.exec(fullText)) !== null) {
                 positions.push(match.index);
             }
             if (positions.length === 0) throw new Error("Не найдено ни одного \\question");
+            
+            const blocks = [];
             for (let i = 0; i < positions.length; i++) {
                 const start = positions[i];
                 const end = (i+1 < positions.length) ? positions[i+1] : fullText.length;
-                let blockRaw = fullText.substring(start, end);
-                blocks.push(blockRaw);
+                blocks.push(fullText.substring(start, end));
             }
             
             const parsedQuestions = [];
@@ -493,9 +503,7 @@
             
             if (parsedQuestions.length === 0) throw new Error("Не удалось распарсить ни одного валидного вопроса.");
             
-            // Сбросим счётчик ID для генерации последовательных id типа 33183307+
             globalCounter = 33183000;
-            
             let questionsXml = '';
             for (let i = 0; i < parsedQuestions.length; i++) {
                 questionsXml += generateQuestionXML(parsedQuestions[i], i);
@@ -505,7 +513,6 @@
             return fullXml;
         }
         
-        // Отображение с обновлением превью
         let currentGeneratedXml = null;
         
         function renderConversion() {
@@ -520,7 +527,7 @@
                 const xmlResult = convertAllToMoodleXML(source);
                 xmlPreview.innerText = xmlResult;
                 const qCount = (xmlResult.match(/<question type=/g) || []).length;
-                statusMsg.innerHTML = `✅ Успешно! Сконвертировано ${qCount} вопрос(ов). Стиль и структура соответствуют шаблону.`;
+                statusMsg.innerHTML = `✅ Успешно! Сконвертировано ${qCount} вопрос(ов). \ce{} и греческие буквы обёрнуты в $$.`;
                 currentGeneratedXml = xmlResult;
                 return true;
             } catch (err) {
@@ -531,7 +538,6 @@
             }
         }
         
-        // События
         convertBtn.addEventListener('click', () => {
             renderConversion();
         });
@@ -547,17 +553,25 @@
             const sample = `\\question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
 \\begin{randomizechoices}
 	\\choice металл координационно связан с лигандом через атом с неподеленной парой.
-	\\correctchoice заполненная орбиталь лиганда (например, C-H $\\sigma$-связь) донирует электронную плотность на вакантную орбиталь металла (трехцентровая двухэлектронная связь M...H-C).
+	\\correctchoice заполненная орбиталь лиганда (например, C-H $\\sigma$-связь, а также \\ce{ClO4^-}) донирует электронную плотность на вакантную орбиталь металла (трехцентровая двухэлектронная связь M...H-C).
 	\\choice металл и лиганд обмениваются протонами.
 	\\choice образуется металл-металлическая связь.
 \\end{randomizechoices}
 
-\\question Что такое эффект транса в координационной химии?
+\\question Какая формула у перхлорат-иона?
 \\begin{randomizechoices}
-    \\choice Влияние лиганда на скорость замещения транс-лиганда.
-    \\correctchoice Лиганд направляет замещение в транс-положение.
-    \\choice Эффект Яна — Теллера.
-    \\choice Только для платины(II).
+    \\choice \\ce{ClO3-}
+    \\correctchoice \\ce{ClO4-}
+    \\choice \\ce{ClO2-}
+    \\choice \\ce{ClO-}
+\\end{randomizechoices}
+
+\\question Что такое $\\alpha$-распад?
+\\begin{randomizechoices}
+    \\choice Испускание электрона
+    \\correctchoice Испускание ядра гелия $\\ce{^4_2He}$
+    \\choice Испускание позитрона
+    \\choice Испускание гамма-кванта
 \\end{randomizechoices}`;
             latexInput.value = sample;
             renderConversion();
@@ -581,16 +595,15 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                statusMsg.innerHTML = "📥 Файл moodle_questions.xml скачан. Готов к импорту в Moodle (со стилями 'times new roman').";
+                statusMsg.innerHTML = "📥 Файл moodle_questions.xml скачан. Команды \\ce{} и греческие буквы успешно обработаны.";
             } else {
                 statusMsg.innerHTML = "⚠️ Нет валидного XML. Нажмите «Конвертировать» сначала.";
             }
         });
         
-        // Инициализация: показать подсказку
         latexInput.value = "";
-        xmlPreview.innerText = "— Введите вопросы с LaTeX-разметкой и нажмите 'Конвертировать' —";
-        statusMsg.innerHTML = "✨ Готов к работе. Для теста нажмите «Загрузить образец».";
+        xmlPreview.innerText = "— Введите вопросы с LaTeX-разметкой (\\ce{}, $\\sigma$) и нажмите 'Конвертировать' —";
+        statusMsg.innerHTML = "✨ Готов к работе. Для теста нажмите «Загрузить образец (химия + греческие)».";
     })();
 </script>
 </body>
