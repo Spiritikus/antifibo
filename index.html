@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Конвертер вопросов LaTeX в Moodle XML</title>
+    <title>Конвертер LaTeX в Moodle XML — точное соответствие шаблону</title>
     <style>
         * {
             box-sizing: border-box;
@@ -11,27 +11,26 @@
 
         body {
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background-color: #f0f7f0;
+            background-color: #eef3ee;
             margin: 0;
             padding: 20px;
-            color: #1a2c1f;
+            color: #1a3a1a;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1500px;
             margin: 0 auto;
             background: white;
             border-radius: 32px;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.2);
             overflow: hidden;
-            transition: all 0.2s;
         }
 
         header {
-            background: #2c5e2e;
+            background: #2b5e2f;
             color: white;
             padding: 1.5rem 2rem;
-            border-bottom: 4px solid #f4b400;
+            border-bottom: 4px solid #f5b042;
         }
 
         header h1 {
@@ -43,7 +42,7 @@
         header p {
             margin: 0;
             opacity: 0.9;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .two-columns {
@@ -56,7 +55,7 @@
             flex: 1 1 50%;
             padding: 1.8rem;
             background: #ffffff;
-            border-right: 1px solid #e0e7e0;
+            border-right: 1px solid #dfe8df;
         }
 
         .panel:last-child {
@@ -68,29 +67,28 @@
             font-weight: 500;
             margin-top: 0;
             margin-bottom: 1rem;
-            color: #1e3a1e;
-            border-left: 5px solid #f4b400;
+            color: #1e4a1e;
+            border-left: 5px solid #f5b042;
             padding-left: 15px;
         }
 
         textarea {
             width: 100%;
-            height: 380px;
+            height: 400px;
             font-family: 'Courier New', 'Fira Code', monospace;
             font-size: 13px;
             line-height: 1.5;
             padding: 16px;
-            border: 1px solid #cbdccb;
+            border: 1px solid #c2d6c2;
             border-radius: 20px;
-            background: #fefef7;
+            background: #fefef5;
             resize: vertical;
-            transition: 0.1s;
         }
 
         textarea:focus {
-            border-color: #2c5e2e;
+            border-color: #2b5e2f;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(44, 94, 46, 0.2);
+            box-shadow: 0 0 0 3px rgba(43, 94, 47, 0.2);
         }
 
         .toolbar {
@@ -103,7 +101,7 @@
         }
 
         button {
-            background-color: #2c5e2e;
+            background-color: #2b5e2f;
             border: none;
             color: white;
             font-weight: 600;
@@ -111,74 +109,66 @@
             border-radius: 40px;
             font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: 0.2s;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         button:hover {
-            background-color: #1f451f;
+            background-color: #1d451f;
             transform: translateY(-1px);
-            box-shadow: 0 6px 12px -6px rgba(0,0,0,0.2);
-        }
-
-        button:active {
-            transform: translateY(1px);
         }
 
         .btn-secondary {
-            background-color: #5a626e;
+            background-color: #5a6b5c;
         }
 
         .btn-secondary:hover {
-            background-color: #454e53;
+            background-color: #445446;
         }
 
         .btn-warning {
-            background-color: #b8860b;
+            background-color: #c97e0a;
         }
 
         .btn-warning:hover {
-            background-color: #9a6e09;
+            background-color: #a86808;
         }
 
         .status {
             margin-top: 1rem;
-            padding: 8px 12px;
-            background: #eef4ee;
+            padding: 8px 14px;
+            background: #eaf4ea;
             border-radius: 60px;
             font-size: 0.85rem;
-            color: #1f3b21;
             font-family: monospace;
+            color: #1f4721;
         }
 
-        .preview-xml {
-            background: #faf9f2;
+        .preview-area {
+            background: #faf9f0;
             border-radius: 20px;
             padding: 12px;
             margin-top: 1rem;
-            border: 1px solid #dde4dd;
+            border: 1px solid #dde6dd;
         }
 
-        .preview-xml h3 {
+        .preview-area h3 {
             margin: 0 0 8px 0;
             font-size: 1rem;
             font-weight: 600;
-            display: flex;
-            gap: 12px;
-            align-items: center;
         }
 
         .xml-box {
             background: #1e2a1a;
             color: #e2f0da;
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
             font-size: 12px;
             padding: 16px;
             border-radius: 16px;
-            max-height: 450px;
+            max-height: 480px;
             overflow: auto;
             white-space: pre-wrap;
             word-break: break-word;
@@ -191,16 +181,11 @@
 
         .example {
             font-size: 0.8rem;
-            background: #f8f9ed;
+            background: #faf5e6;
             padding: 12px;
             border-radius: 20px;
             margin-top: 20px;
-            border-left: 4px solid #f4b400;
-        }
-
-        hr {
-            margin: 20px 0;
-            border-color: #d9e3d9;
+            border-left: 4px solid #f5b042;
         }
 
         footer {
@@ -209,7 +194,7 @@
             text-align: center;
             font-size: 0.8rem;
             color: #2d572c;
-            border-top: 1px solid #cbe2cb;
+            border-top: 1px solid #cde2cd;
         }
 
         @media (max-width: 860px) {
@@ -218,7 +203,7 @@
             }
             .panel {
                 border-right: none;
-                border-bottom: 1px solid #e0e7e0;
+                border-bottom: 1px solid #dfe8df;
             }
         }
     </style>
@@ -226,13 +211,13 @@
 <body>
 <div class="container">
     <header>
-        <h1>📄 Конвертер LaTeX → Moodle XML</h1>
-        <p>Преобразует вопросы в формате \question ... \begin{randomizechoices}...\correctchoice... в формат импорта Moodle (multichoice)</p>
+        <h1>📐 LaTeX → Moodle XML (полный шаблон)</h1>
+        <p>Точное соответствие формату: multichoice, стиль <code>times new roman</code>, CDATA + обёртка &lt;p&gt;&lt;span&gt;...&lt;/span&gt;&lt;/p&gt;, <code>\correctchoice</code> → fraction="100"</p>
     </header>
     <div class="two-columns">
         <div class="panel">
             <h2>📥 Исходные вопросы (LaTeX)</h2>
-            <textarea id="latexInput" placeholder='Вставьте один или несколько вопросов в формате:
+            <textarea id="latexInput" placeholder='Пример формата (один или несколько вопросов):
 
 \question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
 \begin{randomizechoices}
@@ -242,42 +227,48 @@
 	\choice образуется металл-металлическая связь.
 \end{randomizechoices}
 
-\question Другой вопрос ...'></textarea>
+\question Второй вопрос...
+\begin{randomizechoices}
+    \choice неверный вариант
+    \correctchoice верный вариант
+\end{randomizechoices}'></textarea>
             <div class="toolbar">
                 <button id="convertBtn">✨ Конвертировать в Moodle XML</button>
                 <button id="clearBtn" class="btn-secondary">🗑 Очистить</button>
-                <button id="sampleBtn" class="btn-warning">📋 Загрузить пример</button>
+                <button id="sampleBtn" class="btn-warning">📋 Загрузить образец (агастическое)</button>
             </div>
-            <div class="status" id="statusMsg">✅ Ожидание ввода. Нажмите "Конвертировать".</div>
+            <div class="status" id="statusMsg">✅ Ожидание ввода. Нажмите «Конвертировать».</div>
             <div class="example">
-                <strong>📌 Формат вопроса:</strong> Каждый вопрос начинается с <code>\question</code> (текст вопроса до 
-                <code>\begin{randomizechoices}</code>). Внутри окружения — варианты через <code>\choice</code>, правильный 
-                отмечен <code>\correctchoice</code>. Поддерживается LaTeX-разметка внутри (например, <code>$\sigma$</code>).
-                Правило: <code>\correctchoice</code> преобразуется в fraction=100, остальные — 0.
+                <strong>📌 Требования к формату вопроса:</strong><br>
+                • Каждый вопрос начинается с <code>\question</code> (текст вопроса).<br>
+                • Затем <code>\begin{randomizechoices}</code> ... <code>\end{randomizechoices}</code>.<br>
+                • Варианты: <code>\choice</code> (неверный) и <code>\correctchoice</code> (верный, 100%).<br>
+                • Поддерживается LaTeX-разметка: <code>$\sigma$</code> → преобразуется в <code>$$\sigma$$</code> для совместимости с шаблоном.<br>
+                • Результирующий XML полностью повторяет структуру из вашего шаблона: каждый ответ обёрнут в <code>&lt;p&gt;&lt;span style="font-family: 'times new roman', times, serif; font-size: medium;"&gt;...&lt;/span&gt;&lt;/p&gt;</code>.
             </div>
         </div>
         <div class="panel">
             <h2>📤 Результат: Moodle XML</h2>
-            <div class="preview-xml">
-                <h3>🔍 Превью XML (первые строки)</h3>
+            <div class="preview-area">
+                <h3>🔍 XML (совместим с Moodle)</h3>
                 <div class="xml-box" id="xmlPreview">— Сгенерированный XML появится здесь —</div>
                 <div class="download-area">
-                    <button id="downloadBtn" style="background:#eb6f3e;">⬇️ Скачать как questions.xml</button>
+                    <button id="downloadBtn" style="background:#d96c2b;">⬇️ Скачать как moodle_questions.xml</button>
                 </div>
                 <div style="font-size: 0.75rem; margin-top: 8px; color: #4c6b4a;">
-                    ⚡ Файл полностью соответствует структуре Moodle: multichoice, одиночный выбор, перемешивание ответов true, нумерация none, штраф 0.3333333, стандартный балл 1.
+                    ⚡ Каждый вопрос имеет: shuffleanswers="true", answernumbering="none", penalty="0.3333333", defaultgrade="1". Правильный ответ fraction="100", остальные fraction="0". LaTeX-вставки вида $...$ конвертируются в $$...$$.
                 </div>
             </div>
         </div>
     </div>
     <footer>
-        🧪 Конвертер поддерживает множественные вопросы в одном файле. Правильный ответ помечен \correctchoice. Автоматическая экранизация и CDATA для сохранения LaTeX.
+        🧪 Полное соответствие шаблону: <strong>&lt;span style="font-family: 'times new roman', times, serif; font-size: medium;"&gt;</strong> для текста вопроса и каждого ответа. Генерация комментария &lt;!-- question: ID --&gt;.
     </footer>
 </div>
 
 <script>
     (function() {
-        // DOM elements
+        // DOM элементы
         const latexInput = document.getElementById('latexInput');
         const convertBtn = document.getElementById('convertBtn');
         const clearBtn = document.getElementById('clearBtn');
@@ -285,151 +276,164 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const xmlPreview = document.getElementById('xmlPreview');
         const statusMsg = document.getElementById('statusMsg');
-
-        // вспомогательные функции: экранирование для CDATA (в целом помещаем внутрь CDATA, но нужно закрыть ]]> если оно встретится)
+        
+        // Экранирование для CDATA: предотвращаем закрытие CDATA внутри
         function escapeCDATA(str) {
-            // если внутри есть "]]>", разрываем CDATA безопасно
+            if (!str) return '';
             return str.replace(/\]\]>/g, ']]]]><![CDATA[>');
         }
-
-        // Функция оборачивает текст в <![CDATA[ ... ]]> с коррекцией
+        
+        // Обёртка CDATA с безопасной вставкой
         function wrapCDATA(content) {
-            let safeContent = escapeCDATA(content);
-            return `<![CDATA[${safeContent}]]>`;
+            const safe = escapeCDATA(content);
+            return `<![CDATA[${safe}]]>`;
         }
-
-        // Очистка и подготовка текста вопроса / варианта: перевод в HTML-формат абзацев,
-        // но сохраняем LaTeX как есть. Чтобы красиво, оборачиваем в <p> ... </p> для Moodle.
-        function formatHtmlText(text) {
-            // удаляем лишние пробелы по краям
-            text = text.trim();
-            if (text === "") return "";
-            // экранируем потенциально опасные символы (но для CDATA не обязательно, но для читаемости)
-            // просто обернем в <p> и сохраним переносы строк как <br/> если есть? В оригинале вопросы однострочные, 
-            // но для надёжности разбиваем \n на <br> внутри текста вопроса/ответа.
-            // Однако moodle принимает произвольный html внутри CDATA.
-            let withBreaks = text.replace(/\n/g, '<br/>');
-            return `<p>${withBreaks}</p>`;
+        
+        // Преобразование текста с LaTeX: $...$ → $$...$$ (как в примере: $$\sigma$$)
+        // также обрабатываем возможные вхождения \( ... \) но в выборках обычно $...$
+        function convertLatexDelimiters(text) {
+            // заменяем $формула$ (не доллары вне формул) на $$формула$$
+            // используем глобальную замену, осторожно: не трогаем уже существующие $$
+            // сначала экранируем одиночные доллары, которые не являются частью $$
+            let result = text.replace(/\$([^\$]+?)\$/g, (match, formula) => {
+                // если формула пустая или содержит только пробелы, не меняем
+                if (formula.trim() === "") return match;
+                return `$$${formula}$$`;
+            });
+            return result;
         }
-
-        // Парсинг одного вопроса: вход - строка с содержимым вопроса от \question до \end{randomizechoices}
-        // возвращает объект { questionText, choices: [{text, fraction}] } или null при ошибке
-        function parseSingleQuestion(questionBlock) {
-            // удаляем лишние пробелы в начале и конце блока
+        
+        // Оформление текста с обязательным span + p в точности по шаблону
+        // Вход: сырой текст из вопроса или ответа (с возможным LaTeX)
+        // Выход: строка вида <p><span style="font-family: 'times new roman', times, serif; font-size: medium;">отформатированный текст</span></p>
+        function formatWithSpan(rawText) {
+            if (!rawText) return '<p><span style="font-family: \'times new roman\', times, serif; font-size: medium;"></span></p>';
+            let trimmed = rawText.trim();
+            // Конвертируем LaTeX-разделители $...$ → $$...$$
+            let convertedLatex = convertLatexDelimiters(trimmed);
+            // Дополнительно: убираем лишние переносы, но оставляем пробелы
+            let finalText = convertedLatex;
+            // Экранирование HTML не требуется, т.к. помещаем в CDATA, но для красоты оставляем как есть (латех символы).
+            // Однако нужно слегка обработать угловые скобки? нет, внутри CDATA всё безопасно.
+            return `<p><span style="font-family: 'times new roman', times, serif; font-size: medium;">${finalText}</span></p>`;
+        }
+        
+        // Парсинг одного вопроса из блока
+        function parseSingleQuestion(questionBlock, qIndex) {
             let block = questionBlock.trim();
-            if (!block) return null;
+            if (!block) throw new Error("Пустой блок вопроса");
             
-            // Извлекаем текст вопроса: после \question до \begin{randomizechoices}
-            // Ищем \question
+            // Ищем заголовок \question
             const questionMatch = block.match(/^\\question\s+(.*?)(?=\\begin\{randomizechoices\})/s);
             if (!questionMatch) {
-                throw new Error("Не найден заголовок \\question или отсутствует \\begin{randomizechoices}");
+                throw new Error(`Вопрос ${qIndex+1}: отсутствует \\question или не найдено \\begin{randomizechoices}`);
             }
             let rawQuestionText = questionMatch[1].trim();
-            if (!rawQuestionText) {
-                throw new Error("Текст вопроса пуст после \\question");
-            }
+            if (!rawQuestionText) throw new Error(`Вопрос ${qIndex+1}: текст вопроса пуст`);
             
-            // Извлекаем блок вариантов между \begin{randomizechoices} и \end{randomizechoices}
-            const choicesRegex = /\\begin\{randomizechoices\}(.*?)\\end\{randomizechoices\}/s;
+            // Блок вариантов
+            const choicesRegex = /\\begin\{randomizechoices\}([\s\S]*?)\\end\{randomizechoices\}/;
             const choicesMatch = block.match(choicesRegex);
-            if (!choicesMatch) {
-                throw new Error("Не найдено окружение randomizechoices");
-            }
+            if (!choicesMatch) throw new Error(`Вопрос ${qIndex+1}: не найдено окружение randomizechoices`);
             let choicesContent = choicesMatch[1];
             
-            // Разбираем варианты: строки вида \choice текст или \correctchoice текст
-            // варианты могут быть на разных строках и иметь отступы
-            const choiceLines = choicesContent.split(/\r?\n/);
+            // Разбор вариантов: используем потоковый парсинг построчно с учётом многострочных текстов
+            const lines = choicesContent.split(/\r?\n/);
             let choices = [];
             let currentChoice = null;
             
-            // Простой парсер: собираем построчно, но команда \choice и \correctchoice может быть в начале строки с пробелами
-            for (let line of choiceLines) {
-                line = line.trim();
-                if (line === "") continue;
-                // Проверяем начало команды
-                if (line.startsWith('\\choice')) {
-                    // сохраняем предыдущий, если есть
-                    if (currentChoice !== null) {
-                        choices.push(currentChoice);
-                    }
-                    let textPart = line.substring('\\choice'.length).trim();
+            for (let line of lines) {
+                let trimmedLine = line.trim();
+                if (trimmedLine === "") continue;
+                
+                // Проверка на команду \choice или \correctchoice
+                if (trimmedLine.startsWith('\\choice')) {
+                    if (currentChoice !== null) choices.push(currentChoice);
+                    let textPart = trimmedLine.substring('\\choice'.length).trim();
                     currentChoice = { text: textPart, fraction: 0 };
                 }
-                else if (line.startsWith('\\correctchoice')) {
-                    if (currentChoice !== null) {
-                        choices.push(currentChoice);
-                    }
-                    let textPart = line.substring('\\correctchoice'.length).trim();
+                else if (trimmedLine.startsWith('\\correctchoice')) {
+                    if (currentChoice !== null) choices.push(currentChoice);
+                    let textPart = trimmedLine.substring('\\correctchoice'.length).trim();
                     currentChoice = { text: textPart, fraction: 100 };
                 }
                 else {
-                    // продолжение предыдущего варианта (многострочный текст)
+                    // продолжение предыдущего варианта (доп строка)
                     if (currentChoice !== null) {
-                        currentChoice.text += " " + line;
+                        currentChoice.text += " " + trimmedLine;
                     } else {
-                        // некорректная ситуация: встретили текст до команды, игнорируем или выбросим
-                        // но безопасно пропустим
+                        // строки вне вариантов игнорируем (например, пустые комментарии)
                     }
                 }
             }
-            if (currentChoice !== null) {
-                choices.push(currentChoice);
-            }
+            if (currentChoice !== null) choices.push(currentChoice);
             
-            if (choices.length === 0) {
-                throw new Error("Не найдено ни одного варианта ответа (\\choice или \\correctchoice)");
-            }
-            
-            // Проверим, что есть хотя бы один правильный ответ (fraction=100)
+            if (choices.length === 0) throw new Error(`Вопрос ${qIndex+1}: нет вариантов ответа`);
             const hasCorrect = choices.some(ch => ch.fraction === 100);
-            if (!hasCorrect) {
-                throw new Error("Отсутствует правильный ответ (не найден \\correctchoice)");
-            }
+            if (!hasCorrect) throw new Error(`Вопрос ${qIndex+1}: отсутствует \\correctchoice (правильный ответ)`);
             
-            // Очищаем текст вопроса: возможные LaTeX-команды оставляем (они будут внутри CDATA)
-            // Дополнительно: экранируем квадратные скобки? Не требуется.
+            // Дополнительная чистка текста вариантов
+            choices.forEach(choice => {
+                choice.text = choice.text.replace(/\s+/g, ' ').trim();
+            });
+            
             return {
                 questionText: rawQuestionText,
                 choices: choices
             };
         }
         
-        // Генерация XML для вопроса
-        function generateQuestionXML(questionObj, index) {
-            const qtextRaw = questionObj.questionText;
-            const questionHtml = formatHtmlText(qtextRaw);
+        // Экранирование для поля <name> (просто текст)
+        function escapeXmlText(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        // Генерация уникального ID (в духе комментария как в шаблоне)
+        let globalCounter = 33100000;
+        function getNextQuestionId() {
+            return globalCounter++;
+        }
+        
+        // Генерация XML для одного вопроса, строго по шаблону
+        function generateQuestionXML(questionObj, idx) {
+            const questionId = getNextQuestionId();
+            const formattedQuestionHtml = formatWithSpan(questionObj.questionText);
             
-            // Создаем блоки ответов
+            // Имя вопроса: первые 55 символов + возможно обрезаем
+            let rawShortName = questionObj.questionText.replace(/\s+/g, ' ').substring(0, 70);
+            if (rawShortName.length < 5) rawShortName = `Вопрос ${idx+1}`;
+            const nameText = escapeXmlText(rawShortName);
+            
+            // Генерируем ответы
             let answersXml = '';
             for (let i = 0; i < questionObj.choices.length; i++) {
                 const choice = questionObj.choices[i];
-                const answerHtml = formatHtmlText(choice.text);
-                const fraction = choice.fraction;
+                const formattedAnswerHtml = formatWithSpan(choice.text);
+                const fraction = choice.fraction; // 100 или 0
                 answersXml += `
     <answer fraction="${fraction}" format="html">
-      <text>${wrapCDATA(answerHtml)}</text>
+      <text>${wrapCDATA(formattedAnswerHtml)}</text>
       <feedback format="html">
         <text></text>
       </feedback>
     </answer>`;
             }
             
-            // Имя вопроса: берем первые 60 символов текста вопроса
-            let shortName = qtextRaw.replace(/\s+/g, ' ').substring(0, 70);
-            if (shortName.length < 3) shortName = `Вопрос ${index+1}`;
-            
-            const uniqueId = Date.now() + index + Math.floor(Math.random() * 10000);
-            
+            // Формирование полного XML вопроса (точное копирование структуры из эталона)
             const xml = `
-  <!-- question: ${uniqueId} -->
+  <!-- question: ${questionId}  -->
   <question type="multichoice">
     <name>
-      <text>${escapeXmlText(shortName)}</text>
+      <text>${nameText}</text>
     </name>
     <questiontext format="html">
-      <text>${wrapCDATA(questionHtml)}</text>
+      <text>${wrapCDATA(formattedQuestionHtml)}</text>
     </questiontext>
     <generalfeedback format="html">
       <text></text>
@@ -450,113 +454,97 @@
     </partiallycorrectfeedback>
     <incorrectfeedback format="html">
       <text></text>
-    </incorrectfeedback>
-    ${answersXml}
+    </incorrectfeedback>${answersXml}
   </question>`;
             return xml;
         }
         
-        // Вспомогательная функция экранирования XML текста для обычных полей (name)
-        function escapeXmlText(str) {
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-                return c; // суррогатные пары оставляем как есть
-            });
-        }
-        
-        // Основная функция конвертации: из полного текста извлекаем все вопросы и генерируем XML
-        function convertAllQuestions(fullText) {
-            // Разделяем вопросы по шаблону: каждый начинается с "\question"
-            // Используем regex для поиска блоков от \question до следующего \question или до конца строки
-            // Ищем позиции всех \question
-            const questionBlocks = [];
-            let searchText = fullText;
-            // Более надёжный способ: найти индексы всех \question
-            const regexStart = /\\question/g;
+        // Главная функция конвертации полного текста
+        function convertAllToMoodleXML(fullText) {
+            if (!fullText.trim()) throw new Error("Введите текст с вопросами!");
+            
+            // Разделяем на блоки вопросов: регулярное выражение находит от \question до следующего \question или до конца
+            // Более точный метод: собираем блоки вручную
+            const blocks = [];
+            const regex = /\\question/g;
             let match;
             let lastIndex = 0;
-            let starts = [];
-            while ((match = regexStart.exec(searchText)) !== null) {
-                starts.push(match.index);
+            const positions = [];
+            while ((match = regex.exec(fullText)) !== null) {
+                positions.push(match.index);
             }
-            if (starts.length === 0) {
-                throw new Error("Не найдено ни одного вопроса с командой \\question");
-            }
-            for (let i = 0; i < starts.length; i++) {
-                let begin = starts[i];
-                let end = (i+1 < starts.length) ? starts[i+1] : fullText.length;
-                let rawBlock = fullText.substring(begin, end);
-                questionBlocks.push(rawBlock);
+            if (positions.length === 0) throw new Error("Не найдено ни одного \\question");
+            for (let i = 0; i < positions.length; i++) {
+                const start = positions[i];
+                const end = (i+1 < positions.length) ? positions[i+1] : fullText.length;
+                let blockRaw = fullText.substring(start, end);
+                blocks.push(blockRaw);
             }
             
             const parsedQuestions = [];
-            for (let idx = 0; idx < questionBlocks.length; idx++) {
+            for (let i = 0; i < blocks.length; i++) {
                 try {
-                    const parsed = parseSingleQuestion(questionBlocks[idx]);
-                    if (parsed) parsedQuestions.push(parsed);
+                    const parsed = parseSingleQuestion(blocks[i], i);
+                    parsedQuestions.push(parsed);
                 } catch (err) {
-                    throw new Error(`Ошибка в вопросе ${idx+1}: ${err.message}`);
+                    throw new Error(`Ошибка в вопросе №${i+1}: ${err.message}`);
                 }
             }
-            if (parsedQuestions.length === 0) {
-                throw new Error("Не удалось распарсить ни одного валидного вопроса.");
-            }
             
-            // Генерируем общий XML
-            let xmlHeader = `<?xml version="1.0" encoding="UTF-8"?>\n<quiz>\n`;
-            let xmlFooter = `\n</quiz>`;
+            if (parsedQuestions.length === 0) throw new Error("Не удалось распарсить ни одного валидного вопроса.");
+            
+            // Сбросим счётчик ID для генерации последовательных id типа 33183307+
+            globalCounter = 33183000;
+            
             let questionsXml = '';
             for (let i = 0; i < parsedQuestions.length; i++) {
                 questionsXml += generateQuestionXML(parsedQuestions[i], i);
             }
-            return xmlHeader + questionsXml + xmlFooter;
+            
+            const fullXml = `<?xml version="1.0" encoding="UTF-8"?>\n<quiz>${questionsXml}\n</quiz>`;
+            return fullXml;
         }
         
-        // финальная функция отображения и обработки
+        // Отображение с обновлением превью
+        let currentGeneratedXml = null;
+        
         function renderConversion() {
             const source = latexInput.value;
             if (!source.trim()) {
-                statusMsg.innerHTML = "⚠️ Введите текст с вопросами в формате LaTeX.";
-                xmlPreview.innerText = "— Нет данных для конвертации —";
+                statusMsg.innerHTML = "⚠️ Поле ввода пусто. Вставьте вопросы в формате LaTeX.";
+                xmlPreview.innerText = "— Нет данных —";
+                currentGeneratedXml = null;
                 return false;
             }
             try {
-                const resultXml = convertAllQuestions(source);
-                xmlPreview.innerText = resultXml;
-                statusMsg.innerHTML = `✅ Успешно сконвертировано ${(resultXml.match(/<question type=/g) || []).length} вопрос(ов). Скачайте файл.`;
-                return resultXml;
+                const xmlResult = convertAllToMoodleXML(source);
+                xmlPreview.innerText = xmlResult;
+                const qCount = (xmlResult.match(/<question type=/g) || []).length;
+                statusMsg.innerHTML = `✅ Успешно! Сконвертировано ${qCount} вопрос(ов). Стиль и структура соответствуют шаблону.`;
+                currentGeneratedXml = xmlResult;
+                return true;
             } catch (err) {
-                statusMsg.innerHTML = `❌ Ошибка: ${err.message}`;
-                xmlPreview.innerText = `Ошибка парсинга:\n${err.message}\n\nПроверьте формат: каждый вопрос должен содержать \\question, окружение randomizechoices и \\correctchoice.`;
-                return null;
+                statusMsg.innerHTML = `❌ Ошибка парсинга: ${err.message}`;
+                xmlPreview.innerText = `Ошибка:\n${err.message}\n\nПроверьте формат:\n- Каждый вопрос начинается с \\question\n- Окружение \\begin{randomizechoices} ... \\end{randomizechoices}\n- Правильный ответ через \\correctchoice`;
+                currentGeneratedXml = null;
+                return false;
             }
         }
         
-        let lastXml = null;
-        
-        function updateAndStore() {
-            const xml = renderConversion();
-            if (xml) lastXml = xml;
-            else lastXml = null;
-        }
-        
+        // События
         convertBtn.addEventListener('click', () => {
-            updateAndStore();
+            renderConversion();
         });
         
         clearBtn.addEventListener('click', () => {
             latexInput.value = '';
-            xmlPreview.innerText = "— Очищено. Вставьте вопросы —";
-            statusMsg.innerHTML = "🧹 Поле очищено. Вставьте новые вопросы.";
-            lastXml = null;
+            xmlPreview.innerText = "— Поле очищено. Вставьте вопросы и нажмите «Конвертировать» —";
+            statusMsg.innerHTML = "🧹 Очищено. Готов к вводу новых вопросов.";
+            currentGeneratedXml = null;
         });
         
         sampleBtn.addEventListener('click', () => {
-            const sampleText = `\\question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
+            const sample = `\\question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
 \\begin{randomizechoices}
 	\\choice металл координационно связан с лигандом через атом с неподеленной парой.
 	\\correctchoice заполненная орбиталь лиганда (например, C-H $\\sigma$-связь) донирует электронную плотность на вакантную орбиталь металла (трехцентровая двухэлектронная связь M...H-C).
@@ -571,21 +559,20 @@
     \\choice Эффект Яна — Теллера.
     \\choice Только для платины(II).
 \\end{randomizechoices}`;
-            latexInput.value = sampleText;
-            updateAndStore();
+            latexInput.value = sample;
+            renderConversion();
         });
         
         downloadBtn.addEventListener('click', () => {
-            if (!lastXml) {
-                const current = renderConversion();
-                if (!current) {
-                    statusMsg.innerHTML = "❌ Нет валидного XML для скачивания. Проверьте данные.";
+            if (!currentGeneratedXml) {
+                const success = renderConversion();
+                if (!success || !currentGeneratedXml) {
+                    statusMsg.innerHTML = "❌ Не удалось создать XML для скачивания. Проверьте корректность ввода.";
                     return;
                 }
-                lastXml = current;
             }
-            if (lastXml && lastXml.trim().startsWith('<?xml')) {
-                const blob = new Blob([lastXml], {type: "application/xml"});
+            if (currentGeneratedXml && currentGeneratedXml.includes('<quiz>')) {
+                const blob = new Blob([currentGeneratedXml], {type: "application/xml"});
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -594,1494 +581,17 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                statusMsg.innerHTML = "📁 Файл moodle_questions.xml скачан. Готов к импорту в Moodle.";
+                statusMsg.innerHTML = "📥 Файл moodle_questions.xml скачан. Готов к импорту в Moodle (со стилями 'times new roman').";
             } else {
-                statusMsg.innerHTML = "⚠️ Некорректный XML. Нажмите 'Конвертировать' сначала.";
+                statusMsg.innerHTML = "⚠️ Нет валидного XML. Нажмите «Конвертировать» сначала.";
             }
         });
         
-        // загрузить пустой (можно пример)
+        // Инициализация: показать подсказку
         latexInput.value = "";
-        xmlPreview.innerText = "— Введите вопросы и нажмите 'Конвертировать' —";
+        xmlPreview.innerText = "— Введите вопросы с LaTeX-разметкой и нажмите 'Конвертировать' —";
+        statusMsg.innerHTML = "✨ Готов к работе. Для теста нажмите «Загрузить образец».";
     })();
-</script>
-</body>
-</html>  }
-  .logo span { color: var(--muted); font-weight: 400; font-size: 0.9rem; margin-left: 10px; }
-
-  .nav-back {
-    display: none;
-    align-items: center; gap: 8px;
-    cursor: pointer;
-    color: var(--accent1);
-    font-size: 0.95rem;
-    letter-spacing: 0.05em;
-    transition: opacity 0.2s;
-  }
-  .nav-back:hover { opacity: 0.7; }
-  .nav-back svg { width: 16px; height: 16px; }
-
-  /* ── PAGES ── */
-  .page { position: relative; z-index: 1; display: none; }
-  .page.active { display: block; }
-
-  /* ── MINDMAP PAGE ── */
-  #page-mindmap {
-    padding-top: 80px;
-    min-height: 100vh;
-  }
-
-  .mindmap-hero {
-    text-align: center;
-    padding: 60px 20px 40px;
-  }
-  .mindmap-hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    font-weight: 900;
-    color: var(--accent1);
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-  }
-  .mindmap-hero p {
-    margin-top: 16px;
-    color: var(--muted);
-    font-size: 1.15rem;
-    font-style: italic;
-  }
-
-  .mindmap-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-    padding: 20px 40px 80px;
-    max-width: 1600px;
-    margin: 0 auto;
-  }
-
-  .category-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-    position: relative;
-    overflow: hidden;
-  }
-  .category-card::before {
-    content: '';
-    position: absolute; inset: 0;
-    opacity: 0;
-    transition: opacity 0.3s;
-    border-radius: 16px;
-  }
-  .category-card:hover { transform: translateY(-4px); border-color: var(--accent-color, var(--accent1)); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-  .category-card:hover::before { opacity: 1; }
-
-  .cat-icon {
-    font-size: 2rem;
-    margin-bottom: 12px;
-    display: block;
-  }
-  .cat-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--accent-color, var(--accent1));
-    margin-bottom: 6px;
-  }
-  .cat-subtitle {
-    font-size: 0.82rem;
-    color: var(--muted);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .cat-count {
-    margin-top: 14px;
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
-  .cat-count span {
-    color: var(--accent-color, var(--accent1));
-    font-weight: 600;
-  }
-  .cat-arrow {
-    position: absolute; right: 20px; top: 50%;
-    transform: translateY(-50%);
-    color: var(--muted);
-    font-size: 1.2rem;
-    transition: all 0.3s;
-  }
-  .category-card:hover .cat-arrow {
-    color: var(--accent-color, var(--accent1));
-    transform: translateY(-50%) translateX(4px);
-  }
-
-  /* ── CATEGORY PAGE ── */
-  #page-category {
-    padding-top: 80px;
-    min-height: 100vh;
-  }
-
-  .cat-page-header {
-    padding: 50px 40px 30px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: flex-start; gap: 20px;
-  }
-  .cat-page-icon { font-size: 3rem; }
-  .cat-page-header h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.2rem;
-    font-weight: 900;
-    color: var(--cat-color, var(--accent1));
-  }
-  .cat-page-header p { color: var(--muted); font-style: italic; margin-top: 4px; }
-
-  .cat-page-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    min-height: calc(100vh - 300px);
-  }
-
-  /* Words panel */
-  .words-panel {
-    padding: 30px 40px;
-    border-right: 1px solid var(--border);
-  }
-  .words-panel h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    color: var(--muted);
-    margin-bottom: 20px;
-    letter-spacing: 0.05em;
-  }
-
-  .words-grid {
-    display: flex; flex-wrap: wrap; gap: 10px;
-  }
-
-  .word-chip {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 50px;
-    padding: 8px 16px;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .word-chip:hover {
-    border-color: var(--cat-color, var(--accent1));
-    background: rgba(232,184,109,0.08);
-    transform: scale(1.05);
-  }
-  .word-chip .speak-btn {
-    width: 20px; height: 20px;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--muted);
-    transition: color 0.2s;
-  }
-  .word-chip:hover .speak-btn { color: var(--cat-color, var(--accent1)); }
-
-  /* Tooltip */
-  .word-chip .tooltip {
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--card);
-    border: 1px solid var(--cat-color, var(--accent1));
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 0.85rem;
-    color: var(--text);
-    white-space: nowrap;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.2s;
-    z-index: 50;
-    text-align: center;
-  }
-  .word-chip .tooltip::after {
-    content: '';
-    position: absolute; top: 100%; left: 50%;
-    transform: translateX(-50%);
-    border: 5px solid transparent;
-    border-top-color: var(--cat-color, var(--accent1));
-  }
-  .word-chip:hover .tooltip { opacity: 1; }
-
-  /* Dialog panel */
-  .dialog-panel {
-    padding: 30px 40px;
-    background: rgba(255,255,255,0.01);
-  }
-  .dialog-panel h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    color: var(--muted);
-    margin-bottom: 20px;
-    letter-spacing: 0.05em;
-  }
-
-  .dialog-tabs {
-    display: flex; gap: 10px; margin-bottom: 20px;
-  }
-  .dialog-tab {
-    padding: 6px 16px;
-    border-radius: 50px;
-    border: 1px solid var(--border);
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: var(--muted);
-  }
-  .dialog-tab.active {
-    border-color: var(--cat-color, var(--accent1));
-    color: var(--cat-color, var(--accent1));
-    background: rgba(232,184,109,0.08);
-  }
-
-  .dialog-content { display: none; }
-  .dialog-content.active { display: block; }
-
-  .dialog-box {
-    background: var(--surface);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    padding: 24px;
-    margin-bottom: 16px;
-  }
-
-  .dialog-line {
-    display: flex; gap: 12px;
-    margin-bottom: 14px;
-    position: relative;
-  }
-  .dialog-speaker {
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    min-width: 60px;
-    padding-top: 2px;
-    color: var(--cat-color, var(--accent1));
-  }
-  .dialog-text {
-    font-size: 1rem;
-    line-height: 1.5;
-    cursor: default;
-    border-bottom: 1px dashed transparent;
-    transition: border-color 0.2s;
-    position: relative;
-  }
-  .dialog-text:hover {
-    border-bottom-color: var(--cat-color, var(--accent1));
-  }
-  .dialog-text .text-tooltip {
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 0;
-    background: var(--card);
-    border: 1px solid var(--cat-color, var(--accent1));
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-style: italic;
-    max-width: 350px;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.2s;
-    z-index: 50;
-    white-space: nowrap;
-  }
-  .dialog-text:hover .text-tooltip { opacity: 1; }
-
-  .text-box {
-    background: var(--surface);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    padding: 24px;
-  }
-  .text-box p {
-    line-height: 1.7;
-    margin-bottom: 12px;
-    font-size: 1rem;
-    cursor: default;
-  }
-  .text-box p:last-child { margin-bottom: 0; }
-  .text-translation {
-    color: var(--muted);
-    font-style: italic;
-    font-size: 0.9rem;
-    border-top: 1px solid var(--border);
-    padding-top: 14px;
-    margin-top: 14px;
-    display: none;
-  }
-  .show-translation-btn {
-    margin-top: 16px;
-    padding: 8px 20px;
-    border-radius: 50px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
-  }
-  .show-translation-btn:hover {
-    border-color: var(--cat-color, var(--accent1));
-    color: var(--cat-color, var(--accent1));
-  }
-
-  /* Speaking indicator */
-  @keyframes pulse-speak {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-  .speaking { animation: pulse-speak 0.5s infinite; color: var(--cat-color, var(--accent1)) !important; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .mindmap-grid { padding: 20px; gap: 14px; }
-    .cat-page-body { grid-template-columns: 1fr; }
-    .words-panel { border-right: none; border-bottom: 1px solid var(--border); }
-    .words-panel, .dialog-panel { padding: 20px; }
-    header { padding: 14px 20px; }
-    .cat-page-header { padding: 30px 20px 20px; flex-wrap: wrap; }
-  }
-
-  /* Animations */
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .category-card {
-    animation: fadeInUp 0.4s ease both;
-  }
-</style>
-</head>
-<body>
-
-<header>
-  <div class="logo">DELF A1 <span>Lexique Interactif</span></div>
-  <div class="nav-back" id="navBack" onclick="showMindmap()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-    Retour à la carte
-  </div>
-</header>
-
-<!-- MINDMAP PAGE -->
-<div id="page-mindmap" class="page active">
-  <div class="mindmap-hero">
-    <h1>Carte mentale<br>du vocabulaire</h1>
-    <p>Cliquez sur une catégorie pour explorer les mots et dialogues</p>
-  </div>
-  <div class="mindmap-grid" id="mindmapGrid"></div>
-</div>
-
-<!-- CATEGORY PAGE -->
-<div id="page-category" class="page">
-  <div class="cat-page-header">
-    <div class="cat-page-icon" id="catIcon"></div>
-    <div>
-      <h2 id="catTitle"></h2>
-      <p id="catSubtitle"></p>
-    </div>
-  </div>
-  <div class="cat-page-body">
-    <div class="words-panel">
-      <h3>Vocabulaire</h3>
-      <div class="words-grid" id="wordsGrid"></div>
-    </div>
-    <div class="dialog-panel">
-      <h3>Textes & Dialogues</h3>
-      <div class="dialog-tabs">
-        <div class="dialog-tab active" data-tab="dialog" onclick="showTab('dialog', this)">Dialogue</div>
-        <div class="dialog-tab" data-tab="text" onclick="showTab('text', this)">Texte</div>
-      </div>
-      <div class="dialog-content active" id="tab-dialog"></div>
-      <div class="dialog-content" id="tab-text"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-// ── DATA ──────────────────────────────────────────────────────────────────────
-
-const CATEGORIES = [
-  {
-    id: 'saluer',
-    icon: '👋',
-    title: 'Saluer & Prendre congé',
-    subtitle: 'Greetings & Farewells',
-    color: '#e8b86d',
-    words: [
-      { fr: 'Bonjour', ru: 'Добрый день / Здравствуйте', pron: 'bɔ̃.ʒuʁ' },
-      { fr: 'Bonsoir', ru: 'Добрый вечер', pron: 'bɔ̃.swaʁ' },
-      { fr: 'Salut !', ru: 'Привет!', pron: 'sa.ly' },
-      { fr: 'Ça va ?', ru: 'Как дела?', pron: 'sa va' },
-      { fr: 'Comment ça va ?', ru: 'Как у тебя дела?', pron: 'kɔ.mɑ̃ sa va' },
-      { fr: 'Coucou !', ru: 'Ку-ку! / Привет!', pron: 'ku.ku' },
-      { fr: 'Au revoir !', ru: 'До свидания!', pron: 'o ʁə.vwaʁ' },
-      { fr: 'À plus tard !', ru: 'До встречи!', pron: 'a ply taʁ' },
-      { fr: 'À lundi !', ru: 'До понедельника!', pron: 'a lœ̃.di' },
-      { fr: 'À ce soir.', ru: 'До вечера.', pron: 'a sə swaʁ' },
-      { fr: 'À très bientôt.', ru: 'До скорой встречи.', pron: 'a tʁɛ bjɛ̃.to' },
-      { fr: 'À dimanche !', ru: 'До воскресенья!', pron: 'a di.mɑ̃ʃ' },
-      { fr: 'Bises.', ru: 'Поцелуи. / Целую.', pron: 'biz' },
-      { fr: 'Bisous.', ru: 'Поцелуйчики.', pron: 'bi.zu' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Lucas', fr: '— Salut, Emma ! Ça va ?', ru: '— Привет, Эмма! Как дела?' },
-        { speaker: 'Emma', fr: '— Bonjour, Lucas ! Oui, ça va bien, merci. Et toi ?', ru: '— Привет, Люка! Да, всё хорошо, спасибо. А у тебя?' },
-        { speaker: 'Lucas', fr: '— Ça va très bien ! Tu viens à la fête ce soir ?', ru: '— Очень хорошо! Ты придёшь на вечеринку сегодня вечером?' },
-        { speaker: 'Emma', fr: '— Oui ! À ce soir alors !', ru: '— Да! До вечера тогда!' },
-        { speaker: 'Lucas', fr: '— À ce soir ! Bisous !', ru: '— До вечера! Целую!' },
-      ]
-    },
-    text: {
-      fr: 'En France, on dit "Bonjour" le matin et "Bonsoir" le soir. Entre amis, on dit souvent "Salut !" ou "Coucou !". Pour se quitter, on dit "Au revoir" ou "À bientôt". Les amis et la famille se font souvent la bise.',
-      ru: 'Во Франции говорят «Bonjour» утром и «Bonsoir» вечером. Между друзьями часто говорят «Salut!» или «Coucou!». Прощаясь, говорят «Au revoir» или «À bientôt». Друзья и семья часто приветствуют друг друга поцелуем в щёку.'
-    }
-  },
-  {
-    id: 'presenter',
-    icon: '🪪',
-    title: 'Se présenter',
-    subtitle: 'Introductions & Identity',
-    color: '#7eb8d4',
-    words: [
-      { fr: 'un nom', ru: 'фамилия', pron: 'œ̃ nɔ̃' },
-      { fr: 'un prénom', ru: 'имя', pron: 'œ̃ pʁe.nɔ̃' },
-      { fr: 'un numéro', ru: 'номер', pron: 'œ̃ ny.me.ʁo' },
-      { fr: 'une nationalité', ru: 'национальность', pron: 'yn na.sjɔ.na.li.te' },
-      { fr: 'africain', ru: 'африканский', pron: 'a.fʁi.kɛ̃' },
-      { fr: 'belge', ru: 'бельгийский', pron: 'bɛlʒ' },
-      { fr: 'italien', ru: 'итальянский', pron: 'i.ta.ljɛ̃' },
-      { fr: "l'âge", ru: 'возраст', pron: 'laʒ' },
-      { fr: "une pièce d'identité", ru: 'удостоверение личности', pron: 'yn pjɛs di.dɑ̃.ti.te' },
-      { fr: "une photo d'identité", ru: 'фото на документ', pron: 'yn fo.to di.dɑ̃.ti.te' },
-      { fr: 'une date de naissance', ru: 'дата рождения', pron: 'yn dat də nɛ.sɑ̃s' },
-      { fr: 'une ville de naissance', ru: 'город рождения', pron: 'yn vil də nɛ.sɑ̃s' },
-      { fr: 'une adresse', ru: 'адрес', pron: 'yn a.dʁɛs' },
-      { fr: 'le code postal', ru: 'почтовый индекс', pron: 'lə kɔd pɔs.tal' },
-      { fr: 'la ville', ru: 'город', pron: 'la vil' },
-      { fr: 'le pays', ru: 'страна', pron: 'lə pe.i' },
-      { fr: 'Je m\'appelle…', ru: 'Меня зовут…', pron: 'ʒə ma.pɛl' },
-      { fr: 'Je suis italien.', ru: 'Я итальянец.', pron: 'ʒə sɥi i.ta.ljɛ̃' },
-      { fr: 'J\'ai 14 ans.', ru: 'Мне 14 лет.', pron: 'ʒe ka.tɔʁz ɑ̃' },
-      { fr: 'J\'habite à Nantes.', ru: 'Я живу в Нанте.', pron: 'ʒa.bit a nɑ̃t' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Erdem', fr: '— Bonjour ! Je m\'appelle Erdem. Et toi ?', ru: '— Привет! Меня зовут Эрдем. А тебя?' },
-        { speaker: 'Julie', fr: '— Moi, c\'est Julie. Je suis ta correspondante française !', ru: '— Я Жюли. Я твой французский корреспондент!' },
-        { speaker: 'Erdem', fr: '— Enchanté ! Tu habites où ?', ru: '— Приятно познакомиться! Где ты живёшь?' },
-        { speaker: 'Julie', fr: '— J\'ai 14 ans et j\'habite à Nantes. Et toi ?', ru: '— Мне 14 лет, и я живу в Нанте. А ты?' },
-        { speaker: 'Erdem', fr: '— J\'ai 15 ans. Je suis turc, j\'habite à Istanbul.', ru: '— Мне 15 лет. Я турок, живу в Стамбуле.' },
-      ]
-    },
-    text: {
-      fr: 'Pour se présenter, on dit son prénom et son nom. On dit aussi sa nationalité, son âge et sa ville. Une pièce d\'identité contient une photo d\'identité, une date de naissance et une adresse avec le code postal.',
-      ru: 'При представлении говорят своё имя и фамилию. Также называют национальность, возраст и город. Удостоверение личности содержит фотографию, дату рождения и адрес с почтовым индексом.'
-    }
-  },
-  {
-    id: 'famille',
-    icon: '👨‍👩‍👧‍👦',
-    title: 'La famille & Les personnes',
-    subtitle: 'Family & People',
-    color: '#c47fc4',
-    words: [
-      { fr: 'une personne', ru: 'человек', pron: 'yn pɛʁ.sɔn' },
-      { fr: 'un homme', ru: 'мужчина', pron: 'œ̃n‿ɔm' },
-      { fr: 'une femme', ru: 'женщина', pron: 'yn fam' },
-      { fr: 'un enfant', ru: 'ребёнок', pron: 'œ̃n‿ɑ̃.fɑ̃' },
-      { fr: 'un adolescent', ru: 'подросток', pron: 'œ̃ a.dɔ.lɛ.sɑ̃' },
-      { fr: 'un garçon', ru: 'мальчик', pron: 'œ̃ ɡaʁ.sɔ̃' },
-      { fr: 'une fille', ru: 'девочка / дочь', pron: 'yn fij' },
-      { fr: 'un bébé', ru: 'младенец', pron: 'œ̃ be.be' },
-      { fr: 'un collégien', ru: 'школьник (коллеж)', pron: 'œ̃ kɔ.le.ʒjɛ̃' },
-      { fr: 'un lycéen', ru: 'старшеклассник', pron: 'œ̃ li.se.ɛ̃' },
-      { fr: 'un copain', ru: 'приятель / друг', pron: 'œ̃ kɔ.pɛ̃' },
-      { fr: 'une copine', ru: 'подруга', pron: 'yn kɔ.pin' },
-      { fr: 'un ami', ru: 'друг', pron: 'œ̃n‿a.mi' },
-      { fr: 'les parents', ru: 'родители', pron: 'le pa.ʁɑ̃' },
-      { fr: 'les grands-parents', ru: 'бабушка и дедушка', pron: 'le ɡʁɑ̃.pa.ʁɑ̃' },
-      { fr: 'un père', ru: 'отец', pron: 'œ̃ pɛʁ' },
-      { fr: 'une mère', ru: 'мать', pron: 'yn mɛʁ' },
-      { fr: 'un frère', ru: 'брат', pron: 'œ̃ fʁɛʁ' },
-      { fr: 'une sœur', ru: 'сестра', pron: 'yn sœʁ' },
-      { fr: 'un oncle', ru: 'дядя', pron: 'œ̃n‿ɔ̃kl' },
-      { fr: 'une tante', ru: 'тётя', pron: 'yn tɑ̃t' },
-      { fr: 'un cousin', ru: 'двоюродный брат', pron: 'œ̃ ku.zɛ̃' },
-      { fr: 'une cousine', ru: 'двоюродная сестра', pron: 'yn ku.zin' },
-      { fr: 'marié(e)', ru: 'женатый / замужняя', pron: 'ma.ʁje' },
-      { fr: 'célibataire', ru: 'холостой / одинокий', pron: 'se.li.ba.tɛʁ' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Marie', fr: '— C\'est qui sur la photo ?', ru: '— Кто это на фотографии?' },
-        { speaker: 'Paul', fr: '— C\'est ma famille ! Là, c\'est mon père et ma mère.', ru: '— Это моя семья! Вот мой папа и мама.' },
-        { speaker: 'Marie', fr: '— Et le garçon à côté, c\'est ton frère ?', ru: '— А мальчик рядом — это твой брат?' },
-        { speaker: 'Paul', fr: '— Oui, c\'est Julien, mon petit frère. Il a 10 ans.', ru: '— Да, это Жюльен, мой младший брат. Ему 10 лет.' },
-        { speaker: 'Marie', fr: '— Et les grands-parents, ils habitent avec vous ?', ru: '— А бабушка с дедушкой живут с вами?' },
-        { speaker: 'Paul', fr: '— Non, ils habitent à Lyon. Mon oncle et ma tante aussi.', ru: '— Нет, они живут в Лионе. Мой дядя и тётя тоже.' },
-      ]
-    },
-    text: {
-      fr: 'La famille française est souvent composée des parents — le père et la mère — et des enfants. Les grands-parents jouent un rôle important. On compte aussi les oncles, les tantes, les cousins et les cousines. En France, il y a beaucoup de familles avec un parent célibataire.',
-      ru: 'Французская семья обычно состоит из родителей — отца и матери — и детей. Бабушки и дедушки играют важную роль. Также есть дяди, тёти, двоюродные братья и сёстры. Во Франции много семей с одним родителем.'
-    }
-  },
-  {
-    id: 'physique',
-    icon: '🧍',
-    title: 'Caractéristiques physiques & Sentiments',
-    subtitle: 'Physical traits & Feelings',
-    color: '#6ecf9e',
-    words: [
-      { fr: 'petit(e)', ru: 'маленький / низкий', pron: 'pə.ti' },
-      { fr: 'grand(e)', ru: 'большой / высокий', pron: 'ɡʁɑ̃' },
-      { fr: 'beau / belle', ru: 'красивый / красивая', pron: 'bo / bɛl' },
-      { fr: 'laid(e)', ru: 'некрасивый', pron: 'lɛ' },
-      { fr: 'gros(se)', ru: 'толстый', pron: 'ɡʁo' },
-      { fr: 'mince', ru: 'стройный / худой', pron: 'mɛ̃s' },
-      { fr: 'maigre', ru: 'худощавый', pron: 'mɛɡʁ' },
-      { fr: 'long(ue)', ru: 'длинный', pron: 'lɔ̃' },
-      { fr: 'court(e)', ru: 'короткий', pron: 'kuʁ' },
-      { fr: 'blond(e)', ru: 'блондин / блондинка', pron: 'blɔ̃' },
-      { fr: 'brun(e)', ru: 'брюнет / брюнетка', pron: 'bʁœ̃' },
-      { fr: 'roux / rousse', ru: 'рыжеволосый', pron: 'ʁu / ʁus' },
-      { fr: 'heureux / heureuse', ru: 'счастливый', pron: 'ø.ʁø / ø.ʁøz' },
-      { fr: 'content(e)', ru: 'довольный', pron: 'kɔ̃.tɑ̃' },
-      { fr: 'triste', ru: 'грустный', pron: 'tʁist' },
-      { fr: 'gentil(le)', ru: 'добрый / милый', pron: 'ʒɑ̃.ti' },
-      { fr: 'bête', ru: 'глупый', pron: 'bɛt' },
-      { fr: 'sympathique', ru: 'симпатичный / приятный', pron: 'sɛ̃.pa.tik' },
-      { fr: 'sérieux / sérieuse', ru: 'серьёзный', pron: 'se.ʁjø' },
-      { fr: 'le cœur', ru: 'сердце', pron: 'lə kœʁ' },
-      { fr: 'les pieds', ru: 'ноги (ступни)', pron: 'le pje' },
-      { fr: 'les mains', ru: 'руки (кисти)', pron: 'le mɛ̃' },
-      { fr: 'les doigts', ru: 'пальцы', pron: 'le dwa' },
-      { fr: 'la jambe', ru: 'нога', pron: 'la ʒɑ̃b' },
-      { fr: 'les bras', ru: 'руки', pron: 'le bʁa' },
-      { fr: 'les yeux', ru: 'глаза', pron: 'le zjø' },
-      { fr: "l'oreille", ru: 'ухо', pron: 'lɔ.ʁɛj' },
-      { fr: 'le nez', ru: 'нос', pron: 'lə ne' },
-      { fr: 'la bouche', ru: 'рот', pron: 'la buʃ' },
-      { fr: 'les dents', ru: 'зубы', pron: 'le dɑ̃' },
-      { fr: 'les cheveux', ru: 'волосы', pron: 'le ʃə.vø' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Sofia', fr: '— Comment est ton nouveau copain ?', ru: '— Как выглядит твой новый друг?' },
-        { speaker: 'Léa', fr: '— Il est grand et mince, avec les cheveux bruns et les yeux bleus.', ru: '— Он высокий и стройный, с тёмными волосами и голубыми глазами.' },
-        { speaker: 'Sofia', fr: '— Il est beau ! Et il est sympathique ?', ru: '— Он красивый! И он приятный?' },
-        { speaker: 'Léa', fr: '— Oui, très gentil et sérieux. Il est toujours content.', ru: '— Да, очень добрый и серьёзный. Он всегда доволен.' },
-        { speaker: 'Sofia', fr: '— Super ! Je suis heureuse pour toi !', ru: '— Здорово! Я рада за тебя!' },
-      ]
-    },
-    text: {
-      fr: 'Pour décrire une personne, on parle de sa taille — grande ou petite —, de sa forme — mince ou grosse —, et de la couleur de ses cheveux — blond, brun ou roux. On peut aussi parler de son caractère : est-elle gentille, sérieuse ou sympathique ?',
-      ru: 'Чтобы описать человека, говорят о его росте — высокий или низкий, телосложении — стройный или полный, и цвете волос — светлые, тёмные или рыжие. Можно также говорить о характере: добрый ли человек, серьёзный или приятный?'
-    }
-  },
-  {
-    id: 'ville',
-    icon: '🏙️',
-    title: 'La ville & Le logement',
-    subtitle: 'City & Home',
-    color: '#e07c7c',
-    words: [
-      { fr: 'une région', ru: 'регион', pron: 'yn ʁe.ʒjɔ̃' },
-      { fr: 'une capitale', ru: 'столица', pron: 'yn ka.pi.tal' },
-      { fr: 'une rue', ru: 'улица', pron: 'yn ʁy' },
-      { fr: 'une avenue', ru: 'проспект', pron: 'yn a.vny' },
-      { fr: 'une place', ru: 'площадь', pron: 'yn plas' },
-      { fr: 'un carrefour', ru: 'перекрёсток', pron: 'œ̃ kaʁ.fuʁ' },
-      { fr: 'un village', ru: 'деревня', pron: 'œ̃ vi.laʒ' },
-      { fr: 'une église', ru: 'церковь', pron: 'yn e.ɡliz' },
-      { fr: 'un château', ru: 'замок', pron: 'œ̃ ʃa.to' },
-      { fr: 'un monument', ru: 'памятник', pron: 'œ̃ mɔ.ny.mɑ̃' },
-      { fr: 'un hôtel', ru: 'гостиница', pron: 'œ̃n‿o.tɛl' },
-      { fr: 'un immeuble', ru: 'многоквартирный дом', pron: 'œ̃n‿i.mœbl' },
-      { fr: 'un parking', ru: 'парковка', pron: 'œ̃ paʁ.kiŋ' },
-      { fr: 'une maison', ru: 'дом', pron: 'yn mɛ.zɔ̃' },
-      { fr: 'un appartement', ru: 'квартира', pron: 'œ̃n‿a.paʁ.tə.mɑ̃' },
-      { fr: "l'entrée", ru: 'вход', pron: 'lɑ̃.tʁe' },
-      { fr: 'la sortie', ru: 'выход', pron: 'la sɔʁ.ti' },
-      { fr: 'une fenêtre', ru: 'окно', pron: 'yn fə.nɛtʁ' },
-      { fr: 'une chaise', ru: 'стул', pron: 'yn ʃɛz' },
-      { fr: 'une table', ru: 'стол', pron: 'yn tabl' },
-      { fr: 'un lit', ru: 'кровать', pron: 'œ̃ li' },
-      { fr: 'une armoire', ru: 'шкаф', pron: 'yn aʁ.mwaʁ' },
-      { fr: 'une chambre', ru: 'спальня / комната', pron: 'yn ʃɑ̃bʁ' },
-      { fr: 'la cuisine', ru: 'кухня', pron: 'la kɥi.zin' },
-      { fr: 'le four à micro-ondes', ru: 'микроволновая печь', pron: 'lə fuʁ a mi.kʁo.ɔ̃d' },
-      { fr: 'le réfrigérateur', ru: 'холодильник', pron: 'lə ʁe.fʁi.ʒe.ʁa.tœʁ' },
-      { fr: 'le salon', ru: 'гостиная', pron: 'lə sa.lɔ̃' },
-      { fr: 'la salle de bains', ru: 'ванная', pron: 'la sal də bɛ̃' },
-      { fr: 'le jardin', ru: 'сад', pron: 'lə ʒaʁ.dɛ̃' },
-      { fr: 'les toilettes', ru: 'туалет', pron: 'le twa.lɛt' },
-      { fr: 'un escalier', ru: 'лестница', pron: 'œ̃n‿ɛs.ka.lje' },
-      { fr: 'un étage', ru: 'этаж', pron: 'œ̃n‿e.taʒ' },
-      { fr: 'un mur', ru: 'стена', pron: 'œ̃ myʁ' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Maman', fr: '— Tu peux ranger ta chambre, s\'il te plaît ?', ru: '— Ты можешь убрать в своей комнате, пожалуйста?' },
-        { speaker: 'Hugo', fr: '— Je suis en train de cuisiner !', ru: '— Я сейчас готовлю!' },
-        { speaker: 'Maman', fr: '— Il y a ton lit, ton armoire et ta table. Tout est en désordre !', ru: '— Там твоя кровать, шкаф и стол. Всё в беспорядке!' },
-        { speaker: 'Hugo', fr: '— D\'accord. J\'habite au deuxième étage du grand immeuble.', ru: '— Ладно. Я живу на втором этаже большого дома.' },
-        { speaker: 'Maman', fr: '— Notre appartement est beau, avec un grand salon et un jardin.', ru: '— Наша квартира красивая, с большой гостиной и садом.' },
-      ]
-    },
-    text: {
-      fr: 'Paris est la capitale de la France. La ville est organisée en rues, avenues et places. Les Français habitent dans des maisons ou des appartements. Un appartement typique a une cuisine, un salon, une salle de bains et des chambres.',
-      ru: 'Париж — столица Франции. Город разделён на улицы, проспекты и площади. Французы живут в домах или квартирах. Типичная квартира имеет кухню, гостиную, ванную и спальни.'
-    }
-  },
-  {
-    id: 'transport',
-    icon: '🚆',
-    title: 'Les transports & Itinéraire',
-    subtitle: 'Transport & Directions',
-    color: '#7cb8e0',
-    words: [
-      { fr: 'un bus', ru: 'автобус', pron: 'œ̃ bys' },
-      { fr: 'un arrêt de bus', ru: 'остановка', pron: 'œ̃n‿a.ʁɛ də bys' },
-      { fr: 'une carte de bus', ru: 'проездной', pron: 'yn kaʁt də bys' },
-      { fr: 'un siège', ru: 'сиденье', pron: 'œ̃ sjɛʒ' },
-      { fr: 'un tramway', ru: 'трамвай', pron: 'œ̃ tʁam.wɛ' },
-      { fr: 'un train', ru: 'поезд', pron: 'œ̃ tʁɛ̃' },
-      { fr: 'le TGV', ru: 'скоростной поезд ТЖВ', pron: 'lə te.ʒe.ve' },
-      { fr: 'le départ', ru: 'отправление', pron: 'lə de.paʁ' },
-      { fr: "l'arrivée", ru: 'прибытие', pron: 'la.ʁi.ve' },
-      { fr: 'une gare', ru: 'вокзал', pron: 'yn ɡaʁ' },
-      { fr: 'la voie', ru: 'путь / платформа', pron: 'la vwa' },
-      { fr: 'le métro', ru: 'метро', pron: 'lə me.tʁo' },
-      { fr: 'une station de métro', ru: 'станция метро', pron: 'yn sta.sjɔ̃ də me.tʁo' },
-      { fr: 'une voiture', ru: 'автомобиль', pron: 'yn vwa.tyʁ' },
-      { fr: 'la ceinture de sécurité', ru: 'ремень безопасности', pron: 'la sɛ̃.tyʁ də se.ky.ʁi.te' },
-      { fr: 'une voiture électrique', ru: 'электромобиль', pron: 'yn vwa.tyʁ e.lɛk.tʁik' },
-      { fr: 'un vélo', ru: 'велосипед', pron: 'œ̃ ve.lo' },
-      { fr: 'un skateboard', ru: 'скейтборд', pron: 'œ̃ skɛjt.bɔʁd' },
-      { fr: 'une trottinette', ru: 'самокат', pron: 'yn tʁɔ.ti.nɛt' },
-      { fr: 'un aéroport', ru: 'аэропорт', pron: 'œ̃n‿a.e.ʁo.pɔʁ' },
-      { fr: 'un avion', ru: 'самолёт', pron: 'œ̃n‿a.vjɔ̃' },
-      { fr: 'une carte d\'embarquement', ru: 'посадочный талон', pron: 'yn kaʁt dɑ̃.baʁk.mɑ̃' },
-      { fr: 'un vol', ru: 'рейс', pron: 'œ̃ vɔl' },
-      { fr: 'une destination', ru: 'пункт назначения', pron: 'yn dɛs.ti.na.sjɔ̃' },
-      { fr: 'un bateau', ru: 'корабль / лодка', pron: 'œ̃ ba.to' },
-      { fr: 'à droite', ru: 'направо', pron: 'a dʁwat' },
-      { fr: 'à gauche', ru: 'налево', pron: 'a ɡoʃ' },
-      { fr: 'tout droit', ru: 'прямо', pron: 'tu dʁwa' },
-      { fr: 'traverser', ru: 'переходить / пересекать', pron: 'tʁa.vɛʁ.se' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Touriste', fr: '— Excusez-moi, pour aller à la gare ?', ru: '— Извините, как пройти к вокзалу?' },
-        { speaker: 'Passant', fr: '— Tu prends à droite dans la rue du Théâtre, puis à gauche dans la rue Carnot.', ru: '— Вы идёте направо по улице Театральной, затем налево на улицу Карно.' },
-        { speaker: 'Touriste', fr: '— Je traverse le parc ?', ru: '— Я пересекаю парк?' },
-        { speaker: 'Passant', fr: '— Oui, tu continues tout droit et tu arrives sur la place du Marché. La gare est là.', ru: '— Да, вы идёте прямо и выходите на площадь Рынка. Вокзал там.' },
-        { speaker: 'Touriste', fr: '— Merci beaucoup !', ru: '— Большое спасибо!' },
-      ]
-    },
-    text: {
-      fr: 'En France, on peut voyager en train, en bus, en métro ou en avion. Le TGV est un train à grande vitesse très populaire. Dans les villes, les gens utilisent le bus, le tramway ou le métro. Les jeunes aiment aussi le vélo et la trottinette électrique.',
-      ru: 'Во Франции можно путешествовать на поезде, автобусе, метро или самолёте. ТЖВ — очень популярный скоростной поезд. В городах люди пользуются автобусом, трамваем или метро. Молодёжь также любит велосипед и электросамокат.'
-    }
-  },
-  {
-    id: 'temps',
-    icon: '📅',
-    title: 'Le temps & Les événements',
-    subtitle: 'Time & Events',
-    color: '#e8b86d',
-    words: [
-      { fr: 'le matin', ru: 'утро', pron: 'lə ma.tɛ̃' },
-      { fr: "l'après-midi", ru: 'день / после обеда', pron: 'la.pʁɛ mi.di' },
-      { fr: 'le soir', ru: 'вечер', pron: 'lə swaʁ' },
-      { fr: 'la nuit', ru: 'ночь', pron: 'la nɥi' },
-      { fr: "aujourd'hui", ru: 'сегодня', pron: 'o.ʒuʁ.dɥi' },
-      { fr: 'demain', ru: 'завтра', pron: 'də.mɛ̃' },
-      { fr: 'un jour', ru: 'день', pron: 'œ̃ ʒuʁ' },
-      { fr: 'une semaine', ru: 'неделя', pron: 'yn sə.mɛn' },
-      { fr: 'lundi', ru: 'понедельник', pron: 'lœ̃.di' },
-      { fr: 'mardi', ru: 'вторник', pron: 'maʁ.di' },
-      { fr: 'mercredi', ru: 'среда', pron: 'mɛʁ.kʁə.di' },
-      { fr: 'jeudi', ru: 'четверг', pron: 'ʒø.di' },
-      { fr: 'vendredi', ru: 'пятница', pron: 'vɑ̃.dʁə.di' },
-      { fr: 'samedi', ru: 'суббота', pron: 'sam.di' },
-      { fr: 'dimanche', ru: 'воскресенье', pron: 'di.mɑ̃ʃ' },
-      { fr: 'un week-end', ru: 'выходные', pron: 'œ̃ wi.kɛnd' },
-      { fr: 'janvier', ru: 'январь', pron: 'ʒɑ̃.vje' },
-      { fr: 'février', ru: 'февраль', pron: 'fe.vʁije' },
-      { fr: 'mars', ru: 'март', pron: 'maʁs' },
-      { fr: 'avril', ru: 'апрель', pron: 'a.vʁil' },
-      { fr: 'mai', ru: 'май', pron: 'mɛ' },
-      { fr: 'juin', ru: 'июнь', pron: 'ʒɥɛ̃' },
-      { fr: 'juillet', ru: 'июль', pron: 'ʒɥi.jɛ' },
-      { fr: 'août', ru: 'август', pron: 'u' },
-      { fr: 'septembre', ru: 'сентябрь', pron: 'sɛp.tɑ̃bʁ' },
-      { fr: 'octobre', ru: 'октябрь', pron: 'ɔk.tɔbʁ' },
-      { fr: 'novembre', ru: 'ноябрь', pron: 'nɔ.vɑ̃bʁ' },
-      { fr: 'décembre', ru: 'декабрь', pron: 'de.sɑ̃bʁ' },
-      { fr: 'une année', ru: 'год', pron: 'yn a.ne' },
-      { fr: 'une heure', ru: 'час', pron: 'yn œʁ' },
-      { fr: 'une minute', ru: 'минута', pron: 'yn mi.nyt' },
-      { fr: "les vacances d'été", ru: 'летние каникулы', pron: 'le va.kɑ̃s de.te' },
-      { fr: 'un concours', ru: 'конкурс', pron: 'œ̃ kɔ̃.kuʁ' },
-      { fr: 'un festival', ru: 'фестиваль', pron: 'œ̃ fɛs.ti.val' },
-      { fr: 'un salon', ru: 'выставка / ярмарка', pron: 'œ̃ sa.lɔ̃' },
-      { fr: 'un mariage', ru: 'свадьба', pron: 'œ̃ ma.ʁjaʒ' },
-      { fr: 'un carnaval', ru: 'карнавал', pron: 'œ̃ kaʁ.na.val' },
-      { fr: "une fête d'anniversaire", ru: 'день рождения', pron: 'yn fɛt da.ni.vɛʁ.sɛʁ' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Nina', fr: '— Qu\'est-ce qu\'on fait samedi ?', ru: '— Что мы делаем в субботу?' },
-        { speaker: 'Tom', fr: '— Le matin, on va au marché. L\'après-midi, il y a un festival !', ru: '— Утром идём на рынок. После обеда — фестиваль!' },
-        { speaker: 'Nina', fr: '— C\'est quel jour exactement ?', ru: '— Какое именно число?' },
-        { speaker: 'Tom', fr: '— Samedi 14 juin, de 14 h à 20 h 30.', ru: '— Суббота, 14 июня, с 14:00 до 20:30.' },
-        { speaker: 'Nina', fr: '— Super ! On se retrouve demain à 17 h 30 ?', ru: '— Отлично! Встретимся завтра в 17:30?' },
-        { speaker: 'Tom', fr: '— D\'accord ! À demain !', ru: '— Договорились! До завтра!' },
-      ]
-    },
-    text: {
-      fr: 'En France, l\'année scolaire commence en septembre et se termine en juin. Les vacances d\'été durent deux mois : juillet et août. La semaine de travail commence le lundi. Le week-end, c\'est samedi et dimanche.',
-      ru: 'Во Франции учебный год начинается в сентябре и заканчивается в июне. Летние каникулы длятся два месяца: июль и август. Рабочая неделя начинается в понедельник. Выходные — это суббота и воскресенье.'
-    }
-  },
-  {
-    id: 'loisirs',
-    icon: '🎭',
-    title: 'Les loisirs & La culture',
-    subtitle: 'Leisure & Culture',
-    color: '#c47fc4',
-    words: [
-      { fr: 'sortir', ru: 'выходить (из дома)', pron: 'sɔʁ.tiʁ' },
-      { fr: 'une sortie culturelle', ru: 'культурный выход / поход', pron: 'yn sɔʁ.ti kyl.ty.ʁɛl' },
-      { fr: 'une activité', ru: 'занятие / деятельность', pron: 'yn ak.ti.vi.te' },
-      { fr: 'une association', ru: 'объединение / клуб', pron: 'yn a.sɔ.sja.sjɔ̃' },
-      { fr: 'un atelier', ru: 'мастерская / кружок', pron: 'œ̃n‿a.tə.lje' },
-      { fr: 'dessiner', ru: 'рисовать', pron: 'de.si.ne' },
-      { fr: 'un dessin', ru: 'рисунок', pron: 'œ̃ dɛ.sɛ̃' },
-      { fr: 'un jeu vidéo', ru: 'видеоигра', pron: 'œ̃ ʒø vi.de.o' },
-      { fr: 'des jeux de société', ru: 'настольные игры', pron: 'de ʒø də sɔ.sje.te' },
-      { fr: 'jouer', ru: 'играть', pron: 'ʒwe' },
-      { fr: 'un concert', ru: 'концерт', pron: 'œ̃ kɔ̃.sɛʁ' },
-      { fr: 'un orchestre', ru: 'оркестр', pron: 'œ̃n‿ɔʁ.kɛstʁ' },
-      { fr: 'un instrument de musique', ru: 'музыкальный инструмент', pron: 'œ̃n‿ɛ̃s.tʁy.mɑ̃ də my.zik' },
-      { fr: 'la musique classique', ru: 'классическая музыка', pron: 'la my.zik kla.sik' },
-      { fr: 'faire de la musique', ru: 'заниматься музыкой', pron: 'fɛʁ də la my.zik' },
-      { fr: 'une chanson', ru: 'песня', pron: 'yn ʃɑ̃.sɔ̃' },
-      { fr: 'chanter', ru: 'петь', pron: 'ʃɑ̃.te' },
-      { fr: 'un cinéma', ru: 'кинотеатр', pron: 'œ̃ si.ne.ma' },
-      { fr: 'regarder un film', ru: 'смотреть фильм', pron: 'ʁə.ɡaʁ.de œ̃ film' },
-      { fr: 'une affiche de film', ru: 'афиша фильма', pron: 'yn a.fiʃ də film' },
-      { fr: 'la magie', ru: 'магия', pron: 'la ma.ʒi' },
-      { fr: 'la danse', ru: 'танец', pron: 'la dɑ̃s' },
-      { fr: 'un spectacle', ru: 'спектакль / шоу', pron: 'œ̃ spɛk.takl' },
-      { fr: 'un billet', ru: 'билет', pron: 'œ̃ bi.jɛ' },
-      { fr: 'réserver une place', ru: 'забронировать место', pron: 'ʁe.zɛʁ.ve yn plas' },
-      { fr: 'un théâtre', ru: 'театр', pron: 'œ̃ te.atʁ' },
-      { fr: 'un rôle', ru: 'роль', pron: 'œ̃ ʁol' },
-      { fr: 'visiter une exposition', ru: 'посещать выставку', pron: 'vi.zi.te yn ɛks.po.zi.sjɔ̃' },
-      { fr: 'une statue', ru: 'статуя', pron: 'yn sta.ty' },
-      { fr: "l'art", ru: 'искусство', pron: 'laʁ' },
-      { fr: 'une bibliothèque', ru: 'библиотека', pron: 'yn bi.bljɔ.tɛk' },
-      { fr: 'lire', ru: 'читать', pron: 'liʁ' },
-      { fr: 'un roman', ru: 'роман', pron: 'œ̃ ʁɔ.mɑ̃' },
-      { fr: 'un manga', ru: 'манга', pron: 'œ̃ mɑ̃.ɡa' },
-      { fr: 'une bande dessinée', ru: 'комикс', pron: 'yn bɑ̃d de.si.ne' },
-      { fr: 'un conte', ru: 'сказка', pron: 'œ̃ kɔ̃t' },
-      { fr: 'un centre de loisirs', ru: 'досуговый центр', pron: 'œ̃ sɑ̃tʁ də lwa.ziʁ' },
-      { fr: 'un cirque', ru: 'цирк', pron: 'œ̃ siʁk' },
-      { fr: 'un zoo', ru: 'зоопарк', pron: 'œ̃ zo.o' },
-      { fr: 'un aquarium', ru: 'аквариум', pron: 'œ̃n‿a.kwa.ʁjɔm' },
-      { fr: 'un parc d\'aventure', ru: 'парк приключений', pron: 'œ̃ paʁk da.vɑ̃.tyʁ' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Camille', fr: '— Tu veux venir avec nous au théâtre samedi ?', ru: '— Ты хочешь пойти с нами в театр в субботу?' },
-        { speaker: 'Axel', fr: '— Ça m\'intéresse ! C\'est quel spectacle ?', ru: '— Меня интересует! Какой спектакль?' },
-        { speaker: 'Camille', fr: '— Un spectacle de magie ! J\'adore la magie. Il faut réserver une place.', ru: '— Шоу фокусов! Я обожаю магию. Нужно забронировать место.' },
-        { speaker: 'Axel', fr: '— Super ! Et après, on va au cinéma regarder un film ?', ru: '— Отлично! А потом пойдём в кино смотреть фильм?' },
-        { speaker: 'Camille', fr: '— Oui ! Le spectacle se termine à 20 h 30. On se retrouve à 14 h, d\'accord ?', ru: '— Да! Спектакль заканчивается в 20:30. Встретимся в 14:00, хорошо?' },
-      ]
-    },
-    text: {
-      fr: 'Les loisirs en France sont très variés. Les jeunes aiment lire des bandes dessinées et des mangas, aller au cinéma, jouer aux jeux vidéo et faire de la musique. Les sorties culturelles — théâtre, musée, concert — sont très populaires, souvent organisées par les collèges.',
-      ru: 'Досуг во Франции очень разнообразен. Молодёжь любит читать комиксы и мангу, ходить в кино, играть в видеоигры и заниматься музыкой. Культурные походы — в театр, музей, на концерт — очень популярны, часто организуются школами.'
-    }
-  },
-  {
-    id: 'sports',
-    icon: '⚽',
-    title: 'Les sports & La santé',
-    subtitle: 'Sports & Health',
-    color: '#6ecf9e',
-    words: [
-      { fr: 'le rugby', ru: 'регби', pron: 'lə ʁyɡ.bi' },
-      { fr: 'la natation', ru: 'плавание', pron: 'la na.ta.sjɔ̃' },
-      { fr: 'le volley-ball', ru: 'волейбол', pron: 'lə vɔ.le.bɔl' },
-      { fr: 'le handball', ru: 'гандбол', pron: 'lə ɑ̃d.bɔl' },
-      { fr: 'le roller', ru: 'роликовые коньки', pron: 'lə ʁɔ.lœʁ' },
-      { fr: 'le badminton', ru: 'бадминтон', pron: 'lə bad.min.tɔn' },
-      { fr: 'le karaté', ru: 'карате', pron: 'lə ka.ʁa.te' },
-      { fr: 'le tennis', ru: 'теннис', pron: 'lə tɛ.nis' },
-      { fr: 'le basket-ball', ru: 'баскетбол', pron: 'lə bas.kɛt.bɔl' },
-      { fr: 'la course à pied', ru: 'бег', pron: 'la kuʁs a pje' },
-      { fr: 'le ski', ru: 'лыжи', pron: 'lə ski' },
-      { fr: 'le judo', ru: 'дзюдо', pron: 'lə ʒy.do' },
-      { fr: 'le club de football', ru: 'футбольный клуб', pron: 'lə klyb də fut.bɔl' },
-      { fr: 'une équipe', ru: 'команда', pron: 'yn e.kip' },
-      { fr: 'la piscine', ru: 'бассейн', pron: 'la pi.sin' },
-      { fr: 'le stade', ru: 'стадион', pron: 'lə stad' },
-      { fr: 'la salle de sport', ru: 'спортзал', pron: 'la sal də spɔʁ' },
-      { fr: 'le match', ru: 'матч / игра', pron: 'lə matʃ' },
-      { fr: 'un sac de sport', ru: 'спортивная сумка', pron: 'œ̃ sak də spɔʁ' },
-      { fr: 'une tenue de sport', ru: 'спортивная форма', pron: 'yn tə.ny də spɔʁ' },
-      { fr: 'faire du sport', ru: 'заниматься спортом', pron: 'fɛʁ dy spɔʁ' },
-      { fr: 'être sportif', ru: 'быть спортивным', pron: 'ɛtʁ spɔʁ.tif' },
-      { fr: 'se baigner', ru: 'купаться', pron: 'sə bɛ.ɲe' },
-      { fr: 'compter les points', ru: 'считать очки', pron: 'kɔ̃.te le pwɛ̃' },
-      { fr: 'être malade', ru: 'быть больным', pron: 'ɛtʁ ma.lad' },
-      { fr: 'avoir de la fièvre', ru: 'иметь температуру', pron: 'a.vwaʁ də la fjɛvʁ' },
-      { fr: 'avoir mal à la tête', ru: 'болеть голова', pron: 'a.vwaʁ mal a la tɛt' },
-      { fr: 'avoir la grippe', ru: 'болеть гриппом', pron: 'a.vwaʁ la ɡʁip' },
-      { fr: 'un médicament', ru: 'лекарство', pron: 'œ̃ me.di.ka.mɑ̃' },
-      { fr: 'un sirop', ru: 'сироп (от кашля)', pron: 'œ̃ si.ʁo' },
-      { fr: 'une clinique', ru: 'клиника', pron: 'yn kli.nik' },
-      { fr: 'une pharmacie', ru: 'аптека', pron: 'yn faʁ.ma.si' },
-      { fr: 'un gel douche', ru: 'гель для душа', pron: 'œ̃ ʒɛl duʃ' },
-      { fr: 'un shampooing', ru: 'шампунь', pron: 'œ̃ ʃɑ̃.pwɛ̃' },
-      { fr: 'se laver', ru: 'мыться', pron: 'sə la.ve' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Maman', fr: '— Tu ne vas pas à l\'école aujourd\'hui ?', ru: '— Ты не идёшь сегодня в школу?' },
-        { speaker: 'Léo', fr: '— J\'ai mal à la tête et j\'ai de la fièvre. Je suis malade.', ru: '— У меня болит голова и температура. Я болен.' },
-        { speaker: 'Maman', fr: '— Oh non ! Tu as la grippe peut-être. Prends ce médicament 3 fois par jour.', ru: '— О нет! Может, у тебя грипп. Принимай это лекарство 3 раза в день.' },
-        { speaker: 'Léo', fr: '— Et mon match de basket samedi ?', ru: '— А мой матч по баскетболу в субботу?' },
-        { speaker: 'Maman', fr: '— Ne viens pas à l\'école pendant 2 jours. Le match peut attendre !', ru: '— Не ходи в школу 2 дня. Матч подождёт!' },
-      ]
-    },
-    text: {
-      fr: 'Le sport est très important en France. Les sports les plus populaires sont le football, le tennis et le rugby. Beaucoup d\'enfants font de la natation à la piscine ou jouent au basket dans un club. Faire du sport est bon pour la santé.',
-      ru: 'Спорт очень важен во Франции. Самые популярные виды спорта — футбол, теннис и регби. Многие дети занимаются плаванием в бассейне или играют в баскетбол в клубе. Занятие спортом полезно для здоровья.'
-    }
-  },
-  {
-    id: 'ecole',
-    icon: '📚',
-    title: 'L\'école & Les matières',
-    subtitle: 'School & Subjects',
-    color: '#e07c7c',
-    words: [
-      { fr: 'le collège', ru: 'коллеж (средняя школа)', pron: 'lə kɔ.lɛʒ' },
-      { fr: 'le lycée', ru: 'лицей (старшая школа)', pron: 'lə li.se' },
-      { fr: 'la classe', ru: 'класс', pron: 'la klas' },
-      { fr: 'la salle', ru: 'аудитория / зал', pron: 'la sal' },
-      { fr: 'un(e) élève', ru: 'ученик / ученица', pron: 'œ̃n‿e.lɛv' },
-      { fr: 'un(e) professeur(e)', ru: 'учитель', pron: 'œ̃ pʁɔ.fɛ.sœʁ' },
-      { fr: 'un(e) correspondant(e)', ru: 'корреспондент / партнёр по переписке', pron: 'œ̃ kɔ.ʁɛs.pɔ̃.dɑ̃' },
-      { fr: 'les parents d\'élèves', ru: 'родители учеников', pron: 'le pa.ʁɑ̃ de.lɛv' },
-      { fr: 'le tableau', ru: 'доска', pron: 'lə ta.blo' },
-      { fr: 'les cours', ru: 'уроки / занятия', pron: 'le kuʁ' },
-      { fr: 'une leçon', ru: 'урок', pron: 'yn lə.sɔ̃' },
-      { fr: 'les devoirs', ru: 'домашнее задание', pron: 'le də.vwaʁ' },
-      { fr: 'une présentation orale', ru: 'устный доклад', pron: 'yn pʁe.zɑ̃.ta.sjɔ̃ ɔ.ʁal' },
-      { fr: 'un test', ru: 'тест / контрольная', pron: 'œ̃ tɛst' },
-      { fr: 'une note', ru: 'оценка', pron: 'yn nɔt' },
-      { fr: 'un diplôme', ru: 'диплом', pron: 'œ̃ di.plom' },
-      { fr: 'la rentrée scolaire', ru: 'начало учебного года', pron: 'la ʁɑ̃.tʁe skɔ.lɛʁ' },
-      { fr: 'un voyage scolaire', ru: 'школьная поездка', pron: 'œ̃ vwa.jaʒ skɔ.lɛʁ' },
-      { fr: 'le français', ru: 'французский язык', pron: 'lə fʁɑ̃.sɛ' },
-      { fr: 'l\'anglais', ru: 'английский язык', pron: 'lɑ̃.ɡlɛ' },
-      { fr: 'l\'espagnol', ru: 'испанский язык', pron: 'lɛs.pa.ɲɔl' },
-      { fr: 'l\'arabe', ru: 'арабский язык', pron: 'la.ʁab' },
-      { fr: 'la biologie', ru: 'биология', pron: 'la bjo.lɔ.ʒi' },
-      { fr: 'l\'histoire', ru: 'история', pron: 'lis.twaʁ' },
-      { fr: 'la géographie', ru: 'география', pron: 'la ʒe.ɔ.ɡʁa.fi' },
-      { fr: 'les mathématiques', ru: 'математика', pron: 'le ma.te.ma.tik' },
-      { fr: 'l\'informatique', ru: 'информатика', pron: 'lɛ̃.fɔʁ.ma.tik' },
-      { fr: 'la physique', ru: 'физика', pron: 'la fi.zik' },
-      { fr: 'la chimie', ru: 'химия', pron: 'la ʃi.mi' },
-      { fr: 'SVT', ru: 'биология и науки о жизни', pron: 'es.ve.te' },
-      { fr: 'l\'art plastique', ru: 'изобразительное искусство', pron: 'laʁ plas.tik' },
-      { fr: 'un cartable', ru: 'ранец / школьная сумка', pron: 'œ̃ kaʁ.tabl' },
-      { fr: 'un cahier', ru: 'тетрадь', pron: 'œ̃ ka.je' },
-      { fr: 'un crayon', ru: 'карандаш', pron: 'œ̃ kʁɛ.jɔ̃' },
-      { fr: 'un stylo', ru: 'ручка', pron: 'œ̃ sti.lo' },
-      { fr: 'une règle', ru: 'линейка', pron: 'yn ʁɛɡl' },
-      { fr: 'un classeur', ru: 'папка / скоросшиватель', pron: 'œ̃ kla.sœʁ' },
-      { fr: 'un tube de colle', ru: 'клей (тюбик)', pron: 'œ̃ tyb də kɔl' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Prof', fr: '— Bonjour ! Ouvrez vos cahiers et préparez vos stylos.', ru: '— Добрый день! Откройте тетради и приготовьте ручки.' },
-        { speaker: 'Élève', fr: '— Monsieur, c\'est un test aujourd\'hui ?', ru: '— Месье, сегодня контрольная?' },
-        { speaker: 'Prof', fr: '— Oui ! Le 3 avril, il y a un contrôle de mathématiques et de biologie.', ru: '— Да! 3 апреля контрольная по математике и биологии.' },
-        { speaker: 'Élève', fr: '— Et les devoirs pour demain ?', ru: '— А домашнее задание на завтра?' },
-        { speaker: 'Prof', fr: '— Vous devez faire l\'exercice 5 et apprendre la leçon de géographie.', ru: '— Вы должны сделать упражнение 5 и выучить урок по географии.' },
-      ]
-    },
-    text: {
-      fr: 'En France, les élèves vont au collège de la 6ème à la 3ème, puis au lycée. Les matières principales sont le français, les mathématiques, l\'anglais et l\'histoire-géographie. Les élèves ont un cartable avec des cahiers, des stylos et des crayons.',
-      ru: 'Во Франции ученики ходят в коллеж с 6-го по 3-й класс, затем в лицей. Основные предметы — французский, математика, английский и история-география. У учеников есть ранец с тетрадями, ручками и карандашами.'
-    }
-  },
-  {
-    id: 'nourriture',
-    icon: '🍽️',
-    title: 'La nourriture & Les repas',
-    subtitle: 'Food & Meals',
-    color: '#7eb8d4',
-    words: [
-      { fr: 'un restaurant', ru: 'ресторан', pron: 'œ̃ ʁɛs.to.ʁɑ̃' },
-      { fr: 'un menu du midi', ru: 'дневное меню', pron: 'œ̃ mə.ny dy mi.di' },
-      { fr: 'une recette', ru: 'рецепт', pron: 'yn ʁə.sɛt' },
-      { fr: 'le petit-déjeuner', ru: 'завтрак', pron: 'lə pə.ti de.ʒø.ne' },
-      { fr: 'le déjeuner', ru: 'обед', pron: 'lə de.ʒø.ne' },
-      { fr: 'le goûter', ru: 'полдник', pron: 'lə ɡu.te' },
-      { fr: 'le dîner', ru: 'ужин', pron: 'lə di.ne' },
-      { fr: 'un plat', ru: 'блюдо', pron: 'œ̃ pla' },
-      { fr: 'une boisson', ru: 'напиток', pron: 'yn bwa.sɔ̃' },
-      { fr: 'un jus de fruits', ru: 'фруктовый сок', pron: 'œ̃ ʒy də fʁɥi' },
-      { fr: 'un sandwich', ru: 'сэндвич', pron: 'œ̃ sɑ̃d.witʃ' },
-      { fr: 'une pizza', ru: 'пицца', pron: 'yn pid.za' },
-      { fr: 'une soupe', ru: 'суп', pron: 'yn sup' },
-      { fr: 'le pain', ru: 'хлеб', pron: 'lə pɛ̃' },
-      { fr: 'un poulet', ru: 'курица', pron: 'œ̃ pu.lɛ' },
-      { fr: 'un steak', ru: 'стейк', pron: 'œ̃ stɛk' },
-      { fr: 'le poisson', ru: 'рыба', pron: 'lə pwa.sɔ̃' },
-      { fr: 'du riz', ru: 'рис', pron: 'dy ʁi' },
-      { fr: 'des pâtes', ru: 'паста / макароны', pron: 'de pat' },
-      { fr: 'des frites', ru: 'картофель фри', pron: 'de fʁit' },
-      { fr: 'un fromage', ru: 'сыр', pron: 'œ̃ fʁɔ.maʒ' },
-      { fr: 'un gâteau', ru: 'торт / пирог', pron: 'œ̃ ɡa.to' },
-      { fr: 'un yaourt', ru: 'йогурт', pron: 'œ̃ ja.uʁt' },
-      { fr: 'le chocolat', ru: 'шоколад', pron: 'lə ʃɔ.kɔ.la' },
-      { fr: 'une glace', ru: 'мороженое', pron: 'yn ɡlas' },
-      { fr: 'une pâtisserie', ru: 'пирожное / кондитерская', pron: 'yn pa.ti.sʁi' },
-      { fr: 'une orange', ru: 'апельсин', pron: 'yn ɔ.ʁɑ̃ʒ' },
-      { fr: 'une banane', ru: 'банан', pron: 'yn ba.nan' },
-      { fr: 'une pomme', ru: 'яблоко', pron: 'yn pɔm' },
-      { fr: 'une pêche', ru: 'персик', pron: 'yn pɛʃ' },
-      { fr: 'un ananas', ru: 'ананас', pron: 'œ̃n‿a.na.nas' },
-      { fr: 'une tomate', ru: 'томат', pron: 'yn tɔ.mat' },
-      { fr: 'des champignons', ru: 'грибы', pron: 'de ʃɑ̃.pi.ɲɔ̃' },
-      { fr: 'une carotte', ru: 'морковь', pron: 'yn ka.ʁɔt' },
-      { fr: 'une assiette', ru: 'тарелка', pron: 'yn a.sjɛt' },
-      { fr: 'un verre', ru: 'стакан / бокал', pron: 'œ̃ vɛʁ' },
-      { fr: 'une cuillère', ru: 'ложка', pron: 'yn kɥi.jɛʁ' },
-      { fr: 'une fourchette', ru: 'вилка', pron: 'yn fuʁ.ʃɛt' },
-      { fr: 'un couteau', ru: 'нож', pron: 'œ̃ ku.to' },
-      { fr: 'Je voudrais…', ru: 'Я бы хотел(а)…', pron: 'ʒə vu.dʁɛ' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Serveur', fr: '— Bonjour ! Vous avez du soda ?', ru: '— Добрый день! У вас есть газировка?' },
-        { speaker: 'Client', fr: '— Oui ! Je voudrais le menu du midi, s\'il vous plaît.', ru: '— Да! Я бы хотел дневное меню, пожалуйста.' },
-        { speaker: 'Serveur', fr: '— Comme plat, vous avez le poulet avec des frites ou du riz.', ru: '— На горячее у вас курица с картофелем фри или рис.' },
-        { speaker: 'Client', fr: '— Je prends le poulet avec des frites. Et comme dessert, une glace au chocolat.', ru: '— Беру курицу с картофелем фри. И на десерт — шоколадное мороженое.' },
-        { speaker: 'Serveur', fr: '— Très bien ! Bon appétit !', ru: '— Прекрасно! Приятного аппетита!' },
-      ]
-    },
-    text: {
-      fr: 'La cuisine française est célèbre dans le monde entier. Le repas principal est le déjeuner. En France, on mange souvent du pain, du fromage et des pâtisseries. Le petit-déjeuner est simple : du pain avec du beurre et une boisson chaude.',
-      ru: 'Французская кухня знаменита во всём мире. Главный приём пищи — обед. Во Франции часто едят хлеб, сыр и выпечку. Завтрак простой: хлеб с маслом и горячий напиток.'
-    }
-  },
-  {
-    id: 'vetements',
-    icon: '👗',
-    title: 'Les vêtements & Les commerces',
-    subtitle: 'Clothes & Shops',
-    color: '#e8b86d',
-    words: [
-      { fr: 'un pantalon', ru: 'брюки', pron: 'œ̃ pɑ̃.ta.lɔ̃' },
-      { fr: 'une jupe', ru: 'юбка', pron: 'yn ʒyp' },
-      { fr: 'une écharpe', ru: 'шарф', pron: 'yn e.ʃaʁp' },
-      { fr: 'un tee-shirt', ru: 'футболка', pron: 'œ̃ ti.ʃœʁt' },
-      { fr: 'les lunettes', ru: 'очки', pron: 'le ly.nɛt' },
-      { fr: 'un pull', ru: 'свитер', pron: 'œ̃ pyl' },
-      { fr: 'un short', ru: 'шорты', pron: 'œ̃ ʃɔʁt' },
-      { fr: 'un gilet', ru: 'жилет', pron: 'œ̃ ʒi.lɛ' },
-      { fr: 'des chaussures', ru: 'туфли / обувь', pron: 'de ʃo.syʁ' },
-      { fr: 'des bottes', ru: 'сапоги', pron: 'de bɔt' },
-      { fr: 'des baskets', ru: 'кроссовки', pron: 'de bas.kɛt' },
-      { fr: 'des sandales', ru: 'сандалии', pron: 'de sɑ̃.dal' },
-      { fr: 'un parapluie', ru: 'зонт', pron: 'œ̃ pa.ʁa.plɥi' },
-      { fr: 'un casque', ru: 'шлем', pron: 'œ̃ kask' },
-      { fr: 'un sac à dos', ru: 'рюкзак', pron: 'œ̃ sak a do' },
-      { fr: 'un collier', ru: 'ожерелье', pron: 'œ̃ kɔ.lje' },
-      { fr: 'la poste', ru: 'почта', pron: 'la pɔst' },
-      { fr: 'le marché', ru: 'рынок', pron: 'lə maʁ.ʃe' },
-      { fr: 'la boulangerie', ru: 'булочная', pron: 'la bu.lɑ̃.ʒʁi' },
-      { fr: 'l\'épicerie', ru: 'продуктовый магазин', pron: 'le.pi.sʁi' },
-      { fr: 'la boucherie', ru: 'мясная лавка', pron: 'la buʃ.ʁi' },
-      { fr: 'la librairie', ru: 'книжный магазин', pron: 'la li.bʁɛ.ʁi' },
-      { fr: 'la papeterie', ru: 'канцелярский магазин', pron: 'la pap.tʁi' },
-      { fr: 'une boutique', ru: 'магазин / бутик', pron: 'yn bu.tik' },
-      { fr: 'un supermarché', ru: 'супермаркет', pron: 'œ̃ sy.pɛʁ.maʁ.ʃe' },
-      { fr: 'un centre commercial', ru: 'торговый центр', pron: 'œ̃ sɑ̃tʁ kɔ.mɛʁ.sjal' },
-      { fr: 'une promotion', ru: 'акция / скидка', pron: 'yn pʁɔ.mɔ.sjɔ̃' },
-      { fr: 'un achat', ru: 'покупка', pron: 'œ̃n‿a.ʃa' },
-      { fr: 'acheter', ru: 'покупать', pron: 'aʃ.te' },
-      { fr: 'vendre', ru: 'продавать', pron: 'vɑ̃dʁ' },
-      { fr: 'payer en chèque', ru: 'платить чеком', pron: 'pe.je ɑ̃ ʃɛk' },
-      { fr: 'payer en espèces', ru: 'платить наличными', pron: 'pe.je ɑ̃n‿ɛs.pɛs' },
-      { fr: 'C\'est combien ?', ru: 'Сколько стоит?', pron: 'se kɔ̃.bjɛ̃' },
-      { fr: 'C\'est gratuit.', ru: 'Это бесплатно.', pron: 'se ɡʁa.tɥi' },
-        ],
-    dialog: {
-      lines: [
-        { speaker: 'Cliente', fr: '— Excusez-moi, c\'est combien ce pull ?', ru: '— Извините, сколько стоит этот свитер?' },
-        { speaker: 'Vendeur', fr: '— Ce pull est à 39 euros ! Tous les sacs à dos sont à 39 euros aussi.', ru: '— Этот свитер стоит 39 евро! Все рюкзаки тоже по 39 евро.' },
-        { speaker: 'Cliente', fr: '— Il y a une promotion sur les bottes ?', ru: '— Есть акция на сапоги?' },
-        { speaker: 'Vendeur', fr: '— Oui ! Promotion mardi 13 juin sur les bottes ! Réduction de 15 %.', ru: '— Да! Акция в среду 13 июня на сапоги! Скидка 15%.' },
-        { speaker: 'Cliente', fr: '— Super ! Je prends le pull et les bottes. Je paye en espèces.', ru: '— Отлично! Беру свитер и сапоги. Плачу наличными.' },
-      ]
-    },
-    text: {
-      fr: 'En France, on peut faire ses courses dans différents magasins : la boulangerie pour le pain, la boucherie pour la viande, l\'épicerie pour les produits de base. Pour les vêtements, on va dans une boutique ou dans un centre commercial. N\'oubliez pas de regarder les promotions !',
-      ru: 'Во Франции можно делать покупки в разных магазинах: в булочной за хлебом, в мясной лавке за мясом, в продуктовом за основными продуктами. За одеждой ходят в бутик или торговый центр. Не забывайте следить за акциями!'
-    }
-  },
-  {
-    id: 'meteo',
-    icon: '🌤️',
-    title: 'La météo & La nature',
-    subtitle: 'Weather & Nature',
-    color: '#7cb8e0',
-    words: [
-      { fr: 'la météo', ru: 'погода / прогноз', pron: 'la me.te.o' },
-      { fr: 'Il fait beau.', ru: 'Хорошая погода.', pron: 'il fɛ bo' },
-      { fr: 'Il fait chaud.', ru: 'Жарко.', pron: 'il fɛ ʃo' },
-      { fr: 'Il fait frais.', ru: 'Прохладно.', pron: 'il fɛ fʁɛ' },
-      { fr: 'Il fait froid.', ru: 'Холодно.', pron: 'il fɛ fʁwa' },
-      { fr: 'Il pleut.', ru: 'Идёт дождь.', pron: 'il plø' },
-      { fr: 'Il va pleuvoir.', ru: 'Будет дождь.', pron: 'il va plø.vwaʁ' },
-      { fr: 'un nuage', ru: 'облако / туча', pron: 'œ̃ nɥaʒ' },
-      { fr: 'la campagne', ru: 'деревня / сельская местность', pron: 'la kɑ̃.paɲ' },
-      { fr: 'la forêt', ru: 'лес', pron: 'la fɔ.ʁɛ' },
-      { fr: 'un arbre', ru: 'дерево', pron: 'œ̃n‿aʁbʁ' },
-      { fr: 'un fleuve', ru: 'река (крупная)', pron: 'œ̃ fløv' },
-      { fr: 'une rivière', ru: 'река', pron: 'yn ʁi.vjɛʁ' },
-      { fr: 'une fleur', ru: 'цветок', pron: 'yn flœʁ' },
-      { fr: 'la mer', ru: 'море', pron: 'la mɛʁ' },
-      { fr: "l'eau", ru: 'вода', pron: 'lo' },
-      { fr: 'la plage', ru: 'пляж', pron: 'la plaʒ' },
-      { fr: 'un lac', ru: 'озеро', pron: 'œ̃ lak' },
-      { fr: 'la montagne', ru: 'гора', pron: 'la mɔ̃.taɲ' },
-      { fr: 'le paysage', ru: 'пейзаж', pron: 'lə pe.i.zaʒ' },
-      { fr: 'la ferme', ru: 'ферма', pron: 'la fɛʁm' },
-      { fr: "l'agriculture", ru: 'сельское хозяйство', pron: 'la.ɡʁi.kyl.tyʁ' },
-      { fr: 'une vache', ru: 'корова', pron: 'yn vaʃ' },
-      { fr: 'une poule', ru: 'курица', pron: 'yn pul' },
-      { fr: 'un lapin', ru: 'кролик', pron: 'œ̃ la.pɛ̃' },
-      { fr: 'un panda', ru: 'панда', pron: 'œ̃ pɑ̃.da' },
-      { fr: 'un cheval', ru: 'лошадь', pron: 'œ̃ ʃə.val' },
-      { fr: 'un chien', ru: 'собака', pron: 'œ̃ ʃjɛ̃' },
-      { fr: 'un chat', ru: 'кошка', pron: 'œ̃ ʃa' },
-      { fr: 'un dauphin', ru: 'дельфин', pron: 'œ̃ do.fɛ̃' },
-      { fr: 'un éléphant', ru: 'слон', pron: 'œ̃n‿e.le.fɑ̃' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Clara', fr: '— Il fait beau aujourd\'hui ! On va à la plage ?', ru: '— Сегодня хорошая погода! Пойдём на пляж?' },
-        { speaker: 'Max', fr: '— Non, il va pleuvoir cet après-midi. Tu as regardé la météo ?', ru: '— Нет, после обеда будет дождь. Ты смотрела прогноз погоды?' },
-        { speaker: 'Clara', fr: '— Ah non ! Il y a des nuages ?', ru: '— Ой, нет! Уже есть тучи?' },
-        { speaker: 'Max', fr: '— Oui. On va à la campagne voir les chevaux et les vaches à la ferme ?', ru: '— Да. Может, съездим в деревню посмотреть на лошадей и коров на ферме?' },
-        { speaker: 'Clara', fr: '— Super idée ! J\'adore le paysage de la forêt en automne.', ru: '— Отличная идея! Я обожаю осенний пейзаж в лесу.' },
-      ]
-    },
-    text: {
-      fr: 'La France a un climat varié. Dans le nord, il fait souvent frais et il pleut beaucoup. Dans le sud, il fait chaud et beau. La France a de belles plages sur la mer Méditerranée, des forêts et des montagnes comme les Alpes et les Pyrénées.',
-      ru: 'Во Франции разнообразный климат. На севере часто прохладно и идут дожди. На юге тепло и солнечно. Франция располагает прекрасными пляжами на Средиземном море, лесами и горами, такими как Альпы и Пиренеи.'
-    }
-  },
-  {
-    id: 'medias',
-    icon: '💻',
-    title: 'Les médias & La technologie',
-    subtitle: 'Media & Technology',
-    color: '#6ecf9e',
-    words: [
-      { fr: 'la radio', ru: 'радио', pron: 'la ʁa.djo' },
-      { fr: 'la télévision', ru: 'телевидение', pron: 'la te.le.vi.zjɔ̃' },
-      { fr: 'un magazine', ru: 'журнал', pron: 'œ̃ ma.ɡa.zin' },
-      { fr: 'un journal', ru: 'газета', pron: 'œ̃ ʒuʁ.nal' },
-      { fr: 'Internet', ru: 'Интернет', pron: 'ɛ̃.tɛʁ.nɛt' },
-      { fr: 'un site web', ru: 'веб-сайт', pron: 'œ̃ sit wɛb' },
-      { fr: 'un blog', ru: 'блог', pron: 'œ̃ blɔɡ' },
-      { fr: 'un ordinateur', ru: 'компьютер', pron: 'œ̃n‿ɔʁ.di.na.tœʁ' },
-      { fr: 'un message électronique', ru: 'электронное письмо', pron: 'œ̃ mɛ.saʒ e.lɛk.tʁɔ.nik' },
-      { fr: 'une adresse mail', ru: 'адрес электронной почты', pron: 'yn a.dʁɛs mɛl' },
-      { fr: 'une vidéo', ru: 'видео', pron: 'yn vi.de.o' },
-      { fr: 'un appareil photo', ru: 'фотоаппарат', pron: 'œ̃n‿a.pa.ʁɛj fo.to' },
-      { fr: 'un DVD', ru: 'DVD-диск', pron: 'œ̃ de.ve.de' },
-      { fr: 'une montre connectée', ru: 'умные часы', pron: 'yn mɔ̃tʁ kɔ.nɛk.te' },
-      { fr: 'une caméra numérique', ru: 'цифровая камера', pron: 'yn ka.me.ʁa ny.me.ʁik' },
-      { fr: 'un téléphone portable', ru: 'мобильный телефон', pron: 'œ̃ te.le.fɔn pɔʁ.tabl' },
-      { fr: 'allumer un ordinateur', ru: 'включить компьютер', pron: 'a.ly.me œ̃n‿ɔʁ.di.na.tœʁ' },
-      { fr: 'faire des recherches', ru: 'делать поиск / исследования', pron: 'fɛʁ de ʁə.ʃɛʁʃ' },
-      { fr: 'envoyer', ru: 'отправлять', pron: 'ɑ̃.vwa.je' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Enzo', fr: '— Tu peux m\'aider ? J\'allume l\'ordinateur mais Internet ne marche pas.', ru: '— Ты можешь помочь? Я включаю компьютер, но Интернет не работает.' },
-        { speaker: 'Sœur', fr: '— Tu as regardé le site web de l\'école ? Il y a le programme des cours.', ru: '— Ты смотрел сайт школы? Там есть расписание занятий.' },
-        { speaker: 'Enzo', fr: '— Non ! Envoie-moi le lien par message électronique s\'il te plaît.', ru: '— Нет! Пришли мне ссылку по электронной почте, пожалуйста.' },
-        { speaker: 'Sœur', fr: '— D\'accord. Et n\'oublie pas ton appareil photo pour la sortie scolaire !', ru: '— Хорошо. И не забудь фотоаппарат на школьную экскурсию!' },
-        { speaker: 'Enzo', fr: '— Merci ! Je peux aussi utiliser mon téléphone portable ?', ru: '— Спасибо! Можно я также воспользуюсь мобильным телефоном?' },
-      ]
-    },
-    text: {
-      fr: 'Aujourd\'hui, la technologie est très présente dans la vie des jeunes Français. Ils utilisent Internet pour faire des recherches, regarder des vidéos et envoyer des messages électroniques. Le téléphone portable est indispensable.',
-      ru: 'Сегодня технологии очень важны в жизни молодых французов. Они используют Интернет для поиска информации, просмотра видео и отправки электронных писем. Мобильный телефон стал незаменимым.'
-    }
-  },
-  {
-    id: 'professions',
-    icon: '👩‍💼',
-    title: 'Les professions',
-    subtitle: 'Jobs & Professions',
-    color: '#c47fc4',
-    words: [
-      { fr: 'un métier', ru: 'профессия', pron: 'œ̃ me.tje' },
-      { fr: 'un(e) professeur(e)', ru: 'учитель / преподаватель', pron: 'œ̃ pʁɔ.fɛ.sœʁ' },
-      { fr: 'un(e) peintre', ru: 'художник', pron: 'œ̃ pɛ̃tʁ' },
-      { fr: 'un(e) artiste', ru: 'артист / художник', pron: 'œ̃n‿aʁ.tist' },
-      { fr: 'un vendeur', ru: 'продавец', pron: 'œ̃ vɑ̃.dœʁ' },
-      { fr: 'un boulanger', ru: 'пекарь', pron: 'œ̃ bu.lɑ̃.ʒe' },
-      { fr: 'un(e) guide', ru: 'гид / экскурсовод', pron: 'œ̃ɡid' },
-      { fr: 'un serveur', ru: 'официант', pron: 'œ̃ sɛʁ.vœʁ' },
-      { fr: 'un policier', ru: 'полицейский', pron: 'œ̃ pɔ.li.sje' },
-      { fr: 'un pompier', ru: 'пожарный', pron: 'œ̃ pɔ̃.pje' },
-      { fr: 'un(e) comédien(ne)', ru: 'актёр / актриса', pron: 'œ̃ kɔ.me.djɛ̃' },
-      { fr: 'un(e) fleuriste', ru: 'флорист', pron: 'œ̃ flœ.ʁist' },
-      { fr: 'un(e) photographe', ru: 'фотограф', pron: 'œ̃ fo.tɔ.ɡʁaf' },
-      { fr: 'un chauffeur', ru: 'водитель', pron: 'œ̃ ʃo.fœʁ' },
-      { fr: 'un(e) auteur(e)', ru: 'автор / писатель', pron: 'œ̃n‿o.tœʁ' },
-      { fr: 'un(e) pilote', ru: 'пилот', pron: 'œ̃ pi.lɔt' },
-      { fr: 'un chanteur', ru: 'певец', pron: 'œ̃ ʃɑ̃.tœʁ' },
-      { fr: 'Qu\'est-ce que tu veux faire plus tard ?', ru: 'Кем ты хочешь стать?', pron: 'kɛs kə ty vø fɛʁ ply taʁ' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Maîtresse', fr: '— Qu\'est-ce que tu veux faire plus tard ?', ru: '— Кем ты хочешь стать?' },
-        { speaker: 'Jade', fr: '— Je veux être comédienne ou chanteuse !', ru: '— Я хочу стать актрисой или певицей!' },
-        { speaker: 'Maîtresse', fr: '— Et toi, Victor ?', ru: '— А ты, Виктор?' },
-        { speaker: 'Victor', fr: '— Moi, je veux être pilote ou photographe. J\'adore les voyages et les photos.', ru: '— Я хочу стать пилотом или фотографом. Я обожаю путешествия и фотографию.' },
-        { speaker: 'Maîtresse', fr: '— Très bien ! Il faut étudier sérieusement pour réaliser vos rêves.', ru: '— Отлично! Нужно серьёзно учиться, чтобы осуществить свои мечты.' },
-      ]
-    },
-    text: {
-      fr: 'En France, les enfants rêvent de nombreux métiers : comédien, pilote, pompier ou chanteur. Le boulanger est un métier très traditionnel. On peut voir les fleuristes, les vendeurs et les serveurs dans les rues et les restaurants.',
-      ru: 'Во Франции дети мечтают о многих профессиях: актёр, пилот, пожарный или певец. Пекарь — очень традиционная профессия. На улицах и в ресторанах можно встретить флористов, продавцов и официантов.'
-    }
-  },
-  {
-    id: 'caracteristiques',
-    icon: '✨',
-    title: 'Caractéristiques générales',
-    subtitle: 'General Adjectives',
-    color: '#7eb8d4',
-    words: [
-      { fr: 'rapide', ru: 'быстрый', pron: 'ʁa.pid' },
-      { fr: 'facile', ru: 'лёгкий / простой', pron: 'fa.sil' },
-      { fr: 'différent(e)', ru: 'разный / другой', pron: 'di.fe.ʁɑ̃' },
-      { fr: 'ancien(ne)', ru: 'старый / древний', pron: 'ɑ̃.sjɛ̃' },
-      { fr: 'nouveau / nouvelle', ru: 'новый', pron: 'nu.vo / nu.vɛl' },
-      { fr: 'vieux / vieille', ru: 'старый', pron: 'vjø / vjɛj' },
-      { fr: 'neuf / neuve', ru: 'новый (новёхонький)', pron: 'nœf / nœv' },
-      { fr: 'préféré(e)', ru: 'любимый', pron: 'pʁe.fe.ʁe' },
-      { fr: 'magnifique', ru: 'великолепный', pron: 'ma.ɲi.fik' },
-      { fr: 'joli(e)', ru: 'красивый / милый', pron: 'ʒɔ.li' },
-      { fr: 'disponible', ru: 'доступный / свободный', pron: 'dis.pɔ.nibl' },
-      { fr: 'chaud(e)', ru: 'горячий / тёплый', pron: 'ʃo' },
-      { fr: 'super', ru: 'отличный / супер', pron: 'sy.pɛʁ' },
-      { fr: 'gratuit(e)', ru: 'бесплатный', pron: 'ɡʁa.tɥi' },
-      { fr: 'nombreux / nombreuse', ru: 'многочисленный', pron: 'nɔ̃.bʁø' },
-      { fr: 'célèbre', ru: 'знаменитый', pron: 'se.lɛbʁ' },
-      { fr: 'cassé(e)', ru: 'сломанный', pron: 'ka.se' },
-      { fr: 'génial(e)', ru: 'гениальный / отличный', pron: 'ʒe.njal' },
-      { fr: 'très bon(ne)', ru: 'очень хороший', pron: 'tʁɛ bɔ̃' },
-      { fr: 'magique', ru: 'волшебный', pron: 'ma.ʒik' },
-      { fr: 'incroyable', ru: 'невероятный', pron: 'ɛ̃.kʁwa.jabl' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Alice', fr: '— J\'ai un nouveau livre ! C\'est une histoire magique et incroyable !', ru: '— У меня новая книга! Это волшебная и невероятная история!' },
-        { speaker: 'Rémi', fr: '— C\'est génial ! Le livre est très bon ?', ru: '— Это здорово! Книга очень хорошая?' },
-        { speaker: 'Alice', fr: '— Oui, magnifique ! Et c\'est gratuit à la bibliothèque.', ru: '— Да, великолепная! И это бесплатно в библиотеке.' },
-        { speaker: 'Rémi', fr: '— Super ! Mon vélo est cassé, sinon j\'irais avec toi.', ru: '— Отлично! Мой велосипед сломан, иначе я бы пошёл с тобой.' },
-        { speaker: 'Alice', fr: '— Quel dommage ! La bibliothèque est disponible tous les jours.', ru: '— Жаль! Библиотека открыта каждый день.' },
-      ]
-    },
-    text: {
-      fr: 'En français, les adjectifs s\'accordent avec le nom. On dit "un nouveau livre" mais "une nouvelle maison". Les adjectifs comme "magnifique", "génial" et "incroyable" servent à exprimer l\'enthousiasme.',
-      ru: 'Во французском языке прилагательные согласуются с существительным. Говорят «un nouveau livre» («новая книга», м.р.), но «une nouvelle maison» («новый дом», ж.р.). Прилагательные «magnifique», «génial» и «incroyable» используются для выражения восторга.'
-    }
-  },
-  {
-    id: 'actes',
-    icon: '🗣️',
-    title: 'Actes de parole',
-    subtitle: 'Speech Acts & Communication',
-    color: '#e07c7c',
-    words: [
-      { fr: 'J\'aime beaucoup…', ru: 'Мне очень нравится…', pron: 'ʒɛm bo.ku' },
-      { fr: 'J\'adore…', ru: 'Я обожаю…', pron: 'ʒa.dɔʁ' },
-      { fr: 'Je préfère…', ru: 'Я предпочитаю…', pron: 'ʒə pʁe.fɛʁ' },
-      { fr: 'Je déteste…', ru: 'Я ненавижу…', pron: 'ʒə de.tɛst' },
-      { fr: 'Je n\'aime pas…', ru: 'Мне не нравится…', pron: 'ʒə nɛm pa' },
-      { fr: 'Je suis en train de cuisiner.', ru: 'Я сейчас готовлю.', pron: 'ʒə sɥi ɑ̃ tʁɛ̃ də kɥi.zi.ne' },
-      { fr: 'Est-ce que tu veux venir ?', ru: 'Ты хочешь прийти?', pron: 'ɛs kə ty vø və.niʁ' },
-      { fr: 'Ça t\'intéresse ?', ru: 'Тебе интересно?', pron: 'sa tɛ̃.te.ʁɛs' },
-      { fr: 'Tu viens avec nous ?', ru: 'Ты идёшь с нами?', pron: 'ty vjɛ̃ a.vɛk nu' },
-      { fr: 'Je t\'invite…', ru: 'Я приглашаю тебя…', pron: 'ʒə tɛ̃.vit' },
-      { fr: 'D\'accord.', ru: 'Хорошо. / Договорились.', pron: 'da.kɔʁ' },
-      { fr: 'Bravo !', ru: 'Браво!', pron: 'bʁa.vo' },
-      { fr: 'Félicitations !', ru: 'Поздравляю!', pron: 'fe.li.si.ta.sjɔ̃' },
-      { fr: 'Ça suffit !', ru: 'Хватит!', pron: 'sa sy.fi' },
-      { fr: 'Pardon ?', ru: 'Простите? / Что?', pron: 'paʁ.dɔ̃' },
-      { fr: 'Merci beaucoup.', ru: 'Большое спасибо.', pron: 'mɛʁ.si bo.ku' },
-      { fr: 'Je suis désolé(e).', ru: 'Мне жаль. / Извините.', pron: 'ʒə sɥi de.zo.le' },
-      { fr: 'Votre attention s\'il vous plaît !', ru: 'Внимание, пожалуйста!', pron: 'vɔtʁ a.tɑ̃.sjɔ̃ sil vu plɛ' },
-      { fr: 'Bon appétit !', ru: 'Приятного аппетита!', pron: 'bɔ̃n‿a.pe.ti' },
-      { fr: 'Bon voyage !', ru: 'Хорошей поездки!', pron: 'bɔ̃ vwa.jaʒ' },
-      { fr: 'Bonnes vacances !', ru: 'Хороших каникул!', pron: 'bɔn va.kɑ̃s' },
-      { fr: 'Tu joues très bien.', ru: 'Ты очень хорошо играешь.', pron: 'ty ʒu tʁɛ bjɛ̃' },
-      { fr: 'C\'est interdit !', ru: 'Это запрещено!', pron: 'se ɛ̃.tɛʁ.di' },
-      { fr: 'Je dois étudier.', ru: 'Я должен учиться.', pron: 'ʒə dwa e.ty.dje' },
-      { fr: 'Tu peux inviter un ami.', ru: 'Ты можешь пригласить друга.', pron: 'ty pø ɛ̃.vi.te œ̃n‿a.mi' },
-      { fr: 'Comment il s\'appelle ?', ru: 'Как его зовут?', pron: 'kɔ.mɑ̃ il sa.pɛl' },
-      { fr: 'Tu es sûr que…?', ru: 'Ты уверен, что…?', pron: 'ty e syʁ kə' },
-      { fr: 'Veuillez nous excuser…', ru: 'Просим прощения…', pron: 'vœ.je nu ɛks.ky.ze' },
-      { fr: 'Pour faire une salade, …', ru: 'Чтобы приготовить салат, …', pron: 'puʁ fɛʁ yn sa.lad' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Prof', fr: '— Votre attention s\'il vous plaît ! Bravo à tous pour le concours !', ru: '— Внимание, пожалуйста! Браво всем за конкурс!' },
-        { speaker: 'Élève 1', fr: '— Félicitations à Emma ! Elle joue très bien de la guitare.', ru: '— Поздравляем Эмму! Она очень хорошо играет на гитаре.' },
-        { speaker: 'Emma', fr: '— Merci beaucoup ! J\'adore faire de la musique.', ru: '— Большое спасибо! Я обожаю заниматься музыкой.' },
-        { speaker: 'Élève 2', fr: '— Est-ce que tu veux venir à ma fête samedi ?', ru: '— Ты хочешь прийти на мою вечеринку в субботу?' },
-        { speaker: 'Emma', fr: '— Ça m\'intéresse ! Je dois étudier samedi matin, mais l\'après-midi, d\'accord !', ru: '— Мне интересно! Утром в субботу я должна учиться, но после обеда — договорились!' },
-      ]
-    },
-    text: {
-      fr: 'La communication en français utilise de nombreux actes de parole : inviter, remercier, féliciter, interdire ou donner des ordres. Il est important d\'apprendre ces formules pour parler naturellement. "S\'il vous plaît" est la formule de politesse la plus utilisée.',
-      ru: 'Общение на французском языке использует множество речевых актов: приглашать, благодарить, поздравлять, запрещать или давать указания. Важно выучить эти формулы, чтобы говорить естественно. «S\'il vous plaît» — самая распространённая вежливая формула.'
-    }
-  },
-  {
-    id: 'couleurs',
-    icon: '🎨',
-    title: 'Les couleurs & Les objets',
-    subtitle: 'Colors & Objects',
-    color: '#6ecf9e',
-    words: [
-      { fr: 'jaune', ru: 'жёлтый', pron: 'ʒon' },
-      { fr: 'blanc / blanche', ru: 'белый', pron: 'blɑ̃ / blɑ̃ʃ' },
-      { fr: 'noir(e)', ru: 'чёрный', pron: 'nwaʁ' },
-      { fr: 'bleu(e)', ru: 'синий / голубой', pron: 'blø' },
-      { fr: 'rouge', ru: 'красный', pron: 'ʁuʒ' },
-      { fr: 'vert(e)', ru: 'зелёный', pron: 'vɛʁ' },
-      { fr: 'gris(e)', ru: 'серый', pron: 'ɡʁi' },
-      { fr: 'marron', ru: 'коричневый', pron: 'ma.ʁɔ̃' },
-      { fr: 'un cadeau', ru: 'подарок', pron: 'œ̃ ka.do' },
-      { fr: 'un souvenir', ru: 'сувенир', pron: 'œ̃ su.və.niʁ' },
-      { fr: 'une carte postale', ru: 'открытка', pron: 'yn kaʁt pɔs.tal' },
-      { fr: 'une tente 4 places', ru: 'палатка на 4 человека', pron: 'yn tɑ̃t katr plas' },
-      { fr: 'une boîte', ru: 'коробка', pron: 'yn bwat' },
-      { fr: 'une bouteille', ru: 'бутылка', pron: 'yn bu.tɛj' },
-      { fr: 'en plastique', ru: 'пластиковый', pron: 'ɑ̃ plas.tik' },
-      { fr: 'en verre', ru: 'стеклянный', pron: 'ɑ̃ vɛʁ' },
-      { fr: 'un colis', ru: 'посылка', pron: 'œ̃ kɔ.li' },
-      { fr: 'une poubelle', ru: 'мусорное ведро', pron: 'yn pu.bɛl' },
-      { fr: 'une valise', ru: 'чемодан', pron: 'yn va.liz' },
-      { fr: 'un coffre', ru: 'сундук / багажник', pron: 'œ̃ kɔfʁ' },
-      { fr: 'écrire', ru: 'писать', pron: 'e.kʁiʁ' },
-      { fr: 'relier', ru: 'соединять / связывать', pron: 'ʁə.lje' },
-      { fr: 'descendre', ru: 'спускаться', pron: 'de.sɑ̃dʁ' },
-      { fr: "s'inscrire", ru: 'регистрироваться', pron: 's‿ɛ̃s.kʁiʁ' },
-      { fr: 'observer', ru: 'наблюдать', pron: 'ɔb.zɛʁ.ve' },
-      { fr: 'ramasser', ru: 'подбирать / собирать', pron: 'ʁa.ma.se' },
-      { fr: 'donner', ru: 'давать', pron: 'dɔ.ne' },
-      { fr: 'nettoyer', ru: 'убирать / чистить', pron: 'nɛ.twa.je' },
-      { fr: 'organiser', ru: 'организовывать', pron: 'ɔʁ.ɡa.ni.ze' },
-      { fr: 'préparer une fête', ru: 'готовить праздник', pron: 'pʁe.pa.ʁe yn fɛt' },
-      { fr: 'aider quelqu\'un', ru: 'помогать кому-то', pron: 'e.de kɛl.kœ̃' },
-      { fr: 'faire le ménage', ru: 'делать уборку', pron: 'fɛʁ lə me.naʒ' },
-      { fr: 'ranger sa chambre', ru: 'убирать в комнате', pron: 'ʁɑ̃.ʒe sa ʃɑ̃bʁ' },
-    ],
-    dialog: {
-      lines: [
-        { speaker: 'Papa', fr: '— Qu\'est-ce que c\'est ce colis rouge ?', ru: '— Что это за красная посылка?' },
-        { speaker: 'Théo', fr: '— C\'est un cadeau pour Mamie ! Une boîte de chocolats et une carte postale.', ru: '— Это подарок для бабушки! Коробка шоколада и открытка.' },
-        { speaker: 'Papa', fr: '— C\'est gentil ! La bouteille en verre, c\'est quoi ?', ru: '— Как мило! А стеклянная бутылка — что это?' },
-        { speaker: 'Théo', fr: '— Un souvenir de notre voyage. Elle est verte et bleue, très jolie !', ru: '— Сувенир из нашей поездки. Она зелёная и синяя, очень красивая!' },
-        { speaker: 'Papa', fr: '— Maintenant, aide-moi à faire le ménage et ranger ta chambre !', ru: '— А теперь помоги мне сделать уборку и прибраться в своей комнате!' },
-      ]
-    },
-    text: {
-      fr: 'Les couleurs en français ont des formes masculines et féminines. On dit "un stylo rouge" mais "une veste rouge" — le mot "rouge" ne change pas ! Par contre, "blanc" devient "blanche" au féminin.',
-      ru: 'Цвета во французском языке имеют мужскую и женскую формы. Говорят «un stylo rouge» («красная ручка»), но «une veste rouge» — слово «rouge» не изменяется! Зато «blanc» становится «blanche» в женском роде.'
-    }
-  },
-];
-
-// ── HELPERS ──────────────────────────────────────────────────────────────────
-
-let currentCatIndex = null;
-
-function speak(text) {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'fr-FR'; u.rate = 0.85; u.pitch = 1;
-    window.speechSynthesis.speak(u);
-  }
-}
-
-function showMindmap() {
-  document.getElementById('page-mindmap').classList.add('active');
-  document.getElementById('page-category').classList.remove('active');
-  document.getElementById('navBack').style.display = 'none';
-}
-
-function showCategory(idx) {
-  currentCatIndex = idx;
-  const cat = CATEGORIES[idx];
-  document.getElementById('page-mindmap').classList.remove('active');
-  document.getElementById('page-category').classList.add('active');
-  document.getElementById('navBack').style.display = 'flex';
-
-  // Set color variable
-  document.getElementById('page-category').style.setProperty('--cat-color', cat.color);
-
-  // Header
-  document.getElementById('catIcon').textContent = cat.icon;
-  document.getElementById('catTitle').textContent = cat.title;
-  document.getElementById('catSubtitle').textContent = cat.subtitle;
-
-  // Words
-  const grid = document.getElementById('wordsGrid');
-  grid.innerHTML = '';
-  cat.words.forEach(w => {
-    const chip = document.createElement('div');
-    chip.className = 'word-chip';
-    // Используем data-атрибут для безопасного хранения текста
-    chip.setAttribute('data-fr', w.fr);
-    chip.innerHTML = `
-      <span>${w.fr}</span>
-      <span class="speak-btn" title="Écouter">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-      </span>
-      <div class="tooltip">
-        <strong>${w.pron}</strong><br>${w.ru}
-      </div>
-    `;
-    const speakBtn = chip.querySelector('.speak-btn');
-    const textToSpeak = w.fr;
-    chip.addEventListener('click', (e) => {
-      // Предотвращаем срабатывание, если клик был по кнопке
-      if (e.target.closest('.speak-btn')) return;
-      speak(textToSpeak);
-    });
-    speakBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      speakBtn.classList.add('speaking');
-      speak(textToSpeak);
-      setTimeout(() => speakBtn.classList.remove('speaking'), 1500);
-    });
-    grid.appendChild(chip);
-  });
-
-  // Dialog
-  const dialogEl = document.getElementById('tab-dialog');
-  dialogEl.innerHTML = '<div class="dialog-box">' + cat.dialog.lines.map(l => `
-    <div class="dialog-line">
-      <span class="dialog-speaker">${l.speaker}</span>
-      <span class="dialog-text">${l.fr}
-        <span class="text-tooltip">${l.ru}</span>
-      </span>
-    </div>
-  `).join('') + '</div>';
-
-  // Text
-  const textEl = document.getElementById('tab-text');
-  textEl.innerHTML = `
-    <div class="text-box">
-      <p>${cat.text.fr}</p>
-      <div class="text-translation" id="textTranslation">${cat.text.ru}</div>
-    </div>
-    <button class="show-translation-btn" onclick="toggleTranslation()">Afficher la traduction</button>
-  `;
-
-  // Reset tabs
-  showTab('dialog');
-  window.scrollTo(0,0);
-}
-
-function showTab(name, el) {
-  document.querySelectorAll('.dialog-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.dialog-tab').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  if (el) {
-    el.classList.add('active');
-  } else {
-    // Если el не передан (вызов из другого места), находим нужную вкладку
-    const tabToActivate = document.querySelector(`.dialog-tab[data-tab="${name}"]`);
-    if (tabToActivate) tabToActivate.classList.add('active');
-  }
-}
-
-function toggleTranslation() {
-  const el = document.getElementById('textTranslation');
-  const btn = document.querySelector('.show-translation-btn');
-  if (el.style.display === 'block') {
-    el.style.display = 'none';
-    btn.textContent = 'Afficher la traduction';
-  } else {
-    el.style.display = 'block';
-    btn.textContent = 'Masquer la traduction';
-  }
-}
-
-// ── RENDER MINDMAP ────────────────────────────────────────────────────────────
-
-function renderMindmap() {
-  const grid = document.getElementById('mindmapGrid');
-  CATEGORIES.forEach((cat, idx) => {
-    const card = document.createElement('div');
-    card.className = 'category-card';
-    card.style.setProperty('--accent-color', cat.color);
-    card.style.animationDelay = `${idx * 0.04}s`;
-    card.innerHTML = `
-      <span class="cat-icon">${cat.icon}</span>
-      <div class="cat-title">${cat.title}</div>
-      <div class="cat-subtitle">${cat.subtitle}</div>
-      <div class="cat-count"><span>${cat.words.length}</span> mots</div>
-      <div class="cat-arrow">→</div>
-    `;
-    card.addEventListener('click', () => showCategory(idx));
-    grid.appendChild(card);
-  });
-}
-
-renderMindmap();
 </script>
 </body>
 </html>
