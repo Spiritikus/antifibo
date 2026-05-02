@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Конвертер LaTeX в Moodle XML — стандартное оформление (без стилей)</title>
+    <title>Конвертер LaTeX в Moodle XML — HTML-разметка (sub/sup) вместо \ce{}</title>
     <style>
         * {
             box-sizing: border-box;
@@ -255,8 +255,8 @@
 <body>
 <div class="container">
     <header>
-        <h1>🧪 LaTeX → Moodle XML (стандартное оформление)</h1>
-        <p>Автоматическое преобразование: <code>\ce{ClO4^-}</code> → <code>$$\ce{ClO4^-}$$</code>, <code>$\sigma$</code> → <code>$$\sigma$$</code>. Вопросы и ответы оборачиваются только в <code>&lt;p&gt;</code> без дополнительных стилей.</p>
+        <h1>🧪 LaTeX → Moodle XML (HTML-разметка sub/sup)</h1>
+        <p>Автоматическое преобразование: <code>\ce{ClO4^-}</code> → <code>ClO<sub>4</sub><sup>-</sup></code>, <code>$\sigma$</code> → <code>σ</code> (символ Unicode). Греческие буквы и химия в читаемом HTML.</p>
     </header>
     <div class="two-columns">
         <div class="panel">
@@ -277,6 +277,14 @@
     \correctchoice \ce{ClO4-}
     \choice \ce{ClO2-}
     \choice \ce{ClO-}
+\end{randomizechoices}
+
+\question Что такое \ce{^4_2He}?
+\begin{randomizechoices}
+    \choice Протон
+    \correctchoice Альфа-частица
+    \choice Нейтрон
+    \choice Электрон
 \end{randomizechoices}'></textarea>
             <div class="toolbar">
                 <button id="convertBtn">✨ Конвертировать в Moodle XML</button>
@@ -286,29 +294,31 @@
             </div>
             <div class="status" id="statusMsg">✅ Ожидание ввода. Нажмите «Конвертировать».</div>
             <div class="example">
-                <strong>📌 Обработка:</strong><br>
-                • <code>\ce{формула}</code> → <code>$$\ce{формула}$$</code><br>
-                • <code>$...$</code> (греческие буквы, формулы) → <code>$$...$$</code><br>
-                • <strong>Оформление по умолчанию:</strong> текст вопроса и ответов оборачивается только в <code>&lt;p&gt;текст&lt;/p&gt;</code>, без span и inline-стилей.<br>
-                • При ошибках показывается номер вопроса и фрагмент проблемного блока.
+                <strong>📌 Преобразования:</strong><br>
+                • <code>\ce{ClO4^-}</code> → <code>ClO<sub>4</sub><sup>-</sup></code><br>
+                • <code>\ce{^4_2He}</code> → <code><sup>4</sup><sub>2</sub>He</code><br>
+                • <code>$\\sigma$</code> → символ σ (Unicode)<br>
+                • <code>$\\alpha$</code> → α, <code>$\\beta$</code> → β и т.д.<br>
+                • Греческие буквы в формате <code>\letter</code> преобразуются в соответствующие символы.<br>
+                • <strong>Оформление:</strong> только <code>&lt;p&gt;текст&lt;/p&gt;</code> без дополнительных стилей.
             </div>
         </div>
         <div class="panel">
-            <h2>📤 Результат: Moodle XML</h2>
+            <h2>📤 Результат: Moodle XML с HTML-разметкой</h2>
             <div class="preview-area">
-                <h3>🔍 XML (стандартное оформление)</h3>
+                <h3>🔍 XML (sub/sup вместо \ce{})</h3>
                 <div class="xml-box" id="xmlPreview">— Сгенерированный XML или сообщения об ошибках появятся здесь —</div>
                 <div class="download-area">
                     <button id="downloadBtn" style="background:#d96c2b;">⬇️ Скачать как moodle_questions.xml</button>
                 </div>
                 <div style="font-size: 0.75rem; margin-top: 8px; color: #4c6b4a;">
-                    ⚡ <strong>Особенности:</strong> Текст внутри <code>&lt;p&gt;</code> без дополнительных стилей. Moodle сам применит стандартное оформление.
+                    ⚡ <strong>Важно:</strong> Все химические формулы конвертируются в HTML-теги &lt;sub&gt; и &lt;sup&gt;. Греческие буквы становятся обычными символами Unicode.
                 </div>
             </div>
         </div>
     </div>
     <footer>
-        🧪 Конвертер использует минимальную обёртку &lt;p&gt;...&lt;/p&gt; для вопросов и ответов. Поддержка \ce{}, $...$ → $$...$$.
+        🧪 Полная поддержка \ce{} с индексами и зарядами, греческие буквы, стандартное Moodle-оформление.
     </footer>
 </div>
 
@@ -334,30 +344,99 @@
             return `<![CDATA[${safe}]]>`;
         }
         
-        // Преобразование LaTeX: \ce{...} -> $$\ce{...}$$, $...$ -> $$...$$
-        function convertLatexToDisplayMath(text) {
-            if (!text) return text;
+        // Преобразование греческих букв из формата $\alpha$ в символы Unicode
+        function convertGreekLetters(text) {
+            const greekMap = {
+                'alpha': 'α', 'beta': 'β', 'gamma': 'γ', 'delta': 'δ', 'epsilon': 'ε',
+                'zeta': 'ζ', 'eta': 'η', 'theta': 'θ', 'iota': 'ι', 'kappa': 'κ',
+                'lambda': 'λ', 'mu': 'μ', 'nu': 'ν', 'xi': 'ξ', 'omicron': 'ο',
+                'pi': 'π', 'rho': 'ρ', 'sigma': 'σ', 'tau': 'τ', 'upsilon': 'υ',
+                'phi': 'φ', 'chi': 'χ', 'psi': 'ψ', 'omega': 'ω',
+                'Gamma': 'Γ', 'Delta': 'Δ', 'Theta': 'Θ', 'Lambda': 'Λ', 'Xi': 'Ξ',
+                'Pi': 'Π', 'Sigma': 'Σ', 'Phi': 'Φ', 'Psi': 'Ψ', 'Omega': 'Ω'
+            };
+            
             let result = text;
-            // Обработка \ce{...}
-            result = result.replace(/\\ce\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, (match, content) => {
-                return `$$\\ce{${content}}$$`;
+            // Обработка $\alpha$, $\beta$ и т.д.
+            result = result.replace(/\$\\?([a-zA-Z]+)\$/g, (match, name) => {
+                if (greekMap[name]) return greekMap[name];
+                return match;
             });
-            // Обработка $...$ -> $$...$$ (не трогаем уже существующие $$)
-            result = result.replace(/(?<!\$)\$(?!\$)([^\$]+?)(?<!\$)\$(?!\$)/g, (match, content) => {
-                if (content.trim() === "") return match;
-                if (content.includes('\\ce')) return match;
-                return `$$${content}$$`;
+            // Обработка без долларов: \alpha
+            result = result.replace(/\\([a-zA-Z]+)/g, (match, name) => {
+                if (greekMap[name]) return greekMap[name];
+                return match;
             });
             return result;
         }
         
-        // Оформление текста в стандартном формате Moodle: просто <p>текст</p> (без span и стилей)
+        // Преобразование \ce{...} в HTML-разметку с sub и sup
+        function convertCeToHtml(ceContent) {
+            if (!ceContent) return '';
+            
+            let result = ceContent;
+            
+            // Обработка изотопов: ^4_2He -> <sup>4</sup><sub>2</sub>He
+            result = result.replace(/\^([0-9]+)(?:_([0-9]+))?/g, (match, mass, atomic) => {
+                let html = `<sup>${mass}</sup>`;
+                if (atomic) html += `<sub>${atomic}</sub>`;
+                return html;
+            });
+            
+            // Обработка подстрочных индексов: ClO4 -> ClO<sub>4</sub>
+            result = result.replace(/([A-Za-z])([0-9]+)/g, (match, letter, num) => {
+                return `${letter}<sub>${num}</sub>`;
+            });
+            
+            // Обработка составных подстрочных: (SO4)2 -> (SO<sub>4</sub>)<sub>2</sub>
+            result = result.replace(/\(([^)]+)\)([0-9]+)/g, (match, group, num) => {
+                // Рекурсивно обработаем группу
+                let processedGroup = convertCeToHtml(group);
+                return `(${processedGroup})<sub>${num}</sub>`;
+            });
+            
+            // Обработка зарядов: ClO4^- -> ClO<sub>4</sub><sup>-</sup>
+            result = result.replace(/\^\{?([0-9]*[+-])\}?/g, (match, charge) => {
+                return `<sup>${charge}</sup>`;
+            });
+            
+            // Обработка одиночных зарядов без ^: ClO4- -> ClO<sub>4</sub><sup>-</sup>
+            // Но только если перед зарядом не цифра (чтобы не испортить ClO4-)
+            result = result.replace(/([A-Za-z0-9\)])([+-])(?![0-9])/g, (match, before, charge) => {
+                return `${before}<sup>${charge}</sup>`;
+            });
+            
+            // Обработка точек в формулах (гидраты и т.д.)
+            result = result.replace(/·/g, '&middot;');
+            
+            return result;
+        }
+        
+        // Полная обработка текста: \ce{} -> HTML, греческие буквы -> символы
+        function convertAdvancedFormatting(text) {
+            if (!text) return text;
+            
+            let result = text;
+            
+            // Сначала обрабатываем \ce{...} и заменяем на HTML
+            result = result.replace(/\\ce\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, (match, content) => {
+                const converted = convertCeToHtml(content);
+                return converted;
+            });
+            
+            // Обрабатываем греческие буквы
+            result = convertGreekLetters(result);
+            
+            return result;
+        }
+        
+        // Оформление текста в стандартном формате Moodle: просто <p>текст</p>
         function formatPlainHtml(rawText) {
             if (!rawText) return '<p></p>';
             let trimmed = rawText.trim();
-            let convertedLatex = convertLatexToDisplayMath(trimmed);
-            // Заменяем переносы строк на <br> для читаемости, но оставляем как есть
-            let withBreaks = convertedLatex.replace(/\n/g, '<br>');
+            let converted = convertAdvancedFormatting(trimmed);
+            // Заменяем переносы строк на <br>
+            let withBreaks = converted.replace(/\n/g, '<br>');
             return `<p>${withBreaks}</p>`;
         }
         
@@ -369,10 +448,12 @@
                 if (m === '<') return '&lt;';
                 if (m === '>') return '&gt;';
                 return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
             });
         }
         
-        // Парсинг одного вопроса с возвратом объекта или ошибки
+        // Парсинг одного вопроса
         function parseSingleQuestionSafe(questionBlock, qIndex) {
             let block = questionBlock.trim();
             if (!block) {
@@ -451,7 +532,6 @@
         
         function generateQuestionXML(questionObj, idx) {
             const questionId = getNextQuestionId();
-            // Используем стандартное оформление без стилей
             const formattedQuestionHtml = formatPlainHtml(questionObj.questionText);
             
             let rawShortName = questionObj.questionText.replace(/\s+/g, ' ').substring(0, 70);
@@ -503,7 +583,7 @@
   </question>`;
         }
         
-        // Основная конвертация с подробным сбором ошибок
+        // Основная конвертация
         function convertWithDetailedErrors(fullText) {
             if (!fullText.trim()) {
                 return { success: false, errors: [{ type: 'global', message: 'Введите текст с вопросами!' }] };
@@ -613,7 +693,7 @@
                 return false;
             } else {
                 xmlPreview.innerHTML = `<pre style="margin:0; white-space:pre-wrap;">${escapeHtml(result.xml)}</pre>`;
-                statusMsgDiv.innerHTML = `✅ Успешно! Сконвертировано ${result.count} вопрос(ов). Оформление стандартное (только &lt;p&gt;).`;
+                statusMsgDiv.innerHTML = `✅ Успешно! Сконвертировано ${result.count} вопрос(ов). \ce{} заменены на HTML (sub/sup), греческие буквы — символы Unicode.`;
                 statusMsgDiv.classList.remove('error');
                 currentXml = result.xml;
                 return true;
@@ -636,7 +716,7 @@
             const sample = `\\question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
 \\begin{randomizechoices}
 	\\choice металл координационно связан с лигандом через атом с неподеленной парой.
-	\\correctchoice заполненная орбиталь лиганда (например, C-H $\\sigma$-связь, а также \\ce{ClO4^-}) донирует электронную плотность на вакантную орбиталь металла (трехцентровая двухэлектронная связь M...H-C).
+	\\correctchoice заполненная орбиталь лиганда (например, C-H $\\sigma$-связь, а также \\ce{ClO4^-}) донирует электронную плотность на вакантную орбиталь металла.
 	\\choice металл и лиганд обмениваются протонами.
 	\\choice образуется металл-металлическая связь.
 \\end{randomizechoices}
@@ -649,12 +729,20 @@
     \\choice \\ce{ClO-}
 \\end{randomizechoices}
 
-\\question Что такое $\\alpha$-распад?
+\\question Что такое \\ce{^4_2He}?
 \\begin{randomizechoices}
-    \\choice Испускание электрона
-    \\correctchoice Испускание ядра гелия $\\ce{^4_2He}$
-    \\choice Испускание позитрона
-    \\choice Испускание гамма-кванта
+    \\choice Протон
+    \\correctchoice Альфа-частица
+    \\choice Нейтрон
+    \\choice Электрон
+\\end{randomizechoices}
+
+\\question Формула серной кислоты: \\ce{H2SO4}
+\\begin{randomizechoices}
+    \\correctchoice \\ce{H2SO4}
+    \\choice \\ce{H2SO3}
+    \\choice \\ce{H2S}
+    \\choice \\ce{SO4}
 \\end{randomizechoices}`;
             latexInput.value = sample;
             renderConversion();
@@ -671,16 +759,10 @@
 	\\choice неправильно2
 \\end{randomizechoices}
 
-\\question Ошибка в окружении - написано randomize
-\\begin{randomize}
-	\\choice тест
-	\\correctchoice верный
-\\end{randomize}
-
-\\question Корректный вопрос для демонстрации частичного успеха
+\\question Корректный вопрос с \\ce{H2O}
 \\begin{randomizechoices}
-    \\choice неверно
-    \\correctchoice абсолютно верный ответ \\ce{H2O}
+    \\choice \\ce{CO2}
+    \\correctchoice \\ce{H2O}
 \\end{randomizechoices}`;
             latexInput.value = errorSample;
             renderConversion();
@@ -713,7 +795,7 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                statusMsgDiv.innerHTML = "📥 Файл moodle_questions.xml скачан. Все вопросы валидны, оформление стандартное.";
+                statusMsgDiv.innerHTML = "📥 Файл moodle_questions.xml скачан. Химические формулы в HTML-разметке.";
                 statusMsgDiv.classList.remove('error');
             } else {
                 statusMsgDiv.innerHTML = "⚠️ Нет валидного XML. Исправьте ошибки перед скачиванием.";
@@ -723,7 +805,7 @@
         
         latexInput.value = "";
         xmlPreview.innerHTML = "— Введите вопросы с LaTeX-разметкой (\\ce{}, $\\sigma$) и нажмите 'Конвертировать' —";
-        statusMsgDiv.innerHTML = "✨ Готов к работе. Текст оборачивается только в &lt;p&gt; без стилей.";
+        statusMsgDiv.innerHTML = "✨ Готов к работе. \\ce{} преобразуются в HTML-теги sub/sup.";
     })();
 </script>
 </body>
