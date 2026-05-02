@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Конвертер LaTeX в Moodle XML — HTML-разметка (sub/sup) вместо \ce{}</title>
+    <title>Конвертер LaTeX → Moodle XML — полная HTML-разметка (sub/sup, греческие буквы, символы)</title>
     <style>
         * {
             box-sizing: border-box;
@@ -255,36 +255,28 @@
 <body>
 <div class="container">
     <header>
-        <h1>🧪 LaTeX → Moodle XML (HTML-разметка sub/sup)</h1>
-        <p>Автоматическое преобразование: <code>\ce{ClO4^-}</code> → <code>ClO<sub>4</sub><sup>-</sup></code>, <code>$\sigma$</code> → <code>σ</code> (символ Unicode). Греческие буквы и химия в читаемом HTML.</p>
+        <h1>🧪 LaTeX → Moodle XML (полная HTML-разметка)</h1>
+        <p>Преобразование: <code>$1.6\cdot10^{-4}$</code> → <code>1.6·10<sup>-4</sup></code>, <code>\ce{ClO4^-}</code> → <code>ClO<sub>4</sub><sup>-</sup></code>, греческие буквы в символы Unicode.</p>
     </header>
     <div class="two-columns">
         <div class="panel">
             <h2>📥 Исходные вопросы (LaTeX)</h2>
-            <textarea id="latexInput" placeholder='Пример формата с \ce{} и греческими буквами:
+            <textarea id="latexInput" placeholder='Пример формата с математикой и химией:
+
+\question Концентрация ионов составляет $1.6\cdot10^{-4}$\%, что соответствует...
+\begin{randomizechoices}
+    \choice $2.5\cdot10^{-3}$ M
+    \correctchoice $1.6\cdot10^{-4}$ M
+    \choice $8.0\cdot10^{-5}$ M
+    \choice $3.2\cdot10^{-4}$ M
+\end{randomizechoices}
 
 \question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
 \begin{randomizechoices}
-	\choice металл координационно связан с лигандом через атом с неподеленной парой.
-	\correctchoice заполненная орбиталь лиганда (например, C-H $\sigma$-связь, \ce{ClO4^-}) донирует электронную плотность на вакантную орбиталь металла.
-	\choice металл и лиганд обмениваются протонами.
-	\choice образуется металл-металлическая связь.
-\end{randomizechoices}
-
-\question Какая формула у перхлорат-иона?
-\begin{randomizechoices}
-    \choice \ce{ClO3-}
-    \correctchoice \ce{ClO4-}
-    \choice \ce{ClO2-}
-    \choice \ce{ClO-}
-\end{randomizechoices}
-
-\question Что такое \ce{^4_2He}?
-\begin{randomizechoices}
-    \choice Протон
-    \correctchoice Альфа-частица
-    \choice Нейтрон
-    \choice Электрон
+    \choice металл координационно связан с лигандом через атом с неподеленной парой.
+    \correctchoice заполненная орбиталь лиганда (например, C-H $\sigma$-связь, \ce{ClO4^-}) донирует электронную плотность на вакантную орбиталь металла.
+    \choice металл и лиганд обмениваются протонами.
+    \choice образуется металл-металлическая связь.
 \end{randomizechoices}'></textarea>
             <div class="toolbar">
                 <button id="convertBtn">✨ Конвертировать в Moodle XML</button>
@@ -294,31 +286,31 @@
             </div>
             <div class="status" id="statusMsg">✅ Ожидание ввода. Нажмите «Конвертировать».</div>
             <div class="example">
-                <strong>📌 Преобразования:</strong><br>
+                <strong>📌 Поддержка форматирования:</strong><br>
+                • <code>$x^{2}$</code> → <code>x<sup>2</sup></code><br>
+                • <code>$x_{2}$</code> → <code>x<sub>2</sub></code><br>
+                • <code>$1.6\cdot10^{-4}$</code> → <code>1.6·10<sup>-4</sup></code><br>
                 • <code>\ce{ClO4^-}</code> → <code>ClO<sub>4</sub><sup>-</sup></code><br>
-                • <code>\ce{^4_2He}</code> → <code><sup>4</sup><sub>2</sub>He</code><br>
-                • <code>$\\sigma$</code> → символ σ (Unicode)<br>
-                • <code>$\\alpha$</code> → α, <code>$\\beta$</code> → β и т.д.<br>
-                • Греческие буквы в формате <code>\letter</code> преобразуются в соответствующие символы.<br>
-                • <strong>Оформление:</strong> только <code>&lt;p&gt;текст&lt;/p&gt;</code> без дополнительных стилей.
+                • <code>$\sigma$</code> → <code>σ</code> (символ Unicode)<br>
+                • <code>\cdot</code> → <code>·</code>, <code>\times</code> → <code>×</code>
             </div>
         </div>
         <div class="panel">
             <h2>📤 Результат: Moodle XML с HTML-разметкой</h2>
             <div class="preview-area">
-                <h3>🔍 XML (sub/sup вместо \ce{})</h3>
+                <h3>🔍 XML (полная HTML-разметка sub/sup)</h3>
                 <div class="xml-box" id="xmlPreview">— Сгенерированный XML или сообщения об ошибках появятся здесь —</div>
                 <div class="download-area">
                     <button id="downloadBtn" style="background:#d96c2b;">⬇️ Скачать как moodle_questions.xml</button>
                 </div>
                 <div style="font-size: 0.75rem; margin-top: 8px; color: #4c6b4a;">
-                    ⚡ <strong>Важно:</strong> Все химические формулы конвертируются в HTML-теги &lt;sub&gt; и &lt;sup&gt;. Греческие буквы становятся обычными символами Unicode.
+                    ⚡ Все надстрочные и подстрочные символы преобразованы в HTML-теги &lt;sup&gt; и &lt;sub&gt;.
                 </div>
             </div>
         </div>
     </div>
     <footer>
-        🧪 Полная поддержка \ce{} с индексами и зарядами, греческие буквы, стандартное Moodle-оформление.
+        🧪 Полная поддержка математических формул, химических элементов, греческих букв и специальных символов.
     </footer>
 </div>
 
@@ -344,33 +336,89 @@
             return `<![CDATA[${safe}]]>`;
         }
         
-        // Преобразование греческих букв из формата $\alpha$ в символы Unicode
-        function convertGreekLetters(text) {
-            const greekMap = {
-                'alpha': 'α', 'beta': 'β', 'gamma': 'γ', 'delta': 'δ', 'epsilon': 'ε',
-                'zeta': 'ζ', 'eta': 'η', 'theta': 'θ', 'iota': 'ι', 'kappa': 'κ',
-                'lambda': 'λ', 'mu': 'μ', 'nu': 'ν', 'xi': 'ξ', 'omicron': 'ο',
-                'pi': 'π', 'rho': 'ρ', 'sigma': 'σ', 'tau': 'τ', 'upsilon': 'υ',
-                'phi': 'φ', 'chi': 'χ', 'psi': 'ψ', 'omega': 'ω',
-                'Gamma': 'Γ', 'Delta': 'Δ', 'Theta': 'Θ', 'Lambda': 'Λ', 'Xi': 'Ξ',
-                'Pi': 'Π', 'Sigma': 'Σ', 'Phi': 'Φ', 'Psi': 'Ψ', 'Omega': 'Ω'
+        // Преобразование специальных команд LaTeX в символы Unicode и HTML
+        function convertSpecialCommands(text) {
+            const replacements = {
+                '\\cdot': '·',
+                '\\times': '×',
+                '\\div': '÷',
+                '\\pm': '±',
+                '\\mp': '∓',
+                '\\le': '≤',
+                '\\ge': '≥',
+                '\\neq': '≠',
+                '\\approx': '≈',
+                '\\infty': '∞',
+                '\\partial': '∂',
+                '\\nabla': '∇',
+                '\\sqrt': '√',
+                '\\alpha': 'α',
+                '\\beta': 'β',
+                '\\gamma': 'γ',
+                '\\delta': 'δ',
+                '\\epsilon': 'ε',
+                '\\zeta': 'ζ',
+                '\\eta': 'η',
+                '\\theta': 'θ',
+                '\\iota': 'ι',
+                '\\kappa': 'κ',
+                '\\lambda': 'λ',
+                '\\mu': 'μ',
+                '\\nu': 'ν',
+                '\\xi': 'ξ',
+                '\\pi': 'π',
+                '\\rho': 'ρ',
+                '\\sigma': 'σ',
+                '\\tau': 'τ',
+                '\\upsilon': 'υ',
+                '\\phi': 'φ',
+                '\\chi': 'χ',
+                '\\psi': 'ψ',
+                '\\omega': 'ω',
+                '\\Gamma': 'Γ',
+                '\\Delta': 'Δ',
+                '\\Theta': 'Θ',
+                '\\Lambda': 'Λ',
+                '\\Xi': 'Ξ',
+                '\\Pi': 'Π',
+                '\\Sigma': 'Σ',
+                '\\Phi': 'Φ',
+                '\\Psi': 'Ψ',
+                '\\Omega': 'Ω'
             };
             
             let result = text;
-            // Обработка $\alpha$, $\beta$ и т.д.
-            result = result.replace(/\$\\?([a-zA-Z]+)\$/g, (match, name) => {
-                if (greekMap[name]) return greekMap[name];
-                return match;
-            });
-            // Обработка без долларов: \alpha
-            result = result.replace(/\\([a-zA-Z]+)/g, (match, name) => {
-                if (greekMap[name]) return greekMap[name];
-                return match;
-            });
+            for (const [cmd, symbol] of Object.entries(replacements)) {
+                result = result.replace(new RegExp(cmd.replace(/[\\]/g, '\\\\'), 'g'), symbol);
+            }
             return result;
         }
         
-        // Преобразование \ce{...} в HTML-разметку с sub и sup
+        // Преобразование математических выражений $...$ в HTML с sub/sup
+        function convertMathToHtml(text) {
+            // Обработка выражений в формате $...$
+            return text.replace(/\$([^\$]+?)\$/g, (match, expression) => {
+                let result = expression;
+                
+                // Обработка ^{...} для надстрочных индексов (степеней)
+                result = result.replace(/\^\{([^}]+)\}/g, '<sup>$1</sup>');
+                result = result.replace(/\^([a-zA-Z0-9\(\)\[\]\+\-\=\*\/]+)/g, '<sup>$1</sup>');
+                
+                // Обработка _{...} для подстрочных индексов
+                result = result.replace(/\_\{([^}]+)\}/g, '<sub>$1</sub>');
+                result = result.replace(/\_([a-zA-Z0-9]+)/g, '<sub>$1</sub>');
+                
+                // Обработка десятичных степеней: 10^{-4} -> 10<sup>-4</sup>
+                result = result.replace(/([0-9]+)\^\{([^}]+)\}/g, '$1<sup>$2</sup>');
+                
+                // Преобразование специальных команд внутри выражения
+                result = convertSpecialCommands(result);
+                
+                return result;
+            });
+        }
+        
+        // Преобразование \ce{...} в HTML-разметку с sub и sup (расширенная версия)
         function convertCeToHtml(ceContent) {
             if (!ceContent) return '';
             
@@ -390,7 +438,6 @@
             
             // Обработка составных подстрочных: (SO4)2 -> (SO<sub>4</sub>)<sub>2</sub>
             result = result.replace(/\(([^)]+)\)([0-9]+)/g, (match, group, num) => {
-                // Рекурсивно обработаем группу
                 let processedGroup = convertCeToHtml(group);
                 return `(${processedGroup})<sub>${num}</sub>`;
             });
@@ -401,31 +448,42 @@
             });
             
             // Обработка одиночных зарядов без ^: ClO4- -> ClO<sub>4</sub><sup>-</sup>
-            // Но только если перед зарядом не цифра (чтобы не испортить ClO4-)
             result = result.replace(/([A-Za-z0-9\)])([+-])(?![0-9])/g, (match, before, charge) => {
                 return `${before}<sup>${charge}</sup>`;
             });
             
-            // Обработка точек в формулах (гидраты и т.д.)
+            // Обработка точек в формулах
             result = result.replace(/·/g, '&middot;');
+            
+            // Дополнительная обработка для сложных формул
+            result = result.replace(/\{([^}]+)\}/g, '$1');
             
             return result;
         }
         
-        // Полная обработка текста: \ce{} -> HTML, греческие буквы -> символы
-        function convertAdvancedFormatting(text) {
+        // Основная функция преобразования всего текста
+        function convertAllFormatting(text) {
             if (!text) return text;
             
             let result = text;
             
-            // Сначала обрабатываем \ce{...} и заменяем на HTML
+            // 1. Сначала обрабатываем \ce{...} (химические формулы)
             result = result.replace(/\\ce\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, (match, content) => {
-                const converted = convertCeToHtml(content);
-                return converted;
+                return convertCeToHtml(content);
             });
             
-            // Обрабатываем греческие буквы
-            result = convertGreekLetters(result);
+            // 2. Обрабатываем математические выражения $...$
+            result = convertMathToHtml(result);
+            
+            // 3. Обрабатываем оставшиеся специальные команды вне $...$
+            result = convertSpecialCommands(result);
+            
+            // 4. Обрабатываем простые степени без долларов (например, 10^{-4})
+            result = result.replace(/([0-9]+)\^\{([^}]+)\}/g, '$1<sup>$2</sup>');
+            
+            // 5. Убираем лишние \left и \right
+            result = result.replace(/\\left/g, '');
+            result = result.replace(/\\right/g, '');
             
             return result;
         }
@@ -434,7 +492,7 @@
         function formatPlainHtml(rawText) {
             if (!rawText) return '<p></p>';
             let trimmed = rawText.trim();
-            let converted = convertAdvancedFormatting(trimmed);
+            let converted = convertAllFormatting(trimmed);
             // Заменяем переносы строк на <br>
             let withBreaks = converted.replace(/\n/g, '<br>');
             return `<p>${withBreaks}</p>`;
@@ -448,8 +506,6 @@
                 if (m === '<') return '&lt;';
                 if (m === '>') return '&gt;';
                 return m;
-            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-                return c;
             });
         }
         
@@ -693,7 +749,7 @@
                 return false;
             } else {
                 xmlPreview.innerHTML = `<pre style="margin:0; white-space:pre-wrap;">${escapeHtml(result.xml)}</pre>`;
-                statusMsgDiv.innerHTML = `✅ Успешно! Сконвертировано ${result.count} вопрос(ов). \ce{} заменены на HTML (sub/sup), греческие буквы — символы Unicode.`;
+                statusMsgDiv.innerHTML = `✅ Успешно! Сконвертировано ${result.count} вопрос(ов). Все надстрочные и подстрочные символы в HTML-разметке.`;
                 statusMsgDiv.classList.remove('error');
                 currentXml = result.xml;
                 return true;
@@ -713,36 +769,36 @@
         });
         
         sampleBtn.addEventListener('click', () => {
-            const sample = `\\question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
+            const sample = `\\question Концентрация ионов составляет $1.6\\cdot10^{-4}$\\%, что соответствует...
 \\begin{randomizechoices}
-	\\choice металл координационно связан с лигандом через атом с неподеленной парой.
-	\\correctchoice заполненная орбиталь лиганда (например, C-H $\\sigma$-связь, а также \\ce{ClO4^-}) донирует электронную плотность на вакантную орбиталь металла.
-	\\choice металл и лиганд обмениваются протонами.
-	\\choice образуется металл-металлическая связь.
+    \\choice $2.5\\cdot10^{-3}$ M
+    \\correctchoice $1.6\\cdot10^{-4}$ M
+    \\choice $8.0\\cdot10^{-5}$ M
+    \\choice $3.2\\cdot10^{-4}$ M
 \\end{randomizechoices}
 
-\\question Какая формула у перхлорат-иона?
+\\question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
 \\begin{randomizechoices}
-    \\choice \\ce{ClO3-}
-    \\correctchoice \\ce{ClO4-}
-    \\choice \\ce{ClO2-}
-    \\choice \\ce{ClO-}
+    \\choice металл координационно связан с лигандом через атом с неподеленной парой.
+    \\correctchoice заполненная орбиталь лиганда (например, C-H $\\sigma$-связь, \\ce{ClO4^-}) донирует электронную плотность на вакантную орбиталь металла.
+    \\choice металл и лиганд обмениваются протонами.
+    \\choice образуется металл-металлическая связь.
 \\end{randomizechoices}
 
-\\question Что такое \\ce{^4_2He}?
+\\question Формула воды: \\ce{H2O}, а перекиси водорода: \\ce{H2O2}
 \\begin{randomizechoices}
-    \\choice Протон
-    \\correctchoice Альфа-частица
-    \\choice Нейтрон
-    \\choice Электрон
+    \\correctchoice \\ce{H2O}
+    \\choice \\ce{CO2}
+    \\choice \\ce{NaCl}
+    \\choice \\ce{CH4}
 \\end{randomizechoices}
 
-\\question Формула серной кислоты: \\ce{H2SO4}
+\\question Значение числа $\\pi$ примерно равно:
 \\begin{randomizechoices}
-    \\correctchoice \\ce{H2SO4}
-    \\choice \\ce{H2SO3}
-    \\choice \\ce{H2S}
-    \\choice \\ce{SO4}
+    \\choice 3.12
+    \\correctchoice 3.14159
+    \\choice 3.16
+    \\choice 3.0
 \\end{randomizechoices}`;
             latexInput.value = sample;
             renderConversion();
@@ -755,14 +811,15 @@
 
 \\question Нет правильного ответа
 \\begin{randomizechoices}
-	\\choice неправильно1
-	\\choice неправильно2
+    \\choice неправильно1
+    \\choice неправильно2
 \\end{randomizechoices}
 
-\\question Корректный вопрос с \\ce{H2O}
+\\question Корректный вопрос с формулой \\ce{H2SO4}
 \\begin{randomizechoices}
     \\choice \\ce{CO2}
-    \\correctchoice \\ce{H2O}
+    \\correctchoice \\ce{H2SO4}
+    \\choice \\ce{NaCl}
 \\end{randomizechoices}`;
             latexInput.value = errorSample;
             renderConversion();
@@ -795,7 +852,7 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                statusMsgDiv.innerHTML = "📥 Файл moodle_questions.xml скачан. Химические формулы в HTML-разметке.";
+                statusMsgDiv.innerHTML = "📥 Файл moodle_questions.xml скачан. Все формулы в HTML-разметке.";
                 statusMsgDiv.classList.remove('error');
             } else {
                 statusMsgDiv.innerHTML = "⚠️ Нет валидного XML. Исправьте ошибки перед скачиванием.";
@@ -804,8 +861,8 @@
         });
         
         latexInput.value = "";
-        xmlPreview.innerHTML = "— Введите вопросы с LaTeX-разметкой (\\ce{}, $\\sigma$) и нажмите 'Конвертировать' —";
-        statusMsgDiv.innerHTML = "✨ Готов к работе. \\ce{} преобразуются в HTML-теги sub/sup.";
+        xmlPreview.innerHTML = "— Введите вопросы с LaTeX-разметкой (математика, химия, греческие буквы) и нажмите 'Конвертировать' —";
+        statusMsgDiv.innerHTML = "✨ Готов к работе. Все степени и индексы будут преобразованы в HTML-теги.";
     })();
 </script>
 </body>
