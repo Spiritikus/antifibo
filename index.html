@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Конвертер LaTeX в Moodle XML — детальные ошибки с указанием вопроса</title>
+    <title>Конвертер LaTeX в Moodle XML — стандартное оформление (без стилей)</title>
     <style>
         * {
             box-sizing: border-box;
@@ -152,7 +152,6 @@
             color: #a1220a;
             border-left: 4px solid #d32f2f;
             white-space: pre-wrap;
-            font-family: monospace;
         }
 
         .error-list {
@@ -256,8 +255,8 @@
 <body>
 <div class="container">
     <header>
-        <h1>🧪 LaTeX → Moodle XML (с детальными ошибками)</h1>
-        <p>Автоматическое преобразование: <code>\ce{ClO4^-}</code> → <code>$$\ce{ClO4^-}$$</code>, <code>$\sigma$</code> → <code>$$\sigma$$</code>. При ошибках — точное указание номера вопроса и его фрагмента.</p>
+        <h1>🧪 LaTeX → Moodle XML (стандартное оформление)</h1>
+        <p>Автоматическое преобразование: <code>\ce{ClO4^-}</code> → <code>$$\ce{ClO4^-}$$</code>, <code>$\sigma$</code> → <code>$$\sigma$$</code>. Вопросы и ответы оборачиваются только в <code>&lt;p&gt;</code> без дополнительных стилей.</p>
     </header>
     <div class="two-columns">
         <div class="panel">
@@ -287,28 +286,29 @@
             </div>
             <div class="status" id="statusMsg">✅ Ожидание ввода. Нажмите «Конвертировать».</div>
             <div class="example">
-                <strong>📌 Обработка ошибок:</strong><br>
-                • При ошибке показывается <strong>номер вопроса</strong> и <strong>первые 150 символов</strong> проблемного блока.<br>
-                • Если несколько ошибок — выводится полный список всех вопросов с ошибками.<br>
-                • Ошибки валидации: отсутствие <code>\question</code>, <code>\begin{randomizechoices}</code>, <code>\correctchoice</code> и др.
+                <strong>📌 Обработка:</strong><br>
+                • <code>\ce{формула}</code> → <code>$$\ce{формула}$$</code><br>
+                • <code>$...$</code> (греческие буквы, формулы) → <code>$$...$$</code><br>
+                • <strong>Оформление по умолчанию:</strong> текст вопроса и ответов оборачивается только в <code>&lt;p&gt;текст&lt;/p&gt;</code>, без span и inline-стилей.<br>
+                • При ошибках показывается номер вопроса и фрагмент проблемного блока.
             </div>
         </div>
         <div class="panel">
             <h2>📤 Результат: Moodle XML</h2>
             <div class="preview-area">
-                <h3>🔍 XML или список ошибок</h3>
+                <h3>🔍 XML (стандартное оформление)</h3>
                 <div class="xml-box" id="xmlPreview">— Сгенерированный XML или сообщения об ошибках появятся здесь —</div>
                 <div class="download-area">
                     <button id="downloadBtn" style="background:#d96c2b;">⬇️ Скачать как moodle_questions.xml</button>
                 </div>
                 <div style="font-size: 0.75rem; margin-top: 8px; color: #4c6b4a;">
-                    ⚡ <strong>При ошибках</strong> скачивание недоступно. Исправьте ошибки, указанные в списке.
+                    ⚡ <strong>Особенности:</strong> Текст внутри <code>&lt;p&gt;</code> без дополнительных стилей. Moodle сам применит стандартное оформление.
                 </div>
             </div>
         </div>
     </div>
     <footer>
-        🧪 Детальный разбор каждого вопроса: парсинг, валидация, обработка \ce{}, $...$ → $$...$$. Ошибки с указанием номера и фрагмента.
+        🧪 Конвертер использует минимальную обёртку &lt;p&gt;...&lt;/p&gt; для вопросов и ответов. Поддержка \ce{}, $...$ → $$...$$.
     </footer>
 </div>
 
@@ -323,7 +323,7 @@
         const xmlPreview = document.getElementById('xmlPreview');
         const statusMsgDiv = document.getElementById('statusMsg');
         
-        // Вспомогательные функции
+        // Экранирование для CDATA
         function escapeCDATA(str) {
             if (!str) return '';
             return str.replace(/\]\]>/g, ']]]]><![CDATA[>');
@@ -334,6 +334,7 @@
             return `<![CDATA[${safe}]]>`;
         }
         
+        // Преобразование LaTeX: \ce{...} -> $$\ce{...}$$, $...$ -> $$...$$
         function convertLatexToDisplayMath(text) {
             if (!text) return text;
             let result = text;
@@ -341,7 +342,7 @@
             result = result.replace(/\\ce\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, (match, content) => {
                 return `$$\\ce{${content}}$$`;
             });
-            // Обработка $...$ -> $$...$$
+            // Обработка $...$ -> $$...$$ (не трогаем уже существующие $$)
             result = result.replace(/(?<!\$)\$(?!\$)([^\$]+?)(?<!\$)\$(?!\$)/g, (match, content) => {
                 if (content.trim() === "") return match;
                 if (content.includes('\\ce')) return match;
@@ -350,13 +351,17 @@
             return result;
         }
         
-        function formatWithSpan(rawText) {
-            if (!rawText) return '<p><span style="font-family: \'times new roman\', times, serif; font-size: medium;"></span></p>';
+        // Оформление текста в стандартном формате Moodle: просто <p>текст</p> (без span и стилей)
+        function formatPlainHtml(rawText) {
+            if (!rawText) return '<p></p>';
             let trimmed = rawText.trim();
             let convertedLatex = convertLatexToDisplayMath(trimmed);
-            return `<p><span style="font-family: 'times new roman', times, serif; font-size: medium;">${convertedLatex}</span></p>`;
+            // Заменяем переносы строк на <br> для читаемости, но оставляем как есть
+            let withBreaks = convertedLatex.replace(/\n/g, '<br>');
+            return `<p>${withBreaks}</p>`;
         }
         
+        // Экранирование для XML текста (для полей name)
         function escapeXmlText(str) {
             if (!str) return '';
             return str.replace(/[&<>]/g, function(m) {
@@ -367,17 +372,15 @@
             });
         }
         
-        // Парсинг одного вопроса с возвратом объекта или ошибки (с номером)
+        // Парсинг одного вопроса с возвратом объекта или ошибки
         function parseSingleQuestionSafe(questionBlock, qIndex) {
             let block = questionBlock.trim();
             if (!block) {
                 return { success: false, error: `Блок вопроса №${qIndex+1} пуст` };
             }
             
-            // Ищем \question
             const questionMatch = block.match(/^\\question\s+(.*?)(?=\\begin\{randomizechoices\})/s);
             if (!questionMatch) {
-                // Показываем фрагмент блока для диагностики
                 const preview = block.length > 200 ? block.substring(0, 200) + "..." : block;
                 return { success: false, error: `Отсутствует \\question или \\begin{randomizechoices}`, preview };
             }
@@ -448,7 +451,9 @@
         
         function generateQuestionXML(questionObj, idx) {
             const questionId = getNextQuestionId();
-            const formattedQuestionHtml = formatWithSpan(questionObj.questionText);
+            // Используем стандартное оформление без стилей
+            const formattedQuestionHtml = formatPlainHtml(questionObj.questionText);
+            
             let rawShortName = questionObj.questionText.replace(/\s+/g, ' ').substring(0, 70);
             if (rawShortName.length < 5) rawShortName = `Вопрос ${idx+1}`;
             const nameText = escapeXmlText(rawShortName);
@@ -456,7 +461,7 @@
             let answersXml = '';
             for (let i = 0; i < questionObj.choices.length; i++) {
                 const choice = questionObj.choices[i];
-                const formattedAnswerHtml = formatWithSpan(choice.text);
+                const formattedAnswerHtml = formatPlainHtml(choice.text);
                 answersXml += `
     <answer fraction="${choice.fraction}" format="html">
       <text>${wrapCDATA(formattedAnswerHtml)}</text>
@@ -504,7 +509,6 @@
                 return { success: false, errors: [{ type: 'global', message: 'Введите текст с вопросами!' }] };
             }
             
-            // Разделение на блоки вопросов
             const regex = /\\question/g;
             let match;
             const positions = [];
@@ -528,13 +532,11 @@
             for (let i = 0; i < blocks.length; i++) {
                 const parseResult = parseSingleQuestionSafe(blocks[i], i);
                 if (!parseResult.success) {
-                    // Формируем детальную ошибку
-                    const errorDetail = {
+                    errorsList.push({
                         questionNumber: i + 1,
                         message: parseResult.error,
                         preview: parseResult.preview || blocks[i].substring(0, 250)
-                    };
-                    errorsList.push(errorDetail);
+                    });
                 } else {
                     successfulQuestions.push(parseResult.data);
                 }
@@ -548,7 +550,6 @@
                 return { success: false, errors: [{ type: 'global', message: 'Не удалось распарсить ни одного валидного вопроса.' }] };
             }
             
-            // Генерация финального XML
             globalCounter = 33183000;
             let questionsXml = '';
             for (let i = 0; i < successfulQuestions.length; i++) {
@@ -558,7 +559,6 @@
             return { success: true, xml: fullXml, count: successfulQuestions.length };
         }
         
-        // Отображение ошибок в удобочитаемом виде
         function displayErrors(errors, partialCount) {
             let html = `<div style="color:#a1220a; margin-bottom:12px;"><strong>❌ Обнаружены ошибки в вопросах:</strong> ${errors.length} вопрос(ов) с ошибками`;
             if (partialCount > 0) {
@@ -588,8 +588,6 @@
                 if (m === '<') return '&lt;';
                 if (m === '>') return '&gt;';
                 return m;
-            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-                return c;
             });
         }
         
@@ -607,7 +605,6 @@
             
             const result = convertWithDetailedErrors(source);
             if (!result.success) {
-                // Показываем ошибки
                 const errorHtml = displayErrors(result.errors, result.partialCount || 0);
                 xmlPreview.innerHTML = errorHtml;
                 statusMsgDiv.innerHTML = `❌ Конвертация не выполнена: ${result.errors.length} ошибок. Исправьте их и повторите.`;
@@ -615,9 +612,8 @@
                 currentXml = null;
                 return false;
             } else {
-                // Успех
                 xmlPreview.innerHTML = `<pre style="margin:0; white-space:pre-wrap;">${escapeHtml(result.xml)}</pre>`;
-                statusMsgDiv.innerHTML = `✅ Успешно! Сконвертировано ${result.count} вопрос(ов). \ce{} и греческие буквы обёрнуты в $$.`;
+                statusMsgDiv.innerHTML = `✅ Успешно! Сконвертировано ${result.count} вопрос(ов). Оформление стандартное (только &lt;p&gt;).`;
                 statusMsgDiv.classList.remove('error');
                 currentXml = result.xml;
                 return true;
@@ -664,7 +660,6 @@
             renderConversion();
         });
         
-        // Пример с намеренными ошибками
         sampleErrorBtn.addEventListener('click', () => {
             const errorSample = `\\question Вопрос без вариантов ответа
 \\begin{randomizechoices}
@@ -693,7 +688,6 @@
         
         downloadBtn.addEventListener('click', () => {
             if (!currentXml) {
-                // Попробуем сконвертировать ещё раз
                 const source = latexInput.value;
                 if (!source.trim()) {
                     statusMsgDiv.innerHTML = "❌ Нет данных для скачивания. Введите вопросы.";
@@ -719,7 +713,7 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                statusMsgDiv.innerHTML = "📥 Файл moodle_questions.xml скачан. Все вопросы валидны.";
+                statusMsgDiv.innerHTML = "📥 Файл moodle_questions.xml скачан. Все вопросы валидны, оформление стандартное.";
                 statusMsgDiv.classList.remove('error');
             } else {
                 statusMsgDiv.innerHTML = "⚠️ Нет валидного XML. Исправьте ошибки перед скачиванием.";
@@ -729,7 +723,7 @@
         
         latexInput.value = "";
         xmlPreview.innerHTML = "— Введите вопросы с LaTeX-разметкой (\\ce{}, $\\sigma$) и нажмите 'Конвертировать' —";
-        statusMsgDiv.innerHTML = "✨ Готов к работе. При ошибках увидите точный номер вопроса и фрагмент.";
+        statusMsgDiv.innerHTML = "✨ Готов к работе. Текст оборачивается только в &lt;p&gt; без стилей.";
     })();
 </script>
 </body>
