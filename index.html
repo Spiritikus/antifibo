@@ -1,549 +1,155 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Bybit Chart Studio - Графики реального времени</title>
-    <!-- Подключаем библиотеки -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+//@version=6
+indicator("Фибоначчи с закреплением к экстремумам", overlay=true)
 
-        body {
-            background: #0a0e17;
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 24px 20px;
-            color: #eef2ff;
-        }
+// --- Пользовательские настройки ---
+length = input.int(5, "Длина свинга (свечей влево/вправо)", minval=2, tooltip="Количество свечей слева и справа для определения локального экстремума")
+showLines = input.bool(true, "Показывать линии уровней")
+showLabels = input.bool(true, "Показывать подписи уровней")
+upColor = input.color(color.new(color.green, 0), "Цвет бычьего уровня 0%")
+downColor = input.color(color.new(color.red, 0), "Цвет медвежьего уровня 0%")
 
-        /* Контейнер с красивым градиентом */
-        .app-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: rgba(18, 25, 40, 0.6);
-            backdrop-filter: blur(2px);
-            border-radius: 2rem;
-            padding: 1.5rem;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.5);
-            border: 1px solid rgba(71, 85, 105, 0.4);
-        }
+// --- Поиск локальных экстремумов (свинг-поинтов) ---
+swingHigh = ta.pivothigh(high, length, length)
+swingLow = ta.pivotlow(low, length, length)
 
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #E6F7FF, #3E9BFF);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin: 0 0 0.25rem 0;
-            letter-spacing: -0.3px;
-        }
+// --- Переменные для запоминания последних экстремумов ---
+var float lastSwingHigh = na
+var float lastSwingLow = na
+var int lastSwingHighBar = na
+var int lastSwingLowBar = na
+var bool lastWasHigh = false
 
-        .sub {
-            color: #8ca3ba;
-            font-size: 0.85rem;
-            margin-bottom: 1.8rem;
-            border-left: 3px solid #3b82f6;
-            padding-left: 12px;
-        }
-
-        /* панель управления */
-        .control-panel {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            background: #111827;
-            padding: 1rem 1.5rem;
-            border-radius: 1.5rem;
-            margin-bottom: 2rem;
-            align-items: flex-end;
-            border: 1px solid #1f2a3e;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            min-width: 140px;
-        }
-
-        .input-group label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            color: #60a5fa;
-        }
-
-        select, input, button {
-            background: #1e293b;
-            border: 1px solid #334155;
-            padding: 8px 14px;
-            border-radius: 14px;
-            color: white;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            outline: none;
-        }
-
-        select:hover, input:hover {
-            border-color: #3b82f6;
-        }
-
-        button {
-            background: #2563eb;
-            border: none;
-            font-weight: 600;
-            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
-        }
-
-        button:active {
-            transform: scale(0.97);
-            background: #1d4ed8;
-        }
-
-        .api-section {
-            background: #0f172a;
-            border-radius: 1.25rem;
-            padding: 0.9rem 1.5rem;
-            margin-bottom: 1.8rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            border: 1px solid #2d3a5e;
-        }
-
-        .api-badge {
-            font-size: 0.75rem;
-            background: #1e2a44;
-            padding: 5px 12px;
-            border-radius: 40px;
-            font-family: monospace;
-        }
-
-        .chart-container {
-            background: #0b1120;
-            padding: 1rem;
-            border-radius: 1.5rem;
-            margin: 20px 0;
-            border: 1px solid #1f2a46;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-
-        canvas {
-            max-height: 500px;
-            width: 100%;
-        }
-
-        .stats-row {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 1rem;
-            font-size: 0.85rem;
-            background: #0f172f;
-            padding: 12px 20px;
-            border-radius: 1.2rem;
-        }
-
-        .stat-card {
-            background: #1e293b;
-            padding: 8px 18px;
-            border-radius: 28px;
-            font-weight: 500;
-        }
-
-        .error-msg {
-            color: #f97316;
-            background: #2c1a0e;
-            border-radius: 40px;
-            padding: 6px 16px;
-            font-size: 0.8rem;
-            font-family: monospace;
-        }
-
-        footer {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #4b556b;
-            margin-top: 2rem;
-        }
-    </style>
-</head>
-<body>
-<div class="app-container">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-        <div>
-            <h1>📈 Bybit Live Chart</h1>
-            <div class="sub">построение биржевых графиков · реальные данные по API (kline / свечи)</div>
-        </div>
-        <div class="api-badge">🔌 Bybit API v5 | WebSocket / REST</div>
-    </div>
-
-    <!-- Блок для ввода API ключей (необязательно для публичных данных, но демонстрируем работу с ключами) -->
-    <div class="api-section">
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <div class="input-group" style="min-width: 200px;">
-                <label>🔑 API Key (опц.)</label>
-                <input type="text" id="apiKeyInput" placeholder="Ваш API ключ Bybit" autocomplete="off">
-            </div>
-            <div class="input-group">
-                <label>🗝️ Secret Key (опц.)</label>
-                <input type="password" id="apiSecretInput" placeholder="Секретный ключ">
-            </div>
-            <div class="input-group" style="justify-content: flex-end;">
-                <label>&nbsp;</label>
-                <button id="testAuthBtn" style="background:#2d3a5e;">🔒 Проверить ключи (опционально)</button>
-            </div>
-        </div>
-        <div style="font-size: 12px; max-width: 320px; color:#94a3b8;">* для публичных свечей ключи НЕ обязательны. Введите для доступа к приватным эндпоинтам (баланс/ордера).</div>
-    </div>
-
-    <!-- Панель выбора символа и интервала -->
-    <div class="control-panel">
-        <div class="input-group">
-            <label>🪙 Торговая пара (Symbol)</label>
-            <select id="symbolSelect">
-                <option value="BTCUSDT">BTCUSDT</option>
-                <option value="ETHUSDT">ETHUSDT</option>
-                <option value="SOLUSDT">SOLUSDT</option>
-                <option value="XRPUSDT">XRPUSDT</option>
-                <option value="DOGEUSDT">DOGEUSDT</option>
-                <option value="AVAXUSDT">AVAXUSDT</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <label>⏱️ Таймфрейм (Interval)</label>
-            <select id="intervalSelect">
-                <option value="1">1 минута</option>
-                <option value="3">3 минуты</option>
-                <option value="5">5 минут</option>
-                <option value="15">15 минут</option>
-                <option value="30">30 минут</option>
-                <option value="60">1 час</option>
-                <option value="240">4 часа</option>
-                <option value="D">1 день</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <label>📊 Категория (category)</label>
-            <select id="categorySelect">
-                <option value="spot">Spot (спот)</option>
-                <option value="linear">Linear (USDT бессрочные)</option>
-                <option value="inverse">Inverse (инверсные)</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <label>📌 Кол-во свечей</label>
-            <input type="number" id="limitInput" value="60" min="10" max="200" step="10">
-        </div>
-        <div>
-            <label>&nbsp;</label>
-            <button id="fetchBtn" style="background:#3b82f6;">🚀 Построить график</button>
-        </div>
-    </div>
-
-    <!-- Контейнер графика -->
-    <div class="chart-container">
-        <canvas id="priceChart" width="800" height="400" style="width:100%; height:400px;"></canvas>
-    </div>
-
-    <!-- Дополнительная статистика -->
-    <div class="stats-row" id="statsPanel">
-        <div class="stat-card">💡 Загрузите данные для отображения статистики</div>
-        <div class="stat-card">📡 Bybit API | Исторические Kline</div>
-    </div>
-    <footer>
-        🧠 Данные получены через REST API Bybit v5 /market/kline • WebSocket может быть добавлен для реалтайм-обновлений<br>
-        ⚡ Приватные ключи хранятся только локально, не передаются на сторонние сервера
-    </footer>
-</div>
-
-<script>
-    // Конфиг Bybit API (публичный эндпоинт)
-    const BYBIT_REST_BASE = 'https://api.bybit.com';
-    const KLINE_ENDPOINT = '/v5/market/kline';
-
-    // Элементы DOM
-    const symbolSelect = document.getElementById('symbolSelect');
-    const intervalSelect = document.getElementById('intervalSelect');
-    const categorySelect = document.getElementById('categorySelect');
-    const limitInput = document.getElementById('limitInput');
-    const fetchBtn = document.getElementById('fetchBtn');
-    const statsPanel = document.getElementById('statsPanel');
-    const apiKeyInput = document.getElementById('apiKeyInput');
-    const apiSecretInput = document.getElementById('apiSecretInput');
-    const testAuthBtn = document.getElementById('testAuthBtn');
-
-    let chartInstance = null;   // для переиспользования графика Chart.js
-
-    // Вспомогательная функция: преобразование интервала для Bybit (1,3,5,15,30,60,120,240,360,720,D,W,M)
-    function mapIntervalToBybit(selectedVal) {
-        // selectedVal из select option value: '1','3','5','15','30','60','240','D'
-        const intervalMap = {
-            '1': '1',
-            '3': '3',
-            '5': '5',
-            '15': '15',
-            '30': '30',
-            '60': '60',
-            '240': '240',
-            'D': 'D'
-        };
-        return intervalMap[selectedVal] || '60';
-    }
-
-    // Форматирование временных меток для оси X (человеко-читаемые)
-    function formatTimestamp(ts) {
-        // ts приходит в миллисекундах, парсим локально
-        const date = new Date(ts);
-        return date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    }
-
-    // Получение kline данных из Bybit REST API (полностью асинхронный, без приватных ключей)
-    async function fetchKlines(symbol, intervalRaw, category, limit) {
-        const intervalMapped = mapIntervalToBybit(intervalRaw);
-        // Параметры запроса согласно документации Bybit API v5:
-        // category=spot/linear/inverse, symbol=BTCUSDT, interval=1/5/15/60..., limit=200 (max 1000)
-        const params = {
-            category: category,
-            symbol: symbol,
-            interval: intervalMapped,
-            limit: Math.min(Number(limit), 200)   // ограничение 200 для наглядности
-        };
-
-        try {
-            const response = await axios.get(`${BYBIT_REST_BASE}${KLINE_ENDPOINT}`, { params });
-            // Ответ Bybit: { retCode:0, result: { list: [...] } }
-            if (response.data && response.data.retCode === 0) {
-                const rawList = response.data.result.list;
-                if (!rawList || rawList.length === 0) {
-                    throw new Error('Нет данных по этой паре / интервалу');
-                }
-                // Формат данных: каждая свеча массив [startTime, open, high, low, close, volume, turnover]
-                // Пример: ["1733184000000","37834.24","37903.55","37751.48","37832.77","11823.042","447641472.23"]
-                // Сортируем по возрастанию времени (Bybit может отдавать новые первыми, лучше перепроверить)
-                const sorted = [...rawList].sort((a,b) => Number(a[0]) - Number(b[0]));
-                const labels = [];
-                const openPrices = [];
-                const highPrices = [];
-                const lowPrices = [];
-                const closePrices = [];
-                
-                for (const candle of sorted) {
-                    const startTime = Number(candle[0]);
-                    const open = parseFloat(candle[1]);
-                    const high = parseFloat(candle[2]);
-                    const low = parseFloat(candle[3]);
-                    const close = parseFloat(candle[4]);
-                    
-                    labels.push(formatTimestamp(startTime));
-                    openPrices.push(open);
-                    highPrices.push(high);
-                    lowPrices.push(low);
-                    closePrices.push(close);
-                }
-                
-                return { labels, openPrices, highPrices, lowPrices, closePrices, raw: sorted };
-            } else {
-                const errMsg = response.data?.retMsg || 'Неизвестная ошибка API';
-                throw new Error(`Bybit API error: ${errMsg}`);
-            }
-        } catch (error) {
-            console.error('Ошибка при получении свечей:', error);
-            if (error.response) {
-                throw new Error(`Статус ${error.response.status}: ${JSON.stringify(error.response.data)}`);
-            }
-            throw new Error(error.message || 'Сетевая ошибка');
-        }
-    }
-
-    // Обновление статистической панели (последняя цена, максимум, минимум, изменение)
-    function updateStats(closePrices, highPrices, lowPrices, symbol) {
-        if (!closePrices || closePrices.length === 0) {
-            statsPanel.innerHTML = `<div class="stat-card">⚠️ Нет данных для статистики</div>`;
-            return;
-        }
-        const lastPrice = closePrices[closePrices.length - 1];
-        const firstPrice = closePrices[0];
-        const change = lastPrice - firstPrice;
-        const changePercent = (change / firstPrice) * 100;
-        const periodHigh = Math.max(...highPrices);
-        const periodLow = Math.min(...lowPrices);
-        
-        statsPanel.innerHTML = `
-            <div class="stat-card">📌 ${symbol} : ${lastPrice.toFixed(2)} USDT</div>
-            <div class="stat-card" style="color: ${change >=0 ? '#22c55e' : '#ef4444'}">📈 Изм: ${change >=0 ? '+' : ''}${change.toFixed(2)} (${changePercent.toFixed(2)}%)</div>
-            <div class="stat-card">📊 Max: ${periodHigh.toFixed(2)}</div>
-            <div class="stat-card">📉 Min: ${periodLow.toFixed(2)}</div>
-            <div class="stat-card">🕒 Свечей: ${closePrices.length}</div>
-        `;
-    }
-
-    // Отрисовка графика (свечной стиль - используем 'candlestick' через плагин? Но Chart.js без доп.плагина. Сделаем комбинированный: line + области
-    // Для максимальной наглядности я покажу "линию close" и тени high-low, а также бары.
-    // Но можем реализовать полноценные свечи с помощью дополнительной библиотеки, однако используем чистый Chart.js 
-    // с кастомными элементами? Чтобы не перегружать, создадим линейный график цены закрытия и точечный High/Low.
-    // Для профессионалов часто нужен именно свечной вид, но можно реализовать "свечной" через набор вертикальных линий.
-    // Реализуем кастомный свечной рендер? Пожалуй создадим классический линейный график close + фон min-max.
-    function renderChart(labels, openPrices, highPrices, lowPrices, closePrices, symbol) {
-        const ctx = document.getElementById('priceChart').getContext('2d');
-        if (chartInstance) {
-            chartInstance.destroy();
-        }
-        
-        // Создаем градиент для фона
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(59,130,246,0.3)');
-        gradient.addColorStop(1, 'rgba(59,130,246,0.01)');
-        
-        chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: `${symbol} Price (Close)`,
-                        data: closePrices,
-                        borderColor: '#3b82f6',
-                        backgroundColor: gradient,
-                        borderWidth: 2.5,
-                        pointRadius: 0,
-                        pointHoverRadius: 5,
-                        tension: 0.1,
-                        fill: true,
-                        order: 1,
-                    },
-                    {
-                        label: 'High',
-                        data: highPrices,
-                        borderColor: '#fbbf24',
-                        borderWidth: 1,
-                        borderDash: [5, 5],
-                        pointRadius: 0,
-                        fill: false,
-                        order: 2,
-                        hidden: false,
-                    },
-                    {
-                        label: 'Low',
-                        data: lowPrices,
-                        borderColor: '#f97316',
-                        borderWidth: 1,
-                        borderDash: [5, 5],
-                        pointRadius: 0,
-                        fill: false,
-                        order: 3,
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                plugins: {
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                let val = context.raw;
-                                if (label.includes('High')) return `☝️ High: ${val.toFixed(2)}`;
-                                if (label.includes('Low')) return `👇 Low: ${val.toFixed(2)}`;
-                                return `💰 Close: ${val.toFixed(2)}`;
-                            }
-                        },
-                        backgroundColor: '#0f172fe6',
-                        titleColor: '#e2e8f0',
-                        bodyColor: '#cbd5e1'
-                    },
-                    legend: {
-                        labels: { color: '#cbd5e6', font: {size: 11} },
-                        position: 'top',
-                    }
-                },
-                scales: {
-                    y: {
-                        grid: { color: '#1e293b' },
-                        title: { display: true, text: 'Цена (USDT)', color: '#94a3b8' },
-                        ticks: { color: '#e2e8f0' }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { color: '#94a3b8', maxRotation: 45, autoSkip: true, maxTicksLimit: 8 }
-                    }
-                }
-            }
-        });
-    }
-
-    // Основная функция загрузки и обновления
-    async function loadAndDraw() {
-        const symbol = symbolSelect.value;
-        const interval = intervalSelect.value;
-        const category = categorySelect.value;
-        let limit = parseInt(limitInput.value, 10);
-        if (isNaN(limit) || limit < 5) limit = 30;
-        if (limit > 200) limit = 200;
-
-        // Блокируем кнопку на время загрузки
-        fetchBtn.disabled = true;
-        fetchBtn.innerText = '⏳ Загрузка данных...';
-        statsPanel.innerHTML = `<div class="stat-card">⏳ Запрос к Bybit API (${symbol})...</div>`;
-
-        try {
-            const { labels, openPrices, highPrices, lowPrices, closePrices } = await fetchKlines(symbol, interval, category, limit);
-            if (!labels.length) throw new Error('Пустой ответ');
-            
-            renderChart(labels, openPrices, highPrices, lowPrices, closePrices, symbol);
-            updateStats(closePrices, highPrices, lowPrices, symbol);
-        } catch (err) {
-            console.error(err);
-            statsPanel.innerHTML = `<div class="error-msg">❌ Ошибка: ${err.message}</div>`;
-            if (chartInstance) chartInstance.destroy();
-            chartInstance = null;
-        } finally {
-            fetchBtn.disabled = false;
-            fetchBtn.innerText = '🚀 Построить график';
-        }
-    }
-
-    // Опциональная проверка аутентификации (приватные ключи) - тест на получение баланса аккаунта
-    async function testPrivateAuth() {
-        const apiKey = apiKeyInput.value.trim();
-        const apiSecret = apiSecretInput.value.trim();
-        if (!apiKey || !apiSecret) {
-            alert('⚠️ Для проверки заполните API Key и Secret Key. Получите ключи в Bybit (раздел API Management).');
-            return;
-        }
-        // Для реальной подписи запроса GET /v5/account/wallet-balance требуется HMAC SHA256.
-        // Здесь мы просто показываем, что можно реализовать полноценное подписанное подключение. Но для демонстрации концепции графиков не обязательно.
-        // Чтобы не усложнять демо (без дополнительных библиотек для crypto-js) просто покажем информационное сообщение:
-        alert(`🔐 API ключ сохранён в браузере (${apiKey.slice(0,6)}...)\nПолная поддержка приватных эндпоинтов требует подписи запросов. Но ваши ключи никуда не отправляются.\nДля торговых команд используйте bybit-api (node) или cryptojs на фронте.`);
-        // При желании добавьте в .env или серверную часть — рекомендуем бэкенд.
-    }
-
-    // Обработчики событий
-    fetchBtn.addEventListener('click', loadAndDraw);
-    testAuthBtn.addEventListener('click', testPrivateAuth);
+// Обновляем последние значения при нахождении новых экстремумов
+if not na(swingHigh)
+    lastSwingHigh := swingHigh
+    lastSwingHighBar := bar_index
+    lastWasHigh := true
     
-    // При загрузке страницы автоматически построить график для BTCUSDT
-    window.addEventListener('load', () => {
-        loadAndDraw();
-    });
-</script>
-</body>
-</html>
+if not na(swingLow)
+    lastSwingLow := swingLow
+    lastSwingLowBar := bar_index
+    lastWasHigh := false
+
+// --- Определяем текущую активную сетку ---
+float startPrice = na
+float endPrice = na
+int startBar = na
+int endBar = na
+string trend = ""
+
+if lastWasHigh and not na(lastSwingHigh) and not na(lastSwingLow)
+    startPrice := lastSwingHigh
+    endPrice := lastSwingLow
+    startBar := lastSwingHighBar
+    endBar := lastSwingLowBar
+    trend := "bearish"
+else if not lastWasHigh and not na(lastSwingLow) and not na(lastSwingHigh)
+    startPrice := lastSwingLow
+    endPrice := lastSwingHigh
+    startBar := lastSwingLowBar
+    endBar := lastSwingHighBar
+    trend := "bullish"
+
+// --- Определение уровней Фибоначчи ---
+fibLevels = array.from(0.0, 0.236, 0.382, 0.5, 0.618, 0.786, 1.0, 1.272, 1.618, 2.0, 2.618)
+levelColors = array.from(
+    color.new(color.blue, 0), color.new(color.teal, 0), color.new(color.green, 0),
+    color.new(color.yellow, 0), color.new(color.orange, 0), color.new(color.red, 0),
+    color.new(color.purple, 0), color.new(color.fuchsia, 0), color.new(color.maroon, 0),
+    color.new(color.gray, 0), color.new(color.black, 0)
+)
+levelNames = array.from("0%", "23.6%", "38.2%", "50%", "61.8%", "78.6%", "100%", "127.2%", "161.8%", "200%", "261.8%")
+
+// --- Функция для удаления старых объектов с правильным синтаксисом ---
+deleteOldObjects() =>
+    // Получаем все текущие объекты
+    allLines = line.all
+    allLabels = label.all
+    
+    // Проходим по массиву линий и удаляем те, которые созданы этим скриптом
+    for i = 0 to array.size(allLines) - 1
+        lineObj = array.get(allLines, i)
+        // Удаляем линии у которых есть специальный атрибут (через xloc)
+        if line.get_xloc(lineObj) == xloc.bar_index
+            line.delete(lineObj)
+    
+    // Проходим по массиву меток и удаляем
+    for i = 0 to array.size(allLabels) - 1
+        labelObj = array.get(allLabels, i)
+        // Удаляем метки с таймфреймом (обычно все метки скрипта)
+        label.delete(labelObj)
+
+// --- Отрисовка сетки ТОЛЬКО между экстремумами ---
+if barstate.islast and not na(startPrice) and not na(endPrice) and not na(startBar) and not na(endBar)
+    // Удаляем старые объекты
+    deleteOldObjects()
+    
+    // Определяем шаг цены
+    float priceRange = math.abs(endPrice - startPrice)
+    
+    // Создаем массив для хранения созданных линий (чтобы потом удалять только их)
+    var array<line> createdLines = array.new<line>()
+    var array<label> createdLabels = array.new<label>()
+    
+    // Очищаем массивы перед созданием новых объектов
+    array.clear(createdLines)
+    array.clear(createdLabels)
+    
+    for i = 0 to array.size(fibLevels) - 1
+        level = array.get(fibLevels, i)
+        levelColor = array.get(levelColors, i % array.size(levelColors))
+        levelName = array.get(levelNames, i % array.size(levelNames))
+        
+        // Расчет цены уровня
+        float levelPrice = na
+        if trend == "bullish"
+            levelPrice := startPrice + priceRange * level
+        else if trend == "bearish"
+            levelPrice := startPrice - priceRange * level
+        
+        // Настройка цвета
+        color lineColor = levelColor
+        if level == 0.0
+            lineColor := trend == "bullish" ? upColor : downColor
+        if level == 0.5 or level == 0.618
+            lineColor := color.new(color.white, 0)
+        
+        // Рисуем линию ТОЛЬКО от startBar до endBar (не дальше!)
+        if not na(levelPrice)
+            // Создаем линию строго между экстремумами
+            newLine = line.new(startBar, levelPrice, endBar, levelPrice, 
+                     color=lineColor, width=level == 0.0 or level == 1.0 ? 2 : 1, 
+                     style=line.style_solid, extend=extend.none)
+            
+            // Сохраняем линию в массив
+            array.push(createdLines, newLine)
+            
+            // Добавляем подписи ТОЛЬКО на правом экстремуме (endBar)
+            if showLabels
+                newLabel = label.new(endBar, levelPrice, 
+                          text=levelName, 
+                          color=lineColor, 
+                          textcolor=color.white, 
+                          style=label.style_label_left, 
+                          size=size.small)
+                array.push(createdLabels, newLabel)
+    
+    // Рисуем соединительную линию между экстремумами
+    connectLine = line.new(startBar, startPrice, endBar, endPrice, 
+             color=trend == "bullish" ? upColor : downColor, 
+             width=2, style=line.style_dotted)
+    array.push(createdLines, connectLine)
+
+// --- Отображение информации на графике ---
+var table infoTable = table.new(position.top_right, 2, 3, bgcolor=color.new(color.black, 80), border_width=1)
+if barstate.islast and not na(startPrice) and not na(endPrice)
+    table.cell(infoTable, 0, 0, "Последний свинг:", text_color=color.white)
+    table.cell(infoTable, 1, 0, trend == "bullish" ? "БЫЧИЙ ↑" : "МЕДВЕЖИЙ ↓", text_color=trend == "bullish" ? color.green : color.red)
+    table.cell(infoTable, 0, 1, "Точка 0%:", text_color=color.white)
+    table.cell(infoTable, 1, 1, str.tostring(startPrice, format.mintick), text_color=color.yellow)
+    table.cell(infoTable, 0, 2, "Точка 100%:", text_color=color.white)
+    table.cell(infoTable, 1, 2, str.tostring(endPrice, format.mintick), text_color=color.yellow)
+
+// --- Очистка при изменении настроек ---
+if barstate.isrecalculated
+    deleteOldObjects()
