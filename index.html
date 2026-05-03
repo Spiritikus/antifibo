@@ -2,868 +2,462 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Конвертер LaTeX → Moodle XML — полная HTML-разметка (sub/sup, греческие буквы, символы)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradingView Style Chart - Bybit Market Data</title>
+    <!-- TradingView Lightweight Charts v4.1.0 -->
+    <script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background-color: #eef3ee;
-            margin: 0;
-            padding: 20px;
-            color: #1a3a1a;
-        }
-
-        .container {
-            max-width: 1500px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 32px;
-            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.2);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background-color: #131722;
+            color: #d1d4dc;
             overflow: hidden;
+            height: 100vh;
         }
 
-        header {
-            background: #2b5e2f;
-            color: white;
-            padding: 1.5rem 2rem;
-            border-bottom: 4px solid #f5b042;
-        }
-
-        header h1 {
-            margin: 0 0 0.4rem 0;
-            font-weight: 600;
-            font-size: 1.9rem;
-        }
-
-        header p {
-            margin: 0;
-            opacity: 0.9;
-            font-size: 0.95rem;
-        }
-
-        .two-columns {
+        .app-container {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0;
-        }
-
-        .panel {
-            flex: 1 1 50%;
-            padding: 1.8rem;
-            background: #ffffff;
-            border-right: 1px solid #dfe8df;
-        }
-
-        .panel:last-child {
-            border-right: none;
-        }
-
-        .panel h2 {
-            font-size: 1.5rem;
-            font-weight: 500;
-            margin-top: 0;
-            margin-bottom: 1rem;
-            color: #1e4a1e;
-            border-left: 5px solid #f5b042;
-            padding-left: 15px;
-        }
-
-        textarea {
-            width: 100%;
-            height: 380px;
-            font-family: 'Courier New', 'Fira Code', monospace;
-            font-size: 13px;
-            line-height: 1.5;
-            padding: 16px;
-            border: 1px solid #c2d6c2;
-            border-radius: 20px;
-            background: #fefef5;
-            resize: vertical;
-        }
-
-        textarea:focus {
-            border-color: #2b5e2f;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(43, 94, 47, 0.2);
+            flex-direction: column;
+            height: 100%;
         }
 
         .toolbar {
-            margin-top: 1rem;
+            background-color: #1e222d;
+            border-bottom: 1px solid #2a2e39;
+            padding: 8px 16px;
             display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
             align-items: center;
-            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            z-index: 10;
         }
 
-        button {
-            background-color: #2b5e2f;
+        .symbol-info {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            background: #2a2e39;
+            padding: 4px 12px;
+            border-radius: 6px;
+        }
+
+        .symbol {
+            font-weight: 700;
+            font-size: 18px;
+            color: #ffffff;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .timeframe-btn {
+            background: transparent;
             border: none;
-            color: white;
+            color: #787b86;
             font-weight: 600;
-            padding: 10px 24px;
-            border-radius: 40px;
-            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .timeframe-btn:hover {
+            color: #d1d4dc;
+            background: #2a2e39;
+        }
+
+        .timeframe-btn.active {
+            color: #2962ff;
+            background: rgba(41, 98, 255, 0.15);
+        }
+
+        .status-badge {
+            margin-left: auto;
+            display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        button:hover {
-            background-color: #1d451f;
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background-color: #5a6b5c;
-        }
-
-        .btn-secondary:hover {
-            background-color: #445446;
-        }
-
-        .btn-warning {
-            background-color: #c97e0a;
-        }
-
-        .btn-warning:hover {
-            background-color: #a86808;
-        }
-
-        .status {
-            margin-top: 1rem;
-            padding: 8px 14px;
-            background: #eaf4ea;
-            border-radius: 60px;
-            font-size: 0.85rem;
-            font-family: monospace;
-            color: #1f4721;
-        }
-
-        .status.error {
-            background: #fde5e5;
-            color: #a1220a;
-            border-left: 4px solid #d32f2f;
-            white-space: pre-wrap;
-        }
-
-        .error-list {
-            margin-top: 12px;
-            background: #fff5f0;
-            border-radius: 16px;
-            padding: 12px;
-            border: 1px solid #ffccbb;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .error-item {
-            padding: 8px 12px;
-            margin-bottom: 8px;
-            background: white;
-            border-left: 4px solid #d32f2f;
-            border-radius: 10px;
-            font-family: monospace;
             font-size: 12px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        .error-question-preview {
-            background: #f9f2e0;
-            padding: 6px 10px;
-            border-radius: 8px;
-            margin-top: 6px;
+        .led {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #787b86;
+        }
+
+        .led.green {
+            background-color: #00ff9d;
+            box-shadow: 0 0 5px #00ff9d;
+        }
+
+        .led.red {
+            background-color: #f23645;
+        }
+
+        .chart-container {
+            flex: 1;
+            position: relative;
+            min-height: 0;
+        }
+
+        #chart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .status-bar {
+            background-color: #1e222d;
+            border-top: 1px solid #2a2e39;
+            padding: 4px 16px;
             font-size: 11px;
-            color: #5a3a1a;
-        }
-
-        .preview-area {
-            background: #faf9f0;
-            border-radius: 20px;
-            padding: 12px;
-            margin-top: 1rem;
-            border: 1px solid #dde6dd;
-        }
-
-        .preview-area h3 {
-            margin: 0 0 8px 0;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .xml-box {
-            background: #1e2a1a;
-            color: #e2f0da;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            padding: 16px;
-            border-radius: 16px;
-            max-height: 480px;
-            overflow: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .download-area {
-            margin-top: 18px;
-            text-align: right;
-        }
-
-        .example {
-            font-size: 0.8rem;
-            background: #faf5e6;
-            padding: 12px;
-            border-radius: 20px;
-            margin-top: 20px;
-            border-left: 4px solid #f5b042;
-        }
-
-        .example code {
-            background: #e8e0c8;
-            padding: 2px 5px;
-            border-radius: 8px;
+            display: flex;
+            gap: 24px;
             font-family: monospace;
-        }
-
-        footer {
-            background: #eaf3ea;
-            padding: 1rem 2rem;
-            text-align: center;
-            font-size: 0.8rem;
-            color: #2d572c;
-            border-top: 1px solid #cde2cd;
-        }
-
-        @media (max-width: 860px) {
-            .two-columns {
-                flex-direction: column;
-            }
-            .panel {
-                border-right: none;
-                border-bottom: 1px solid #dfe8df;
-            }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <header>
-        <h1>🧪 LaTeX → Moodle XML (полная HTML-разметка)</h1>
-        <p>Преобразование: <code>$1.6\cdot10^{-4}$</code> → <code>1.6·10<sup>-4</sup></code>, <code>\ce{ClO4^-}</code> → <code>ClO<sub>4</sub><sup>-</sup></code>, греческие буквы в символы Unicode.</p>
-    </header>
-    <div class="two-columns">
-        <div class="panel">
-            <h2>📥 Исходные вопросы (LaTeX)</h2>
-            <textarea id="latexInput" placeholder='Пример формата с математикой и химией:
-
-\question Концентрация ионов составляет $1.6\cdot10^{-4}$\%, что соответствует...
-\begin{randomizechoices}
-    \choice $2.5\cdot10^{-3}$ M
-    \correctchoice $1.6\cdot10^{-4}$ M
-    \choice $8.0\cdot10^{-5}$ M
-    \choice $3.2\cdot10^{-4}$ M
-\end{randomizechoices}
-
-\question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
-\begin{randomizechoices}
-    \choice металл координационно связан с лигандом через атом с неподеленной парой.
-    \correctchoice заполненная орбиталь лиганда (например, C-H $\sigma$-связь, \ce{ClO4^-}) донирует электронную плотность на вакантную орбиталь металла.
-    \choice металл и лиганд обмениваются протонами.
-    \choice образуется металл-металлическая связь.
-\end{randomizechoices}'></textarea>
-            <div class="toolbar">
-                <button id="convertBtn">✨ Конвертировать в Moodle XML</button>
-                <button id="clearBtn" class="btn-secondary">🗑 Очистить</button>
-                <button id="sampleBtn" class="btn-warning">📋 Загрузить образец</button>
-                <button id="sampleErrorBtn" class="btn-secondary" style="background:#b5651e;">⚠️ Тест с ошибками</button>
-            </div>
-            <div class="status" id="statusMsg">✅ Ожидание ввода. Нажмите «Конвертировать».</div>
-            <div class="example">
-                <strong>📌 Поддержка форматирования:</strong><br>
-                • <code>$x^{2}$</code> → <code>x<sup>2</sup></code><br>
-                • <code>$x_{2}$</code> → <code>x<sub>2</sub></code><br>
-                • <code>$1.6\cdot10^{-4}$</code> → <code>1.6·10<sup>-4</sup></code><br>
-                • <code>\ce{ClO4^-}</code> → <code>ClO<sub>4</sub><sup>-</sup></code><br>
-                • <code>$\sigma$</code> → <code>σ</code> (символ Unicode)<br>
-                • <code>\cdot</code> → <code>·</code>, <code>\times</code> → <code>×</code>
-            </div>
+<div class="app-container">
+    <div class="toolbar">
+        <div class="symbol-info">
+            <span class="symbol" id="symbol-name">BTCUSDT</span>
+            <span class="description">Perpetual</span>
         </div>
-        <div class="panel">
-            <h2>📤 Результат: Moodle XML с HTML-разметкой</h2>
-            <div class="preview-area">
-                <h3>🔍 XML (полная HTML-разметка sub/sup)</h3>
-                <div class="xml-box" id="xmlPreview">— Сгенерированный XML или сообщения об ошибках появятся здесь —</div>
-                <div class="download-area">
-                    <button id="downloadBtn" style="background:#d96c2b;">⬇️ Скачать как moodle_questions.xml</button>
-                </div>
-                <div style="font-size: 0.75rem; margin-top: 8px; color: #4c6b4a;">
-                    ⚡ Все надстрочные и подстрочные символы преобразованы в HTML-теги &lt;sup&gt; и &lt;sub&gt;.
-                </div>
-            </div>
+        <div class="controls" id="timeframe-controls">
+            <button data-interval="1" class="timeframe-btn">1m</button>
+            <button data-interval="5" class="timeframe-btn">5m</button>
+            <button data-interval="15" class="timeframe-btn">15m</button>
+            <button data-interval="60" class="timeframe-btn active">1h</button>
+            <button data-interval="D" class="timeframe-btn">1D</button>
+        </div>
+        <div class="status-badge">
+            <div class="led" id="ws-led"></div>
+            <span id="ws-status">Загрузка...</span>
         </div>
     </div>
-    <footer>
-        🧪 Полная поддержка математических формул, химических элементов, греческих букв и специальных символов.
-    </footer>
+    <div class="chart-container">
+        <div id="chart"></div>
+    </div>
+    <div class="status-bar">
+        <span>📊 Bybit API v5</span>
+        <span id="price-info">Цена: --</span>
+        <span id="update-time"></span>
+    </div>
 </div>
 
 <script>
-    (function() {
-        const latexInput = document.getElementById('latexInput');
-        const convertBtn = document.getElementById('convertBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const sampleBtn = document.getElementById('sampleBtn');
-        const sampleErrorBtn = document.getElementById('sampleErrorBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const xmlPreview = document.getElementById('xmlPreview');
-        const statusMsgDiv = document.getElementById('statusMsg');
+    // Дожидаемся загрузки DOM
+    document.addEventListener('DOMContentLoaded', () => {
+        // Получаем элемент для графика
+        const chartElement = document.getElementById('chart');
         
-        // Экранирование для CDATA
-        function escapeCDATA(str) {
-            if (!str) return '';
-            return str.replace(/\]\]>/g, ']]]]><![CDATA[>');
-        }
-        
-        function wrapCDATA(content) {
-            const safe = escapeCDATA(content);
-            return `<![CDATA[${safe}]]>`;
-        }
-        
-        // Преобразование специальных команд LaTeX в символы Unicode и HTML
-        function convertSpecialCommands(text) {
-            const replacements = {
-                '\\cdot': '·',
-                '\\times': '×',
-                '\\div': '÷',
-                '\\pm': '±',
-                '\\mp': '∓',
-                '\\le': '≤',
-                '\\ge': '≥',
-                '\\neq': '≠',
-                '\\approx': '≈',
-                '\\infty': '∞',
-                '\\partial': '∂',
-                '\\nabla': '∇',
-                '\\sqrt': '√',
-                '\\alpha': 'α',
-                '\\beta': 'β',
-                '\\gamma': 'γ',
-                '\\delta': 'δ',
-                '\\epsilon': 'ε',
-                '\\zeta': 'ζ',
-                '\\eta': 'η',
-                '\\theta': 'θ',
-                '\\iota': 'ι',
-                '\\kappa': 'κ',
-                '\\lambda': 'λ',
-                '\\mu': 'μ',
-                '\\nu': 'ν',
-                '\\xi': 'ξ',
-                '\\pi': 'π',
-                '\\rho': 'ρ',
-                '\\sigma': 'σ',
-                '\\tau': 'τ',
-                '\\upsilon': 'υ',
-                '\\phi': 'φ',
-                '\\chi': 'χ',
-                '\\psi': 'ψ',
-                '\\omega': 'ω',
-                '\\Gamma': 'Γ',
-                '\\Delta': 'Δ',
-                '\\Theta': 'Θ',
-                '\\Lambda': 'Λ',
-                '\\Xi': 'Ξ',
-                '\\Pi': 'Π',
-                '\\Sigma': 'Σ',
-                '\\Phi': 'Φ',
-                '\\Psi': 'Ψ',
-                '\\Omega': 'Ω'
-            };
-            
-            let result = text;
-            for (const [cmd, symbol] of Object.entries(replacements)) {
-                result = result.replace(new RegExp(cmd.replace(/[\\]/g, '\\\\'), 'g'), symbol);
+        // Создаем график с правильными размерами
+        const chart = LightweightCharts.createChart(chartElement, {
+            width: chartElement.clientWidth,
+            height: chartElement.clientHeight,
+            layout: {
+                background: { color: '#131722' },
+                textColor: '#d1d4dc',
+            },
+            grid: {
+                vertLines: { color: '#2a2e39' },
+                horzLines: { color: '#2a2e39' },
+            },
+            crosshair: {
+                mode: LightweightCharts.CrosshairMode.Normal,
+            },
+            rightPriceScale: {
+                borderColor: '#2a2e39',
+            },
+            timeScale: {
+                borderColor: '#2a2e39',
+                timeVisible: true,
+                secondsVisible: false,
+            },
+        });
+
+        // Создаем свечную серию
+        const candlestickSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {
+            upColor: '#00ff9d',
+            downColor: '#f23645',
+            borderDownColor: '#f23645',
+            borderUpColor: '#00ff9d',
+            wickDownColor: '#f23645',
+            wickUpColor: '#00ff9d',
+        });
+
+        // Создаем серию для объема
+        const volumeSeries = chart.addSeries(LightweightCharts.HistogramSeries, {
+            color: '#2962ff',
+            priceFormat: {
+                type: 'volume',
+            },
+            priceScaleId: '',
+        });
+
+        // Настройка шкалы объема
+        chart.priceScale('').applyOptions({
+            scaleMargins: {
+                top: 0.8,
+                bottom: 0,
+            },
+        });
+
+        // Переменные
+        let currentSymbol = 'BTCUSDT';
+        let currentInterval = '60';
+        let ws = null;
+
+        // Функция форматирования времени (Bybit возвращает timestamp в секундах)
+        function formatKlineTime(timestamp) {
+            // Bybit возвращает timestamp в секундах или миллисекундах? Проверим
+            // Если число больше 10^12 - это миллисекунды
+            if (timestamp > 1000000000000) {
+                return Math.floor(timestamp / 1000);
             }
-            return result;
+            return timestamp;
         }
-        
-        // Преобразование математических выражений $...$ в HTML с sub/sup
-        function convertMathToHtml(text) {
-            // Обработка выражений в формате $...$
-            return text.replace(/\$([^\$]+?)\$/g, (match, expression) => {
-                let result = expression;
+
+        // Загрузка исторических данных
+        async function loadHistoricalData() {
+            try {
+                const intervalMap = {
+                    '1': '1',
+                    '5': '5', 
+                    '15': '15',
+                    '60': '60',
+                    'D': 'D'
+                };
                 
-                // Обработка ^{...} для надстрочных индексов (степеней)
-                result = result.replace(/\^\{([^}]+)\}/g, '<sup>$1</sup>');
-                result = result.replace(/\^([a-zA-Z0-9\(\)\[\]\+\-\=\*\/]+)/g, '<sup>$1</sup>');
+                const bybitInterval = intervalMap[currentInterval];
+                const url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${currentSymbol}&interval=${bybitInterval}&limit=200`;
                 
-                // Обработка _{...} для подстрочных индексов
-                result = result.replace(/\_\{([^}]+)\}/g, '<sub>$1</sub>');
-                result = result.replace(/\_([a-zA-Z0-9]+)/g, '<sub>$1</sub>');
+                console.log('Загрузка данных:', url);
+                const response = await fetch(url);
+                const data = await response.json();
                 
-                // Обработка десятичных степеней: 10^{-4} -> 10<sup>-4</sup>
-                result = result.replace(/([0-9]+)\^\{([^}]+)\}/g, '$1<sup>$2</sup>');
-                
-                // Преобразование специальных команд внутри выражения
-                result = convertSpecialCommands(result);
-                
-                return result;
-            });
-        }
-        
-        // Преобразование \ce{...} в HTML-разметку с sub и sup (расширенная версия)
-        function convertCeToHtml(ceContent) {
-            if (!ceContent) return '';
-            
-            let result = ceContent;
-            
-            // Обработка изотопов: ^4_2He -> <sup>4</sup><sub>2</sub>He
-            result = result.replace(/\^([0-9]+)(?:_([0-9]+))?/g, (match, mass, atomic) => {
-                let html = `<sup>${mass}</sup>`;
-                if (atomic) html += `<sub>${atomic}</sub>`;
-                return html;
-            });
-            
-            // Обработка подстрочных индексов: ClO4 -> ClO<sub>4</sub>
-            result = result.replace(/([A-Za-z])([0-9]+)/g, (match, letter, num) => {
-                return `${letter}<sub>${num}</sub>`;
-            });
-            
-            // Обработка составных подстрочных: (SO4)2 -> (SO<sub>4</sub>)<sub>2</sub>
-            result = result.replace(/\(([^)]+)\)([0-9]+)/g, (match, group, num) => {
-                let processedGroup = convertCeToHtml(group);
-                return `(${processedGroup})<sub>${num}</sub>`;
-            });
-            
-            // Обработка зарядов: ClO4^- -> ClO<sub>4</sub><sup>-</sup>
-            result = result.replace(/\^\{?([0-9]*[+-])\}?/g, (match, charge) => {
-                return `<sup>${charge}</sup>`;
-            });
-            
-            // Обработка одиночных зарядов без ^: ClO4- -> ClO<sub>4</sub><sup>-</sup>
-            result = result.replace(/([A-Za-z0-9\)])([+-])(?![0-9])/g, (match, before, charge) => {
-                return `${before}<sup>${charge}</sup>`;
-            });
-            
-            // Обработка точек в формулах
-            result = result.replace(/·/g, '&middot;');
-            
-            // Дополнительная обработка для сложных формул
-            result = result.replace(/\{([^}]+)\}/g, '$1');
-            
-            return result;
-        }
-        
-        // Основная функция преобразования всего текста
-        function convertAllFormatting(text) {
-            if (!text) return text;
-            
-            let result = text;
-            
-            // 1. Сначала обрабатываем \ce{...} (химические формулы)
-            result = result.replace(/\\ce\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, (match, content) => {
-                return convertCeToHtml(content);
-            });
-            
-            // 2. Обрабатываем математические выражения $...$
-            result = convertMathToHtml(result);
-            
-            // 3. Обрабатываем оставшиеся специальные команды вне $...$
-            result = convertSpecialCommands(result);
-            
-            // 4. Обрабатываем простые степени без долларов (например, 10^{-4})
-            result = result.replace(/([0-9]+)\^\{([^}]+)\}/g, '$1<sup>$2</sup>');
-            
-            // 5. Убираем лишние \left и \right
-            result = result.replace(/\\left/g, '');
-            result = result.replace(/\\right/g, '');
-            
-            return result;
-        }
-        
-        // Оформление текста в стандартном формате Moodle: просто <p>текст</p>
-        function formatPlainHtml(rawText) {
-            if (!rawText) return '<p></p>';
-            let trimmed = rawText.trim();
-            let converted = convertAllFormatting(trimmed);
-            // Заменяем переносы строк на <br>
-            let withBreaks = converted.replace(/\n/g, '<br>');
-            return `<p>${withBreaks}</p>`;
-        }
-        
-        // Экранирование для XML текста (для полей name)
-        function escapeXmlText(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
-        }
-        
-        // Парсинг одного вопроса
-        function parseSingleQuestionSafe(questionBlock, qIndex) {
-            let block = questionBlock.trim();
-            if (!block) {
-                return { success: false, error: `Блок вопроса №${qIndex+1} пуст` };
-            }
-            
-            const questionMatch = block.match(/^\\question\s+(.*?)(?=\\begin\{randomizechoices\})/s);
-            if (!questionMatch) {
-                const preview = block.length > 200 ? block.substring(0, 200) + "..." : block;
-                return { success: false, error: `Отсутствует \\question или \\begin{randomizechoices}`, preview };
-            }
-            let rawQuestionText = questionMatch[1].trim();
-            if (!rawQuestionText) {
-                return { success: false, error: `Текст вопроса пуст после \\question`, preview: block.substring(0, 150) };
-            }
-            
-            const choicesRegex = /\\begin\{randomizechoices\}([\s\S]*?)\\end\{randomizechoices\}/;
-            const choicesMatch = block.match(choicesRegex);
-            if (!choicesMatch) {
-                return { success: false, error: `Не найдено окружение \\begin{randomizechoices}...\\end{randomizechoices}`, preview: block.substring(0, 200) };
-            }
-            let choicesContent = choicesMatch[1];
-            
-            const lines = choicesContent.split(/\r?\n/);
-            let choices = [];
-            let currentChoice = null;
-            
-            for (let line of lines) {
-                let trimmedLine = line.trim();
-                if (trimmedLine === "") continue;
-                
-                if (trimmedLine.startsWith('\\choice')) {
-                    if (currentChoice !== null) choices.push(currentChoice);
-                    let textPart = trimmedLine.substring('\\choice'.length).trim();
-                    currentChoice = { text: textPart, fraction: 0 };
+                if (data.retCode !== 0) {
+                    throw new Error(data.retMsg);
                 }
-                else if (trimmedLine.startsWith('\\correctchoice')) {
-                    if (currentChoice !== null) choices.push(currentChoice);
-                    let textPart = trimmedLine.substring('\\correctchoice'.length).trim();
-                    currentChoice = { text: textPart, fraction: 100 };
-                }
-                else {
-                    if (currentChoice !== null) {
-                        currentChoice.text += " " + trimmedLine;
-                    }
-                }
-            }
-            if (currentChoice !== null) choices.push(currentChoice);
-            
-            if (choices.length === 0) {
-                return { success: false, error: `Нет ни одного варианта (\\choice или \\correctchoice)`, preview: choicesContent.substring(0, 150) };
-            }
-            const hasCorrect = choices.some(ch => ch.fraction === 100);
-            if (!hasCorrect) {
-                return { success: false, error: `Отсутствует правильный ответ (нужен \\correctchoice)`, preview: choicesContent.substring(0, 200) };
-            }
-            
-            choices.forEach(choice => {
-                choice.text = choice.text.replace(/\s+/g, ' ').trim();
-            });
-            
-            return {
-                success: true,
-                data: {
-                    questionText: rawQuestionText,
-                    choices: choices
-                }
-            };
-        }
-        
-        // Генерация XML для вопроса
-        let globalCounter = 33183000;
-        function getNextQuestionId() {
-            return globalCounter++;
-        }
-        
-        function generateQuestionXML(questionObj, idx) {
-            const questionId = getNextQuestionId();
-            const formattedQuestionHtml = formatPlainHtml(questionObj.questionText);
-            
-            let rawShortName = questionObj.questionText.replace(/\s+/g, ' ').substring(0, 70);
-            if (rawShortName.length < 5) rawShortName = `Вопрос ${idx+1}`;
-            const nameText = escapeXmlText(rawShortName);
-            
-            let answersXml = '';
-            for (let i = 0; i < questionObj.choices.length; i++) {
-                const choice = questionObj.choices[i];
-                const formattedAnswerHtml = formatPlainHtml(choice.text);
-                answersXml += `
-    <answer fraction="${choice.fraction}" format="html">
-      <text>${wrapCDATA(formattedAnswerHtml)}</text>
-      <feedback format="html">
-        <text></text>
-      </feedback>
-    </answer>`;
-            }
-            
-            return `
-  <!-- question: ${questionId}  -->
-  <question type="multichoice">
-    <name>
-      <text>${nameText}</text>
-    </name>
-    <questiontext format="html">
-      <text>${wrapCDATA(formattedQuestionHtml)}</text>
-    </questiontext>
-    <generalfeedback format="html">
-      <text></text>
-    </generalfeedback>
-    <defaultgrade>1</defaultgrade>
-    <penalty>0.3333333</penalty>
-    <hidden>0</hidden>
-    <idnumber></idnumber>
-    <single>true</single>
-    <shuffleanswers>true</shuffleanswers>
-    <answernumbering>none</answernumbering>
-    <showstandardinstruction>0</showstandardinstruction>
-    <correctfeedback format="html">
-      <text></text>
-    </correctfeedback>
-    <partiallycorrectfeedback format="html">
-      <text></text>
-    </partiallycorrectfeedback>
-    <incorrectfeedback format="html">
-      <text></text>
-    </incorrectfeedback>${answersXml}
-  </question>`;
-        }
-        
-        // Основная конвертация
-        function convertWithDetailedErrors(fullText) {
-            if (!fullText.trim()) {
-                return { success: false, errors: [{ type: 'global', message: 'Введите текст с вопросами!' }] };
-            }
-            
-            const regex = /\\question/g;
-            let match;
-            const positions = [];
-            while ((match = regex.exec(fullText)) !== null) {
-                positions.push(match.index);
-            }
-            if (positions.length === 0) {
-                return { success: false, errors: [{ type: 'global', message: 'Не найдено ни одного \\question. Убедитесь, что вопросы начинаются с команды \\question.' }] };
-            }
-            
-            const blocks = [];
-            for (let i = 0; i < positions.length; i++) {
-                const start = positions[i];
-                const end = (i+1 < positions.length) ? positions[i+1] : fullText.length;
-                blocks.push(fullText.substring(start, end));
-            }
-            
-            const errorsList = [];
-            const successfulQuestions = [];
-            
-            for (let i = 0; i < blocks.length; i++) {
-                const parseResult = parseSingleQuestionSafe(blocks[i], i);
-                if (!parseResult.success) {
-                    errorsList.push({
-                        questionNumber: i + 1,
-                        message: parseResult.error,
-                        preview: parseResult.preview || blocks[i].substring(0, 250)
+                
+                const klines = data.result.list;
+                console.log('Получено свечей:', klines.length);
+                
+                // Bybit возвращает от новых к старым, разворачиваем
+                const reversedKlines = [...klines].reverse();
+                
+                // Преобразуем данные для графика
+                const chartData = [];
+                const volumeData = [];
+                
+                for (const kline of reversedKlines) {
+                    // Bybit возвращает timestamp в миллисекундах
+                    const time = Math.floor(parseInt(kline[0]) / 1000);
+                    
+                    chartData.push({
+                        time: time,
+                        open: parseFloat(kline[1]),
+                        high: parseFloat(kline[2]),
+                        low: parseFloat(kline[3]),
+                        close: parseFloat(kline[4]),
                     });
-                } else {
-                    successfulQuestions.push(parseResult.data);
+                    
+                    volumeData.push({
+                        time: time,
+                        value: parseFloat(kline[5]),
+                        color: parseFloat(kline[1]) <= parseFloat(kline[4]) ? '#00ff9d33' : '#f2364533'
+                    });
                 }
+                
+                if (chartData.length > 0) {
+                    candlestickSeries.setData(chartData);
+                    volumeSeries.setData(volumeData);
+                    chart.timeScale().fitContent();
+                    
+                    // Обновляем цену
+                    const lastPrice = chartData[chartData.length - 1].close;
+                    document.getElementById('price-info').innerHTML = `Цена: $${lastPrice.toFixed(2)}`;
+                    document.getElementById('update-time').innerHTML = `Обновлено: ${new Date().toLocaleTimeString()}`;
+                    
+                    // Обновляем статус
+                    const led = document.getElementById('ws-led');
+                    led.classList.add('green');
+                    led.classList.remove('red');
+                    document.getElementById('ws-status').innerHTML = 'Данные загружены';
+                    
+                    return chartData[chartData.length - 1];
+                }
+                
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                document.getElementById('ws-status').innerHTML = 'Ошибка загрузки';
+                const led = document.getElementById('ws-led');
+                led.classList.remove('green');
+                led.classList.add('red');
+                return null;
             }
-            
-            if (errorsList.length > 0) {
-                return { success: false, errors: errorsList, partialCount: successfulQuestions.length };
-            }
-            
-            if (successfulQuestions.length === 0) {
-                return { success: false, errors: [{ type: 'global', message: 'Не удалось распарсить ни одного валидного вопроса.' }] };
-            }
-            
-            globalCounter = 33183000;
-            let questionsXml = '';
-            for (let i = 0; i < successfulQuestions.length; i++) {
-                questionsXml += generateQuestionXML(successfulQuestions[i], i);
-            }
-            const fullXml = `<?xml version="1.0" encoding="UTF-8"?>\n<quiz>${questionsXml}\n</quiz>`;
-            return { success: true, xml: fullXml, count: successfulQuestions.length };
         }
         
-        function displayErrors(errors, partialCount) {
-            let html = `<div style="color:#a1220a; margin-bottom:12px;"><strong>❌ Обнаружены ошибки в вопросах:</strong> ${errors.length} вопрос(ов) с ошибками`;
-            if (partialCount > 0) {
-                html += ` (${partialCount} вопрос(ов) успешно распарсены, но XML не создан из-за ошибок)`;
+        // WebSocket подключение
+        function connectWebSocket() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.close();
             }
-            html += `</div><div class="error-list">`;
             
-            errors.forEach(err => {
-                html += `<div class="error-item">
-                            <strong>⚠️ Вопрос №${err.questionNumber}</strong><br>
-                            <span style="color:#b33;">Ошибка:</span> ${escapeHtml(err.message)}<br>`;
-                if (err.preview) {
-                    html += `<div class="error-question-preview">
-                                <strong>📄 Фрагмент проблемного вопроса:</strong><br>
-                                <code style="white-space: pre-wrap;">${escapeHtml(err.preview)}</code>
-                             </div>`;
+            ws = new WebSocket('wss://stream.bybit.com/v5/public/linear');
+            
+            ws.onopen = () => {
+                console.log('WebSocket подключен');
+                document.getElementById('ws-status').innerHTML = 'Live данные';
+                const led = document.getElementById('ws-led');
+                led.classList.add('green');
+                led.classList.remove('red');
+                
+                // Подписываемся на свечи
+                const intervalMap = {'1':'1','5':'5','15':'15','60':'60','D':'D'};
+                const topic = `kline.${intervalMap[currentInterval]}.${currentSymbol}`;
+                ws.send(JSON.stringify({
+                    op: 'subscribe',
+                    args: [topic]
+                }));
+            };
+            
+            ws.onmessage = (event) => {
+                try {
+                    const message = JSON.parse(event.data);
+                    
+                    // Ответ на ping
+                    if (message.op === 'ping') {
+                        ws.send(JSON.stringify({ op: 'pong' }));
+                        return;
+                    }
+                    
+                    // Обработка данных свечи
+                    if (message.topic && message.topic.includes('kline') && message.data) {
+                        const klineData = message.data;
+                        const time = Math.floor(klineData.start / 1000);
+                        const open = parseFloat(klineData.open);
+                        const high = parseFloat(klineData.high);
+                        const low = parseFloat(klineData.low);
+                        const close = parseFloat(klineData.close);
+                        const volume = parseFloat(klineData.volume);
+                        
+                        const candle = { time, open, high, low, close };
+                        const volData = { 
+                            time, 
+                            value: volume,
+                            color: open <= close ? '#00ff9d33' : '#f2364533'
+                        };
+                        
+                        // Обновляем график
+                        candlestickSeries.update(candle);
+                        volumeSeries.update(volData);
+                        
+                        // Обновляем информацию о цене
+                        document.getElementById('price-info').innerHTML = `Цена: $${close.toFixed(2)}`;
+                        document.getElementById('update-time').innerHTML = `Обновлено: ${new Date().toLocaleTimeString()}`;
+                        
+                        // Мигаем индикатором
+                        const led = document.getElementById('ws-led');
+                        led.style.opacity = '0.5';
+                        setTimeout(() => { led.style.opacity = '1'; }, 200);
+                    }
+                } catch (error) {
+                    console.error('Ошибка обработки сообщения:', error);
                 }
-                html += `</div>`;
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket ошибка:', error);
+                document.getElementById('ws-status').innerHTML = 'WS ошибка';
+                const led = document.getElementById('ws-led');
+                led.classList.remove('green');
+                led.classList.add('red');
+            };
+            
+            ws.onclose = () => {
+                console.log('WebSocket отключен, переподключение через 5 сек...');
+                document.getElementById('ws-status').innerHTML = 'Переподключение...';
+                setTimeout(connectWebSocket, 5000);
+            };
+        }
+        
+        // Смена таймфрейма
+        async function changeInterval(interval) {
+            currentInterval = interval;
+            
+            // Обновляем активную кнопку
+            document.querySelectorAll('.timeframe-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-interval') === interval) {
+                    btn.classList.add('active');
+                }
             });
-            html += `</div>`;
-            return html;
+            
+            // Переподключаем WebSocket с новым интервалом
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                // Отписываемся от старого
+                const intervalMap = {'1':'1','5':'5','15':'15','60':'60','D':'D'};
+                const oldTopic = `kline.${intervalMap[currentInterval === interval ? interval : '60']}.${currentSymbol}`;
+                ws.send(JSON.stringify({
+                    op: 'unsubscribe',
+                    args: [oldTopic]
+                }));
+                
+                // Подписываемся на новый
+                const newTopic = `kline.${intervalMap[interval]}.${currentSymbol}`;
+                ws.send(JSON.stringify({
+                    op: 'subscribe',
+                    args: [newTopic]
+                }));
+            }
+            
+            // Перезагружаем исторические данные
+            await loadHistoricalData();
         }
         
-        function escapeHtml(str) {
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
+        // Обработка изменения размера окна
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                const width = chartElement.clientWidth;
+                const height = chartElement.clientHeight;
+                chart.applyOptions({ width, height });
+                chart.timeScale().fitContent();
+            }, 100);
+        });
+        
+        // Инициализация приложения
+        async function init() {
+            // Загружаем исторические данные
+            await loadHistoricalData();
+            
+            // Подключаем WebSocket
+            connectWebSocket();
+            
+            // Назначаем обработчики кнопок
+            document.querySelectorAll('.timeframe-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const interval = e.target.getAttribute('data-interval');
+                    changeInterval(interval);
+                });
             });
         }
         
-        let currentXml = null;
-        
-        function renderConversion() {
-            const source = latexInput.value;
-            if (!source.trim()) {
-                statusMsgDiv.innerHTML = "⚠️ Поле ввода пусто. Вставьте вопросы в формате LaTeX.";
-                statusMsgDiv.classList.remove('error');
-                xmlPreview.innerHTML = "— Нет данных для конвертации —";
-                currentXml = null;
-                return false;
-            }
-            
-            const result = convertWithDetailedErrors(source);
-            if (!result.success) {
-                const errorHtml = displayErrors(result.errors, result.partialCount || 0);
-                xmlPreview.innerHTML = errorHtml;
-                statusMsgDiv.innerHTML = `❌ Конвертация не выполнена: ${result.errors.length} ошибок. Исправьте их и повторите.`;
-                statusMsgDiv.classList.add('error');
-                currentXml = null;
-                return false;
-            } else {
-                xmlPreview.innerHTML = `<pre style="margin:0; white-space:pre-wrap;">${escapeHtml(result.xml)}</pre>`;
-                statusMsgDiv.innerHTML = `✅ Успешно! Сконвертировано ${result.count} вопрос(ов). Все надстрочные и подстрочные символы в HTML-разметке.`;
-                statusMsgDiv.classList.remove('error');
-                currentXml = result.xml;
-                return true;
-            }
-        }
-        
-        convertBtn.addEventListener('click', () => {
-            renderConversion();
-        });
-        
-        clearBtn.addEventListener('click', () => {
-            latexInput.value = '';
-            xmlPreview.innerHTML = "— Поле очищено. Вставьте вопросы и нажмите «Конвертировать» —";
-            statusMsgDiv.innerHTML = "🧹 Очищено. Готов к вводу новых вопросов.";
-            statusMsgDiv.classList.remove('error');
-            currentXml = null;
-        });
-        
-        sampleBtn.addEventListener('click', () => {
-            const sample = `\\question Концентрация ионов составляет $1.6\\cdot10^{-4}$\\%, что соответствует...
-\\begin{randomizechoices}
-    \\choice $2.5\\cdot10^{-3}$ M
-    \\correctchoice $1.6\\cdot10^{-4}$ M
-    \\choice $8.0\\cdot10^{-5}$ M
-    \\choice $3.2\\cdot10^{-4}$ M
-\\end{randomizechoices}
-
-\\question Агастическое взаимодействие — это особый тип взаимодействия, при котором...
-\\begin{randomizechoices}
-    \\choice металл координационно связан с лигандом через атом с неподеленной парой.
-    \\correctchoice заполненная орбиталь лиганда (например, C-H $\\sigma$-связь, \\ce{ClO4^-}) донирует электронную плотность на вакантную орбиталь металла.
-    \\choice металл и лиганд обмениваются протонами.
-    \\choice образуется металл-металлическая связь.
-\\end{randomizechoices}
-
-\\question Формула воды: \\ce{H2O}, а перекиси водорода: \\ce{H2O2}
-\\begin{randomizechoices}
-    \\correctchoice \\ce{H2O}
-    \\choice \\ce{CO2}
-    \\choice \\ce{NaCl}
-    \\choice \\ce{CH4}
-\\end{randomizechoices}
-
-\\question Значение числа $\\pi$ примерно равно:
-\\begin{randomizechoices}
-    \\choice 3.12
-    \\correctchoice 3.14159
-    \\choice 3.16
-    \\choice 3.0
-\\end{randomizechoices}`;
-            latexInput.value = sample;
-            renderConversion();
-        });
-        
-        sampleErrorBtn.addEventListener('click', () => {
-            const errorSample = `\\question Вопрос без вариантов ответа
-\\begin{randomizechoices}
-\\end{randomizechoices}
-
-\\question Нет правильного ответа
-\\begin{randomizechoices}
-    \\choice неправильно1
-    \\choice неправильно2
-\\end{randomizechoices}
-
-\\question Корректный вопрос с формулой \\ce{H2SO4}
-\\begin{randomizechoices}
-    \\choice \\ce{CO2}
-    \\correctchoice \\ce{H2SO4}
-    \\choice \\ce{NaCl}
-\\end{randomizechoices}`;
-            latexInput.value = errorSample;
-            renderConversion();
-        });
-        
-        downloadBtn.addEventListener('click', () => {
-            if (!currentXml) {
-                const source = latexInput.value;
-                if (!source.trim()) {
-                    statusMsgDiv.innerHTML = "❌ Нет данных для скачивания. Введите вопросы.";
-                    statusMsgDiv.classList.add('error');
-                    return;
-                }
-                const result = convertWithDetailedErrors(source);
-                if (!result.success) {
-                    statusMsgDiv.innerHTML = `❌ Невозможно скачать XML, так как есть ошибки. Исправьте их.`;
-                    statusMsgDiv.classList.add('error');
-                    return;
-                } else {
-                    currentXml = result.xml;
-                }
-            }
-            if (currentXml && currentXml.includes('<quiz>')) {
-                const blob = new Blob([currentXml], {type: "application/xml"});
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = "moodle_questions.xml";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                statusMsgDiv.innerHTML = "📥 Файл moodle_questions.xml скачан. Все формулы в HTML-разметке.";
-                statusMsgDiv.classList.remove('error');
-            } else {
-                statusMsgDiv.innerHTML = "⚠️ Нет валидного XML. Исправьте ошибки перед скачиванием.";
-                statusMsgDiv.classList.add('error');
-            }
-        });
-        
-        latexInput.value = "";
-        xmlPreview.innerHTML = "— Введите вопросы с LaTeX-разметкой (математика, химия, греческие буквы) и нажмите 'Конвертировать' —";
-        statusMsgDiv.innerHTML = "✨ Готов к работе. Все степени и индексы будут преобразованы в HTML-теги.";
-    })();
+        // Запускаем приложение
+        init();
+    });
 </script>
 </body>
 </html>
