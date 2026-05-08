@@ -1,155 +1,626 @@
-//@version=6
-indicator("Фибоначчи с закреплением к экстремумам", overlay=true)
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Конвертер LaTeX вопросов в Excel (Quiz)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-// --- Пользовательские настройки ---
-length = input.int(5, "Длина свинга (свечей влево/вправо)", minval=2, tooltip="Количество свечей слева и справа для определения локального экстремума")
-showLines = input.bool(true, "Показывать линии уровней")
-showLabels = input.bool(true, "Показывать подписи уровней")
-upColor = input.color(color.new(color.green, 0), "Цвет бычьего уровня 0%")
-downColor = input.color(color.new(color.red, 0), "Цвет медвежьего уровня 0%")
+        body {
+            background: #e9f0f5;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-// --- Поиск локальных экстремумов (свинг-поинтов) ---
-swingHigh = ta.pivothigh(high, length, length)
-swingLow = ta.pivotlow(low, length, length)
+        .card {
+            max-width: 1300px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
 
-// --- Переменные для запоминания последних экстремумов ---
-var float lastSwingHigh = na
-var float lastSwingLow = na
-var int lastSwingHighBar = na
-var int lastSwingLowBar = na
-var bool lastWasHigh = false
+        .header {
+            background: #1e3c5c;
+            color: white;
+            padding: 1.5rem 2rem;
+        }
 
-// Обновляем последние значения при нахождении новых экстремумов
-if not na(swingHigh)
-    lastSwingHigh := swingHigh
-    lastSwingHighBar := bar_index
-    lastWasHigh := true
-    
-if not na(swingLow)
-    lastSwingLow := swingLow
-    lastSwingLowBar := bar_index
-    lastWasHigh := false
+        .header h1 {
+            margin: 0 0 0.3rem 0;
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
 
-// --- Определяем текущую активную сетку ---
-float startPrice = na
-float endPrice = na
-int startBar = na
-int endBar = na
-string trend = ""
+        .header p {
+            margin: 0;
+            opacity: 0.85;
+            font-size: 0.95rem;
+        }
 
-if lastWasHigh and not na(lastSwingHigh) and not na(lastSwingLow)
-    startPrice := lastSwingHigh
-    endPrice := lastSwingLow
-    startBar := lastSwingHighBar
-    endBar := lastSwingLowBar
-    trend := "bearish"
-else if not lastWasHigh and not na(lastSwingLow) and not na(lastSwingHigh)
-    startPrice := lastSwingLow
-    endPrice := lastSwingHigh
-    startBar := lastSwingLowBar
-    endBar := lastSwingHighBar
-    trend := "bullish"
+        .content {
+            padding: 2rem;
+        }
 
-// --- Определение уровней Фибоначчи ---
-fibLevels = array.from(0.0, 0.236, 0.382, 0.5, 0.618, 0.786, 1.0, 1.272, 1.618, 2.0, 2.618)
-levelColors = array.from(
-    color.new(color.blue, 0), color.new(color.teal, 0), color.new(color.green, 0),
-    color.new(color.yellow, 0), color.new(color.orange, 0), color.new(color.red, 0),
-    color.new(color.purple, 0), color.new(color.fuchsia, 0), color.new(color.maroon, 0),
-    color.new(color.gray, 0), color.new(color.black, 0)
-)
-levelNames = array.from("0%", "23.6%", "38.2%", "50%", "61.8%", "78.6%", "100%", "127.2%", "161.8%", "200%", "261.8%")
+        .upload-area {
+            background: #f8fafc;
+            border: 2px dashed #b9d0e7;
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 2rem;
+        }
 
-// --- Функция для удаления старых объектов с правильным синтаксисом ---
-deleteOldObjects() =>
-    // Получаем все текущие объекты
-    allLines = line.all
-    allLabels = label.all
-    
-    // Проходим по массиву линий и удаляем те, которые созданы этим скриптом
-    for i = 0 to array.size(allLines) - 1
-        lineObj = array.get(allLines, i)
-        // Удаляем линии у которых есть специальный атрибут (через xloc)
-        if line.get_xloc(lineObj) == xloc.bar_index
-            line.delete(lineObj)
-    
-    // Проходим по массиву меток и удаляем
-    for i = 0 to array.size(allLabels) - 1
-        labelObj = array.get(allLabels, i)
-        // Удаляем метки с таймфреймом (обычно все метки скрипта)
-        label.delete(labelObj)
+        .upload-area:hover {
+            border-color: #1e3c5c;
+            background: #f1f7fd;
+        }
 
-// --- Отрисовка сетки ТОЛЬКО между экстремумами ---
-if barstate.islast and not na(startPrice) and not na(endPrice) and not na(startBar) and not na(endBar)
-    // Удаляем старые объекты
-    deleteOldObjects()
-    
-    // Определяем шаг цены
-    float priceRange = math.abs(endPrice - startPrice)
-    
-    // Создаем массив для хранения созданных линий (чтобы потом удалять только их)
-    var array<line> createdLines = array.new<line>()
-    var array<label> createdLabels = array.new<label>()
-    
-    // Очищаем массивы перед созданием новых объектов
-    array.clear(createdLines)
-    array.clear(createdLabels)
-    
-    for i = 0 to array.size(fibLevels) - 1
-        level = array.get(fibLevels, i)
-        levelColor = array.get(levelColors, i % array.size(levelColors))
-        levelName = array.get(levelNames, i % array.size(levelNames))
+        .upload-area input {
+            display: none;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1.5rem 0 1rem;
+        }
+
+        button {
+            background: #1e3c5c;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background: #0f2b44;
+            transform: translateY(-1px);
+        }
+
+        button.secondary {
+            background: #4b6f8e;
+        }
+
+        button.secondary:hover {
+            background: #2c4e6e;
+        }
+
+        .preview-section {
+            margin-top: 2rem;
+            border-top: 1px solid #e2edf2;
+            padding-top: 1.5rem;
+        }
+
+        .preview-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #1e3c5c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+            border: 1px solid #dce7ef;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            font-family: monospace;
+        }
+
+        th {
+            background: #eef3fc;
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 2px solid #cbdde9;
+            color: #1e3c5c;
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e2edf2;
+            vertical-align: top;
+            background-color: #fff;
+        }
+
+        .question-cell {
+            min-width: 280px;
+        }
+
+        .badge-correct {
+            background: #c8f0e1;
+            color: #0b5e42;
+            font-weight: bold;
+            font-size: 0.7rem;
+            border-radius: 30px;
+            padding: 2px 8px;
+            display: inline-block;
+            margin-left: 6px;
+        }
+
+        .status-msg {
+            background: #eef2f7;
+            border-radius: 36px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            color: #2c577c;
+        }
+
+        footer {
+            background: #f0f4f9;
+            padding: 1rem 2rem;
+            font-size: 0.75rem;
+            color: #5e7e9e;
+            text-align: center;
+            border-top: 1px solid #dce7ef;
+        }
+
+        @media (max-width: 700px) {
+            .content {
+                padding: 1rem;
+            }
+            th, td {
+                font-size: 0.75rem;
+                padding: 8px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <h1>📄 LaTeX → Excel (Вопросы с выбором)</h1>
+        <p>Конвертация файлов с вопросами в формате \question ... \begin{randomizechoices} ... \correctchoice ... в XLSX-таблицу.<br>
+        Столбцы: № | Текст вопроса | Вариант A | Вариант B* | Вариант C | Вариант D</p>
+    </div>
+    <div class="content">
+        <div class="upload-area" id="dropZone">
+            <label for="fileInput" style="cursor: pointer; display: block;">
+                📂 <strong>Нажмите или перетащите файл .txt</strong><br>
+                <span style="font-size: 0.8rem; color: #4f6f8f;">Файл должен содержать вопросы в LaTeX-разметке (с \question и randomizechoices)</span>
+            </label>
+            <input type="file" id="fileInput" accept=".txt, .tex, .text/plain">
+        </div>
+
+        <div class="btn-group">
+            <button id="convertBtn" disabled>🔄 Конвертировать в Excel</button>
+            <button id="clearBtn" class="secondary">🗑 Очистить / Сброс</button>
+        </div>
+
+        <div id="statusArea" class="status-msg" style="margin: 12px 0;">
+            ⚡ Ожидание загрузки файла...
+        </div>
+
+        <div class="preview-section" id="previewArea" style="display: none;">
+            <div class="preview-title">
+                📋 Предпросмотр (первые 5 вопросов)
+            </div>
+            <div class="table-wrapper">
+                <div id="previewTable"></div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        ✅ Правильный ответ помечен звёздочкой * в столбце ответа. Поддерживаются \correctchoice внутри окружения randomizechoices.
+        Порядок вариантов сохраняется как в исходном LaTeX, но корректный вариант отмечается звездочкой.
+    </footer>
+</div>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<script>
+    // Глобальное хранилище распарсенных вопросов
+    let parsedQuestions = []; // каждый элемент: { questionText, choices: [{text, isCorrect}] }
+
+    // DOM элементы
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const convertBtn = document.getElementById('convertBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const statusArea = document.getElementById('statusArea');
+    const previewArea = document.getElementById('previewArea');
+    const previewTableDiv = document.getElementById('previewTable');
+
+    // Функция для парсинга содержимого .txt файла с поддержкой многострочных \question, вариантов, \correctchoice
+    function parseLatexQuestions(content) {
+        // Нормализуем переводы строк: заменяем \r\n? на \n
+        let text = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
         
-        // Расчет цены уровня
-        float levelPrice = na
-        if trend == "bullish"
-            levelPrice := startPrice + priceRange * level
-        else if trend == "bearish"
-            levelPrice := startPrice - priceRange * level
+        // Регулярное выражение для нахождения каждого блока вопроса
+        // Ищем паттерн: \question ... (до \begin{randomizechoices}) ... затем варианты внутри окружения
+        // Более надёжно: разбиваем по \question (следим за экранированием?)
+        // Но в реальных данных \question в начале строки или с пробелом. Используем подход сплита с сохранением.
         
-        // Настройка цвета
-        color lineColor = levelColor
-        if level == 0.0
-            lineColor := trend == "bullish" ? upColor : downColor
-        if level == 0.5 or level == 0.618
-            lineColor := color.new(color.white, 0)
+        // Разделяем на "сырые" блоки по шаблону \\question (с учётом возможных пробелов)
+        // Чтобы не потерять содержимое, используем matches с флагом /gs
+        const questionBlocks = [];
+        // Ищем все участки начиная с \question и до следующего \question или до конца файла
+        const regexBlocks = /\\question\s+(.*?)(?=\\question|\n*$)/gs;
+        let match;
+        let rawBlocks = [];
+        while ((match = regexBlocks.exec(text)) !== null) {
+            rawBlocks.push(match[1]);
+        }
         
-        // Рисуем линию ТОЛЬКО от startBar до endBar (не дальше!)
-        if not na(levelPrice)
-            // Создаем линию строго между экстремумами
-            newLine = line.new(startBar, levelPrice, endBar, levelPrice, 
-                     color=lineColor, width=level == 0.0 or level == 1.0 ? 2 : 1, 
-                     style=line.style_solid, extend=extend.none)
+        // Если не нашли по этому шаблону, возможно файл начинается не с \question? тогда попробуем альтернативный метод: разбить по строкам \question вручную.
+        if (rawBlocks.length === 0 && text.includes('\\question')) {
+            // дополнительные попытки
+            let parts = text.split(/\\question/);
+            for (let i = 1; i < parts.length; i++) {
+                rawBlocks.push(parts[i]);
+            }
+        }
+        
+        if (rawBlocks.length === 0) {
+            throw new Error('Не найдено ни одного вопроса с командой \\question. Убедитесь, что файл содержит \\question в начале каждого вопроса.');
+        }
+        
+        // парсим каждый блок
+        const questions = [];
+        
+        for (let idx = 0; idx < rawBlocks.length; idx++) {
+            let block = rawBlocks[idx];
+            // Извлечение текста вопроса: всё, что до \begin{randomizechoices} или \begin{choices} (поддержка разных)
+            let questionText = '';
+            let choicesRaw = '';
             
-            // Сохраняем линию в массив
-            array.push(createdLines, newLine)
+            // Поиск начала окружения вариантов
+            const beginMatch = block.match(/\\begin\{(randomizechoices|choices)\}/);
+            if (beginMatch) {
+                const beginEnv = beginMatch[0];
+                const envName = beginMatch[1];
+                const endEnv = `\\end{${envName}}`;
+                const startIdx = block.indexOf(beginEnv);
+                questionText = block.substring(0, startIdx).trim();
+                
+                // Извлекаем содержимое окружения
+                const afterBegin = block.substring(startIdx + beginEnv.length);
+                const endIdx = afterBegin.indexOf(endEnv);
+                if (endIdx !== -1) {
+                    choicesRaw = afterBegin.substring(0, endIdx).trim();
+                } else {
+                    choicesRaw = '';
+                }
+            } else {
+                // Если окружения нет, пробуем найти просто варианты \choice и \correctchoice без окружения? но по условию оно есть
+                questionText = block.trim();
+                choicesRaw = '';
+            }
             
-            // Добавляем подписи ТОЛЬКО на правом экстремуме (endBar)
-            if showLabels
-                newLabel = label.new(endBar, levelPrice, 
-                          text=levelName, 
-                          color=lineColor, 
-                          textcolor=color.white, 
-                          style=label.style_label_left, 
-                          size=size.small)
-                array.push(createdLabels, newLabel)
+            // Очищаем текст вопроса от мусора: возможные лишние символы, но сохраняем LaTeX
+            questionText = questionText.replace(/^[\s\n]+/, '').replace(/[\s\n]+$/, '');
+            
+            // Парсим варианты: ищем \choice и \correctchoice
+            // Разделяем строки и ищем команды
+            const lines = choicesRaw.split(/\r?\n/);
+            const choices = [];
+            let currentChoiceText = '';
+            let insideChoice = false;
+            let isCurCorrect = false;
+            
+            // Простой и надёжный способ: идти по строкам и ловить команды \choice или \correctchoice, накапливая текст до следующей команды
+            // но чтобы поддерживать многострочные варианты с формулами, лучше искать по регулярке с флагом /s
+            // Используем метод matchAll для паттерна: (\\correctchoice|\\choice)\s*(.*?)(?=\\choice|\\correctchoice|$)
+            const choicePattern = /(\\(?:correct)?choice)\s*([\s\S]*?)(?=\\\\choice|\\\\correctchoice|$)/gi;
+            let matchChoice;
+            const tempChoices = [];
+            // Скопируем choicesRaw для работы с глобальным поиском
+            let choicesCopy = choicesRaw;
+            // иногда варианты идут без разделителей строк, но с паттерном (\choice) работает
+            let lastIndex = 0;
+            const regexGlobal = /(\\(?:correct)?choice)\s*([\s\S]*?)(?=\\\\choice|\\\\correctchoice|$)/gi;
+            let result;
+            while ((result = regexGlobal.exec(choicesCopy)) !== null) {
+                const fullCmd = result[1]; // \choice или \correctchoice
+                let choiceContent = result[2] || '';
+                // убираем лишние пробелы в начале/конце, но сохраняем формулы
+                choiceContent = choiceContent.trim();
+                const isCorrect = fullCmd.includes('correct');
+                tempChoices.push({
+                    text: choiceContent,
+                    isCorrect: isCorrect
+                });
+            }
+            
+            // Если регулярка не нашла варианты, попробуем построчно (запасной метод)
+            if (tempChoices.length === 0 && choicesRaw.trim().length > 0) {
+                // парсим построчно, каждая строка с \choice или \correctchoice
+                let current = null;
+                const allLines = choicesRaw.split(/\n/);
+                for (let line of allLines) {
+                    line = line.trim();
+                    if (line.startsWith('\\correctchoice')) {
+                        let after = line.replace(/\\correctchoice\s*/, '').trim();
+                        if (current !== null) {
+                            // сохранить предыдущий
+                            choices.push(current);
+                        }
+                        current = { text: after, isCorrect: true };
+                    } 
+                    else if (line.startsWith('\\choice')) {
+                        if (current !== null) choices.push(current);
+                        let after = line.replace(/\\choice\s*/, '').trim();
+                        current = { text: after, isCorrect: false };
+                    }
+                    else if (current && line.length > 0) {
+                        // многострочный вариант: продолжение
+                        current.text += ' ' + line;
+                    }
+                }
+                if (current !== null) choices.push(current);
+            } else {
+                // используем результат из regex
+                for (let t of tempChoices) choices.push(t);
+            }
+            
+            // Если вариантов меньше 2, но может быть формат другой; всё равно сохраним.
+            // Дополнительно: очистка текста вариантов от возможных лишних команд, типа \correctchoice внутри середины
+            for (let c of choices) {
+                c.text = c.text.replace(/\\correctchoice/g, '').replace(/\\choice/g, '').trim();
+                // убираем незакрытые скобки не принципиально
+            }
+            
+            if (questionText) {
+                questions.push({
+                    questionText: questionText,
+                    choices: choices
+                });
+            }
+        }
+        
+        if (questions.length === 0) {
+            throw new Error('Не удалось распарсить ни одного вопроса. Проверьте формат: каждый вопрос должен содержать \\question и окружение randomizechoices с \\choice и \\correctchoice.');
+        }
+        return questions;
+    }
     
-    // Рисуем соединительную линию между экстремумами
-    connectLine = line.new(startBar, startPrice, endBar, endPrice, 
-             color=trend == "bullish" ? upColor : downColor, 
-             width=2, style=line.style_dotted)
-    array.push(createdLines, connectLine)
-
-// --- Отображение информации на графике ---
-var table infoTable = table.new(position.top_right, 2, 3, bgcolor=color.new(color.black, 80), border_width=1)
-if barstate.islast and not na(startPrice) and not na(endPrice)
-    table.cell(infoTable, 0, 0, "Последний свинг:", text_color=color.white)
-    table.cell(infoTable, 1, 0, trend == "bullish" ? "БЫЧИЙ ↑" : "МЕДВЕЖИЙ ↓", text_color=trend == "bullish" ? color.green : color.red)
-    table.cell(infoTable, 0, 1, "Точка 0%:", text_color=color.white)
-    table.cell(infoTable, 1, 1, str.tostring(startPrice, format.mintick), text_color=color.yellow)
-    table.cell(infoTable, 0, 2, "Точка 100%:", text_color=color.white)
-    table.cell(infoTable, 1, 2, str.tostring(endPrice, format.mintick), text_color=color.yellow)
-
-// --- Очистка при изменении настроек ---
-if barstate.isrecalculated
-    deleteOldObjects()
+    // Преобразование распарсенных данных в строки таблицы (массив массивов для Excel)
+    function questionsToRows(questions) {
+        // Строка заголовков: Номер, Вопрос, Вариант 1, Вариант 2*, Вариант 3, Вариант 4
+        // ВАЖНО: если вариантов меньше 4, заполняем пустыми строками. Если больше 4 — объединяем лишние? По условию 4 варианта, но на всякий случай:
+        // Экспортируем как есть: максимальное число вариантов среди всех вопросов, но спецификация: 4 варианта.
+        // Лучше фиксировать ровно 4 варианта, но если их 3, то четвёртый пустой и т.д.
+        const rows = [["Номер вопроса", "Текст вопроса", "Вариант A", "Вариант B*", "Вариант C", "Вариант D"]];
+        
+        for (let i = 0; i < questions.length; i++) {
+            const q = questions[i];
+            const qNumber = i + 1;
+            const questionBody = q.questionText;
+            
+            // Построить 4 варианта с пометкой *, если вариант правильный
+            let choicesArray = [];
+            for (let ch of q.choices) {
+                let textWithMark = ch.text;
+                if (ch.isCorrect) {
+                    textWithMark = `*${textWithMark}`;
+                }
+                choicesArray.push(textWithMark);
+            }
+            
+            // Дополняем до 4 вариантов пустыми строками
+            while (choicesArray.length < 4) {
+                choicesArray.push("");
+            }
+            // Обрезаем до 4, если больше 4 (на всякий случай)
+            if (choicesArray.length > 4) {
+                choicesArray = choicesArray.slice(0,4);
+                // но убедимся что * среди первых 4х сохранится
+            }
+            
+            rows.push([
+                qNumber.toString(),
+                questionBody,
+                choicesArray[0] || "",
+                choicesArray[1] || "",
+                choicesArray[2] || "",
+                choicesArray[3] || ""
+            ]);
+        }
+        return rows;
+    }
+    
+    // Экспорт в Excel через SheetJS
+    function exportToExcel(questions) {
+        if (!questions || questions.length === 0) {
+            alert("Нет данных для экспорта. Сначала загрузите и распарсите файл.");
+            return;
+        }
+        const rows = questionsToRows(questions);
+        const wsData = rows;
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        // Настройка ширины столбцов (опционально)
+        ws['!cols'] = [
+            { wch: 8 },   // номер
+            { wch: 55 },  // вопрос
+            { wch: 40 },  // ответ 1
+            { wch: 40 },  // ответ 2 со *
+            { wch: 40 },  // ответ 3
+            { wch: 40 }   // ответ 4
+        ];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Вопросы");
+        XLSX.writeFile(wb, `questions_export_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`);
+        statusArea.innerHTML = `✅ Экспорт выполнен! Скачан файл с ${questions.length} вопрос(ов).`;
+    }
+    
+    // Обновить превью таблицы в браузере
+    function renderPreview(questions) {
+        if (!questions || questions.length === 0) {
+            previewArea.style.display = "none";
+            return;
+        }
+        previewArea.style.display = "block";
+        const rowsForDisplay = questionsToRows(questions);
+        if (rowsForDisplay.length <= 1) {
+            previewTableDiv.innerHTML = "<p style='padding:1rem'>Нет данных для превью</p>";
+            return;
+        }
+        // Показываем не более 6 строк + заголовок
+        const maxPreview = Math.min(rowsForDisplay.length, 6); // заголовок + 5 вопросов
+        const previewRows = rowsForDisplay.slice(0, maxPreview);
+        
+        let html = '<table style="width:100%; border-collapse: collapse;">\n<thead><tr>';
+        // Заголовки
+        previewRows[0].forEach(cell => {
+            html += `<th style="padding:8px 6px; border:1px solid #cddfe8;">${escapeHtml(cell)}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+        for (let i=1; i<previewRows.length; i++) {
+            html += '<tr>';
+            previewRows[i].forEach((cell, idx) => {
+                let style = '';
+                if (idx === 3 && cell.toString().startsWith('*')) style = 'background: #e0f7f0;';
+                let displayCell = cell;
+                if (idx === 3 && cell.toString().startsWith('*')) {
+                    displayCell = cell.toString().substring(0, 80);
+                }
+                html += `<td style="padding:8px 6px; border:1px solid #e2edf2; ${style}">${escapeHtml(displayCell.substring(0, 120))}${displayCell.length>120?'…':''}</td>`;
+            });
+            html += '</tr>';
+        }
+        html += '</tbody></table>';
+        if (rowsForDisplay.length - 1 > 5) {
+            html += `<div style="margin-top: 10px; font-style: italic; color: #2c5a7a;">+ ещё ${rowsForDisplay.length - 1 - 5} вопрос(ов) ... полная таблица в Excel</div>`;
+        }
+        previewTableDiv.innerHTML = html;
+    }
+    
+    // вспомогательная функция для экранирования HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+    
+    // Основная функция загрузки и парсинга файла
+    function loadAndParseFile(file) {
+        if (!file) return;
+        statusArea.innerHTML = "⏳ Чтение файла...";
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const content = e.target.result;
+                const questions = parseLatexQuestions(content);
+                if (questions.length === 0) {
+                    statusArea.innerHTML = "⚠️ Не удалось распарсить вопросы. Убедитесь, что используется формат: \\question ... \\begin{randomizechoices} ... \\choice, \\correctchoice ... \\end{randomizechoices}";
+                    parsedQuestions = [];
+                    convertBtn.disabled = true;
+                    previewArea.style.display = "none";
+                    return;
+                }
+                parsedQuestions = questions;
+                convertBtn.disabled = false;
+                statusArea.innerHTML = `✅ Успешно загружено ${questions.length} вопрос(ов). Нажмите "Конвертировать в Excel" для скачивания.`;
+                renderPreview(parsedQuestions);
+            } catch (err) {
+                console.error(err);
+                statusArea.innerHTML = `❌ Ошибка парсинга: ${err.message}`;
+                parsedQuestions = [];
+                convertBtn.disabled = true;
+                previewArea.style.display = "none";
+            }
+        };
+        reader.onerror = function() {
+            statusArea.innerHTML = "❌ Ошибка чтения файла.";
+            parsedQuestions = [];
+            convertBtn.disabled = true;
+        };
+        reader.readAsText(file, "UTF-8");
+    }
+    
+    // Обработка выбора файла
+    fileInput.addEventListener('change', (e) => {
+        if (fileInput.files && fileInput.files.length > 0) {
+            loadAndParseFile(fileInput.files[0]);
+        } else {
+            resetState();
+        }
+    });
+    
+    // Drag & drop область
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = "#eef4fc";
+        dropZone.style.borderColor = "#0f5b9c";
+    });
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.backgroundColor = "#f8fafc";
+        dropZone.style.borderColor = "#b9d0e7";
+    });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = "#f8fafc";
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            loadAndParseFile(files[0]);
+        } else {
+            resetState();
+        }
+    });
+    
+    function resetState() {
+        parsedQuestions = [];
+        convertBtn.disabled = true;
+        previewArea.style.display = "none";
+        statusArea.innerHTML = "📂 Файл не загружен. Выберите .txt файл с вопросами.";
+        fileInput.value = '';
+    }
+    
+    clearBtn.addEventListener('click', () => {
+        resetState();
+        if (previewTableDiv) previewTableDiv.innerHTML = '';
+        statusArea.innerHTML = "🧹 Сброшено. Загрузите новый файл.";
+    });
+    
+    convertBtn.addEventListener('click', () => {
+        if (parsedQuestions && parsedQuestions.length > 0) {
+            exportToExcel(parsedQuestions);
+        } else {
+            alert("Нет данных. Загрузите корректный текстовый файл с вопросами.");
+        }
+    });
+    
+    // Инициализация: кнопка конвертации по умолчанию отключена
+    convertBtn.disabled = true;
+    // Дополнительно пример тестовых данных для демонстрации (опционально) – не добавляем автоматически
+    // Работаем только по загрузке.
+</script>
+</body>
+</html>
