@@ -155,11 +155,6 @@
             color: #0c5460;
             display: block;
         }
-        .status.loading {
-            background: #fff3cd;
-            color: #856404;
-            display: block;
-        }
         .footer-note {
             margin-top: 2rem;
             font-size: 0.85rem;
@@ -172,19 +167,19 @@
         .footer-note strong {
             color: #4a5a6a;
         }
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 3px solid #e9ecef;
-            border-top: 3px solid #cb7b4a;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            vertical-align: middle;
-            margin-right: 8px;
+        canvas {
+            display: none;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        video {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 1rem;
+            border-radius: 12px;
+            display: none;
+        }
+        .video-container {
+            text-align: center;
+            margin-top: 1rem;
         }
     </style>
 </head>
@@ -204,7 +199,7 @@
 
     <!-- Загрузка аудио -->
     <div class="form-group">
-        <label>🎵 Charger un fichier audio (MP3, WAV, OGG, M4A)</label>
+        <label>🎵 Charger un fichier audio (MP3, WAV, OGG)</label>
         <input type="file" id="audioInput" accept="audio/*">
         <div class="file-info" id="audioInfo">Aucun audio chargé</div>
     </div>
@@ -231,192 +226,259 @@
     <button class="btn-generate" id="generateBtn">🎬 Générer MP4</button>
     <div class="status" id="statusMessage"></div>
 
+    <!-- Видео превью -->
+    <div class="video-container">
+        <video id="videoPreview" controls></video>
+    </div>
+
     <!-- Информация -->
     <div class="footer-note">
         <strong>📌 Comment ça marche :</strong><br>
         • L'image sera affichée pendant toute la durée de l'audio<br>
-        • Le fichier MP4 généré pourra être lu dans <strong>n'importe quel lecteur</strong> (VLC, Windows Media Player, QuickTime, etc.)<br>
+        • Le fichier MP4 généré pourra être lu dans <strong>n'importe quel lecteur</strong><br>
         • La vidéo contient une image fixe + la piste audio<br>
-        • <strong>La première génération peut prendre 20-30 secondes</strong> (téléchargement de FFmpeg)
+        • <strong>La génération prend environ 1-2 secondes</strong> (100% local, sans serveur)
     </div>
 </div>
 
-<script type="importmap">
-{
-    "imports": {
-        "@ffmpeg/ffmpeg": "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/esm/index.js",
-        "@ffmpeg/util": "https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/esm/index.js"
-    }
-}
-</script>
+<script>
+    (function() {
+        // === DOM ===
+        const imageInput = document.getElementById('imageInput');
+        const audioInput = document.getElementById('audioInput');
+        const imageInfo = document.getElementById('imageInfo');
+        const audioInfo = document.getElementById('audioInfo');
+        const imagePreview = document.getElementById('imagePreview');
+        const audioPreview = document.getElementById('audioPreview');
+        const audioNamePreview = document.getElementById('audioNamePreview');
+        const generateBtn = document.getElementById('generateBtn');
+        const statusDiv = document.getElementById('statusMessage');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const videoPreview = document.getElementById('videoPreview');
 
-<script type="module">
-    import { FFmpeg } from '@ffmpeg/ffmpeg';
-    import { toBlobURL, fetchFile } from '@ffmpeg/util';
+        let imageFile = null;
+        let audioFile = null;
+        let imageDataURL = null;
 
-    // === DOM ===
-    const imageInput = document.getElementById('imageInput');
-    const audioInput = document.getElementById('audioInput');
-    const imageInfo = document.getElementById('imageInfo');
-    const audioInfo = document.getElementById('audioInfo');
-    const imagePreview = document.getElementById('imagePreview');
-    const audioPreview = document.getElementById('audioPreview');
-    const audioNamePreview = document.getElementById('audioNamePreview');
-    const generateBtn = document.getElementById('generateBtn');
-    const statusDiv = document.getElementById('statusMessage');
-    const progressBar = document.getElementById('progressBar');
-    const progressFill = document.getElementById('progressFill');
-
-    let imageFile = null;
-    let audioFile = null;
-    let audioFileName = null;
-    let ffmpeg = null;
-
-    // === Gestion image ===
-    imageInput.addEventListener('change', function(e) {
-        const file = this.files[0];
-        if (!file) {
-            imageInfo.textContent = 'Aucune image chargée';
-            imagePreview.style.display = 'none';
-            imageFile = null;
-            return;
-        }
-        imageFile = file;
-        imageInfo.textContent = '✅ ' + file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
-        const reader = new FileReader();
-        reader.onload = function(ev) {
-            imagePreview.src = ev.target.result;
-            imagePreview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // === Gestion audio ===
-    audioInput.addEventListener('change', function(e) {
-        const file = this.files[0];
-        if (!file) {
-            audioInfo.textContent = 'Aucun audio chargé';
-            audioPreview.style.display = 'none';
-            audioNamePreview.textContent = '';
-            audioFile = null;
-            audioFileName = null;
-            return;
-        }
-        audioFile = file;
-        audioFileName = file.name;
-        audioInfo.textContent = '✅ ' + file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
-        const reader = new FileReader();
-        reader.onload = function(ev) {
-            audioPreview.src = ev.target.result;
-            audioPreview.style.display = 'block';
-            audioNamePreview.textContent = '🎵 ' + file.name;
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // === Initialisation FFmpeg ===
-    async function initFFmpeg() {
-        if (ffmpeg) return ffmpeg;
-        
-        showStatus('⏳ Téléchargement de FFmpeg... (20-30 Mo, peut prendre du temps)', 'loading');
-        
-        const baseURL = 'https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/umd';
-        ffmpeg = new FFmpeg();
-        
-        await ffmpeg.load({
-            coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-            wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-            workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript'),
+        // === Gestion image ===
+        imageInput.addEventListener('change', function(e) {
+            const file = this.files[0];
+            if (!file) {
+                imageInfo.textContent = 'Aucune image chargée';
+                imagePreview.style.display = 'none';
+                imageFile = null;
+                imageDataURL = null;
+                return;
+            }
+            imageFile = file;
+            imageInfo.textContent = '✅ ' + file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                imageDataURL = ev.target.result;
+                imagePreview.src = imageDataURL;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
         });
-        
-        return ffmpeg;
-    }
 
-    // === Генерация MP4 ===
-    generateBtn.addEventListener('click', async function() {
-        if (!imageFile) {
-            showStatus('❌ Veuillez charger une image.', 'error');
-            return;
+        // === Gestion audio ===
+        audioInput.addEventListener('change', function(e) {
+            const file = this.files[0];
+            if (!file) {
+                audioInfo.textContent = 'Aucun audio chargé';
+                audioPreview.style.display = 'none';
+                audioNamePreview.textContent = '';
+                audioFile = null;
+                return;
+            }
+            audioFile = file;
+            audioInfo.textContent = '✅ ' + file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                audioPreview.src = ev.target.result;
+                audioPreview.style.display = 'block';
+                audioNamePreview.textContent = '🎵 ' + file.name;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // === Генерация MP4 ===
+        generateBtn.addEventListener('click', async function() {
+            if (!imageDataURL) {
+                showStatus('❌ Veuillez charger une image.', 'error');
+                return;
+            }
+            if (!audioFile) {
+                showStatus('❌ Veuillez charger un fichier audio.', 'error');
+                return;
+            }
+
+            generateBtn.disabled = true;
+            progressBar.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressFill.textContent = '0%';
+            videoPreview.style.display = 'none';
+            showStatus('⏳ Préparation de la vidéo...', 'info');
+
+            try {
+                // 1. Créer un canvas pour l'image
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // 2. Charger l'image
+                const img = new Image();
+                img.src = imageDataURL;
+                await new Promise((resolve) => { img.onload = resolve; });
+                
+                // 3. Définir la taille du canvas (1280x720 - HD)
+                const width = 1280;
+                const height = 720;
+                canvas.width = width;
+                canvas.height = height;
+                
+                // 4. Dessiner l'image en conservant le ratio
+                const imgRatio = img.width / img.height;
+                let drawWidth, drawHeight, offsetX = 0, offsetY = 0;
+                
+                if (imgRatio > width / height) {
+                    drawHeight = height;
+                    drawWidth = height * imgRatio;
+                    offsetX = (width - drawWidth) / 2;
+                } else {
+                    drawWidth = width;
+                    drawHeight = width / imgRatio;
+                    offsetY = (height - drawHeight) / 2;
+                }
+                
+                // Fond noir
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, width, height);
+                
+                // Image
+                ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+
+                // 5. Capturer le canvas en stream
+                const stream = canvas.captureStream(30); // 30 fps
+                
+                // 6. Ajouter l'audio
+                const audioContext = new AudioContext();
+                const audioBuffer = await audioFile.arrayBuffer();
+                const decodedAudio = await audioContext.decodeAudioData(audioBuffer);
+                
+                // Créer un MediaStream avec l'audio
+                const audioStream = audioContext.createMediaStreamDestination();
+                const source = audioContext.createBufferSource();
+                source.buffer = decodedAudio;
+                source.connect(audioStream);
+                
+                // Mélanger les streams (vidéo + audio)
+                const combinedStream = new MediaStream([
+                    ...stream.getTracks(),
+                    ...audioStream.stream.getTracks()
+                ]);
+
+                // 7. Enregistrer avec MediaRecorder
+                const mediaRecorder = new MediaRecorder(combinedStream, {
+                    mimeType: 'video/webm;codecs=vp9,opus'
+                });
+
+                // Vérifier si le codec est supporté, sinon utiliser un autre
+                if (!MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')) {
+                    // Essayer avec un autre codec
+                    const recorder = new MediaRecorder(combinedStream, {
+                        mimeType: 'video/webm;codecs=vp8,opus'
+                    });
+                    if (!MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+                        const fallback = new MediaRecorder(combinedStream, {
+                            mimeType: 'video/webm'
+                        });
+                        await recordVideo(fallback);
+                    } else {
+                        await recordVideo(recorder);
+                    }
+                } else {
+                    await recordVideo(mediaRecorder);
+                }
+
+                async function recordVideo(recorder) {
+                    return new Promise((resolve, reject) => {
+                        const chunks = [];
+                        
+                        recorder.ondataavailable = (e) => {
+                            if (e.data.size > 0) chunks.push(e.data);
+                        };
+                        
+                        recorder.onstop = () => {
+                            const blob = new Blob(chunks, { type: 'video/webm' });
+                            const url = URL.createObjectURL(blob);
+                            
+                            // Créer un lien de téléchargement
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'video_image_audio.webm';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            
+                            // Afficher le preview
+                            videoPreview.src = url;
+                            videoPreview.style.display = 'block';
+                            
+                            progressFill.style.width = '100%';
+                            progressFill.textContent = '100%';
+                            showStatus('✅ Vidéo générée avec succès ! Téléchargement automatique.', 'success');
+                            generateBtn.disabled = false;
+                            resolve();
+                        };
+                        
+                        recorder.onerror = (err) => {
+                            reject(err);
+                        };
+                        
+                        // Démarrer l'audio
+                        source.start(0);
+                        
+                        // Démarrer l'enregistrement
+                        recorder.start();
+                        
+                        // Arrêter après la durée de l'audio
+                        const duration = decodedAudio.duration * 1000;
+                        setTimeout(() => {
+                            recorder.stop();
+                            source.stop();
+                            audioContext.close();
+                        }, duration + 500);
+                        
+                        // Mettre à jour la progression
+                        let startTime = Date.now();
+                        const interval = setInterval(() => {
+                            const elapsed = Date.now() - startTime;
+                            const percent = Math.min((elapsed / duration) * 100, 99);
+                            progressFill.style.width = percent + '%';
+                            progressFill.textContent = Math.round(percent) + '%';
+                            if (percent >= 99) clearInterval(interval);
+                        }, 100);
+                    });
+                }
+
+            } catch (err) {
+                console.error(err);
+                showStatus('❌ Erreur : ' + err.message, 'error');
+                generateBtn.disabled = false;
+                progressBar.style.display = 'none';
+            }
+        });
+
+        function showStatus(msg, type) {
+            statusDiv.textContent = msg;
+            statusDiv.className = 'status';
+            if (type) statusDiv.classList.add(type);
+            if (msg) statusDiv.style.display = 'block';
+            else statusDiv.style.display = 'none';
         }
-        if (!audioFile) {
-            showStatus('❌ Veuillez charger un fichier audio.', 'error');
-            return;
-        }
 
-        generateBtn.disabled = true;
-        progressBar.style.display = 'block';
-        progressFill.style.width = '0%';
-        progressFill.textContent = '0%';
-
-        try {
-            // Initialiser FFmpeg
-            const ffmpegInstance = await initFFmpeg();
-            
-            showStatus('⏳ Traitement de l\'image et de l\'audio...', 'info');
-
-            // Écrire les fichiers
-            ffmpegInstance.FS('writeFile', 'image.jpg', await fetchFile(imageFile));
-            ffmpegInstance.FS('writeFile', 'audio.mp3', await fetchFile(audioFile));
-
-            // Suivi de progression
-            ffmpegInstance.on('progress', ({ progress }) => {
-                const percent = Math.round(progress * 100);
-                progressFill.style.width = Math.min(percent, 99) + '%';
-                progressFill.textContent = Math.min(percent, 99) + '%';
-            });
-
-            // Commande FFmpeg
-            await ffmpegInstance.exec([
-                '-loop', '1',
-                '-i', 'image.jpg',
-                '-i', 'audio.mp3',
-                '-c:v', 'libx264',
-                '-c:a', 'aac',
-                '-pix_fmt', 'yuv420p',
-                '-shortest',
-                '-vf', 'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2',
-                'output.mp4'
-            ]);
-
-            // Lire le fichier généré
-            const data = ffmpegInstance.FS('readFile', 'output.mp4');
-            const blob = new Blob([data.buffer], { type: 'video/mp4' });
-            const url = URL.createObjectURL(blob);
-
-            // Télécharger
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'video_image_audio.mp4';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
-            // Nettoyer
-            ffmpegInstance.FS('unlink', 'image.jpg');
-            ffmpegInstance.FS('unlink', 'audio.mp3');
-            ffmpegInstance.FS('unlink', 'output.mp4');
-
-            progressFill.style.width = '100%';
-            progressFill.textContent = '100%';
-            showStatus('✅ MP4 généré avec succès ! Le téléchargement a commencé.', 'success');
-            generateBtn.disabled = false;
-
-        } catch (err) {
-            console.error(err);
-            showStatus('❌ Erreur : ' + err.message, 'error');
-            generateBtn.disabled = false;
-            progressBar.style.display = 'none';
-        }
-    });
-
-    function showStatus(msg, type) {
-        statusDiv.innerHTML = msg;
-        statusDiv.className = 'status';
-        if (type) statusDiv.classList.add(type);
-        if (msg) statusDiv.style.display = 'block';
-        else statusDiv.style.display = 'none';
-    }
+    })();
 </script>
 </body>
 </html>
