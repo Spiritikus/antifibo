@@ -1,657 +1,422 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Конвертер LaTeX вопросов в Excel | Поддержка \ce и формул</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur MP4 · Image + Audio</title>
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        body {
-            background: linear-gradient(135deg, #e9f0f5 0%, #dce6ef 100%);
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+        }
+        body {
+            background: #f0ece6;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            padding: 2rem 1rem;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
         }
-
-        .card {
-            max-width: 1500px;
+        .container {
+            max-width: 720px;
             width: 100%;
             background: white;
-            border-radius: 36px;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
-            overflow: hidden;
+            border-radius: 28px;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
         }
-
-        .header {
-            background: linear-gradient(135deg, #1e3c5c 0%, #2a4a6e 100%);
-            color: white;
-            padding: 1.8rem 2rem;
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: #1e2b3c;
+            border-left: 5px solid #cb7b4a;
+            padding-left: 1rem;
+            margin-bottom: 0.5rem;
         }
-
-        .header h1 {
-            margin: 0 0 0.3rem 0;
-            font-weight: 700;
-            font-size: 1.9rem;
-        }
-
-        .header p {
-            margin: 0;
-            opacity: 0.9;
-            font-size: 0.95rem;
-        }
-
-        .content {
-            padding: 2rem;
-        }
-
-        .input-methods {
-            display: flex;
-            gap: 1.8rem;
-            flex-wrap: wrap;
+        .sous-titre {
+            color: #5b6f82;
             margin-bottom: 2rem;
+            border-bottom: 1px solid #e2dad1;
+            padding-bottom: 1rem;
         }
-
-        .method-card {
-            flex: 1;
-            min-width: 280px;
-            background: #f9fbfd;
-            border-radius: 24px;
-            padding: 1.3rem;
-            border: 1px solid #e2edf2;
+        .form-group {
+            margin-bottom: 1.8rem;
         }
-
-        .method-card h3 {
-            margin: 0 0 0.8rem 0;
-            font-size: 1.2rem;
-            color: #1e3c5c;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #1a2837;
         }
-
-        .upload-area {
-            background: #ffffff;
-            border: 2px dashed #b9d0e7;
-            border-radius: 20px;
-            padding: 1.2rem;
-            text-align: center;
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px dashed #cdbfb0;
+            border-radius: 16px;
+            background: #faf8f6;
             cursor: pointer;
-            transition: 0.2s;
+        }
+        .form-group input[type="file"]:hover {
+            border-color: #b47b53;
+        }
+        .form-group .file-info {
+            font-size: 0.9rem;
+            color: #4a5a6a;
+            margin-top: 0.4rem;
+        }
+        .preview-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+            padding: 1.2rem;
+            background: #f8f6f3;
+            border-radius: 16px;
+        }
+        .preview-row .preview-item {
+            flex: 1;
+            min-width: 120px;
+        }
+        .preview-row .preview-item img,
+        .preview-row .preview-item audio {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 12px;
+            display: block;
+            margin-top: 0.3rem;
+        }
+        .preview-row .preview-item audio {
+            max-height: 60px;
+            width: 100%;
+        }
+        .btn-generate {
+            background: #cb7b4a;
+            color: white;
+            border: none;
+            padding: 0.9rem 2.5rem;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+            width: 100%;
             margin-top: 0.5rem;
         }
-
-        .upload-area:hover {
-            border-color: #1e3c5c;
-            background: #f1f7fd;
+        .btn-generate:hover {
+            background: #b86a38;
+            transform: scale(0.99);
         }
-
-        .upload-area input {
+        .btn-generate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .progress-bar {
+            margin-top: 1rem;
+            width: 100%;
+            height: 24px;
+            background: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
             display: none;
         }
-
-        textarea {
-            width: 100%;
-            min-height: 320px;
-            padding: 14px;
-            font-family: 'Courier New', 'Fira Code', monospace;
-            font-size: 0.82rem;
-            border: 1px solid #cbdde9;
-            border-radius: 18px;
-            background: #ffffff;
-            resize: vertical;
-            line-height: 1.5;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #1e3c5c;
-            box-shadow: 0 0 0 3px rgba(30,60,92,0.15);
-        }
-
-        .btn-group {
+        .progress-bar .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #cb7b4a;
+            border-radius: 12px;
+            transition: width 0.3s;
             display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
+            align-items: center;
             justify-content: center;
-            margin: 1.5rem 0 1rem;
-        }
-
-        button {
-            background: #1e3c5c;
-            border: none;
             color: white;
-            font-weight: 600;
-            padding: 12px 28px;
-            border-radius: 44px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
-
-        button:hover {
-            background: #0f2b44;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+        .status {
+            margin-top: 1.2rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            background: #eae3db;
+            color: #1e2b3c;
+            display: none;
         }
-
-        button.secondary {
-            background: #5a7d9c;
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
         }
-
-        button.success {
-            background: #2a7f6e;
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
         }
-
-        button.success:hover {
-            background: #1e5f52;
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            display: block;
         }
-
-        .status-msg {
-            background: #eef2f7;
-            border-radius: 40px;
-            padding: 12px 22px;
-            font-size: 0.9rem;
-            color: #1e3c5c;
-            margin: 16px 0;
-            border-left: 4px solid #2a7f6e;
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+            display: block;
         }
-
-        .preview-section {
+        .footer-note {
             margin-top: 2rem;
-            border-top: 1px solid #e2edf2;
-            padding-top: 1.5rem;
-        }
-
-        .preview-title {
-            font-weight: 700;
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            color: #1e3c5c;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 20px;
-            border: 1px solid #dce7ef;
-            background: white;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.82rem;
-        }
-
-        th {
-            background: #eef3fc;
-            padding: 14px 12px;
+            font-size: 0.85rem;
+            color: #7a8a9a;
             text-align: center;
-            border-bottom: 2px solid #cbdde9;
-            color: #1e3c5c;
-            font-weight: 700;
+            border-top: 1px solid #e2dad1;
+            padding-top: 1.2rem;
+            line-height: 1.6;
         }
-
-        td {
-            padding: 12px 12px;
-            border-bottom: 1px solid #e2edf2;
-            vertical-align: top;
+        .footer-note strong {
+            color: #4a5a6a;
         }
-
-        .correct-col {
-            background-color: #d4f5e8 !important;
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid #e9ecef;
+            border-top: 3px solid #cb7b4a;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
         }
-
-        footer {
-            background: #f0f4f9;
-            padding: 1rem 2rem;
-            font-size: 0.75rem;
-            color: #5e7e9e;
-            text-align: center;
-            border-top: 1px solid #dce7ef;
-        }
-
-        .example-hint {
-            font-size: 0.7rem;
-            color: #5a7d9c;
-            margin-top: 8px;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-<div class="card">
-    <div class="header">
-        <h1>📊 LaTeX → Excel | Полная поддержка \ce и формул</h1>
-        <p>Корректно обрабатывает LaTeX-команды \ce{}, формулы, переносы строк. Каждый вариант ответа — в отдельную ячейку.</p>
+<div class="container">
+    <h1>🎬 Générateur MP4 · Image + Audio</h1>
+    <div class="sous-titre">
+        Créez une vidéo MP4 avec une image fixe et une piste audio
     </div>
-    <div class="content">
-        <div class="input-methods">
-            <div class="method-card">
-                <h3>📁 Загрузить файл</h3>
-                <div class="upload-area" id="dropZone">
-                    <label for="fileInput" style="cursor: pointer; display: block;">
-                        📂 Нажмите или перетащите .txt / .tex
-                    </label>
-                    <input type="file" id="fileInput" accept=".txt, .tex, .text/plain">
-                </div>
-            </div>
-            <div class="method-card">
-                <h3>✏️ Вставить LaTeX</h3>
-                <textarea id="latexInput" placeholder='Пример с командами \ce (химические формулы):
 
-\question Какова электронная конфигурация атома водорода в основном состоянии?
-\begin{randomizechoices}
-    \correctchoice \ce{1s^1}
-    \choice \ce{1s^2}
-    \choice \ce{1s^2 2s^1}
-    \choice \ce{1s^2 2s^2 2p^1}
-\end{randomizechoices}
+    <!-- Загрузка картинки -->
+    <div class="form-group">
+        <label>🖼️ Charger une image (JPG, PNG)</label>
+        <input type="file" id="imageInput" accept="image/*">
+        <div class="file-info" id="imageInfo">Aucune image chargée</div>
+    </div>
 
-\question Сходство спектров водорода и щелочных металлов является аргументом для размещения водорода в...
-\begin{randomizechoices}
-    \correctchoice I группе периодической системы.
-    \choice VII группе периодической системы.
-    \choice VIII группе периодической системы.
-    \choice отдельно от всех групп.
-\end{randomizechoices}
+    <!-- Загрузка аудио -->
+    <div class="form-group">
+        <label>🎵 Charger un fichier audio (MP3, WAV, OGG, M4A)</label>
+        <input type="file" id="audioInput" accept="audio/*">
+        <div class="file-info" id="audioInfo">Aucun audio chargé</div>
+    </div>
 
-\question Энергия ионизации атома водорода по сравнению с атомами щелочных металлов...
-\begin{randomizechoices}
-    \correctchoice намного больше.
-    \choice примерно одинакова.
-    \choice намного меньше.
-    \choice не может быть сравнена.
-\end{randomizechoices}'></textarea>
-                <div class="example-hint">💡 Каждый вариант должен начинаться с \choice или \correctchoice на отдельной строке. Поддерживаются \ce{}, \mathrm{}, \text{} и любые другие LaTeX-команды.</div>
-            </div>
+    <!-- Превью -->
+    <div class="preview-row" id="previewRow">
+        <div class="preview-item">
+            <span style="font-weight:500;">Image</span>
+            <img id="imagePreview" style="display:none; max-height:120px;" alt="Aperçu">
         </div>
-
-        <div class="btn-group">
-            <button id="convertFromTextBtn">🔄 Конвертировать из текста</button>
-            <button id="clearAllBtn" class="secondary">🗑 Очистить всё</button>
-            <button id="exportExcelBtn" class="success" disabled>📎 Экспорт в Excel (XLSX)</button>
-        </div>
-
-        <div id="statusArea" class="status-msg">
-            💡 Вставьте LaTeX-код или загрузите файл, затем нажмите «Конвертировать из текста».
-        </div>
-
-        <div class="preview-section" id="previewArea" style="display: none;">
-            <div class="preview-title">
-                <span>📋 Предпросмотр (первые 5 вопросов)</span>
-                <span style="background: #e1ecf4; padding: 4px 14px; border-radius: 30px; font-size: 0.75rem;" id="questionsCountBadge"></span>
-            </div>
-            <div class="table-wrapper">
-                <div id="previewTable"></div>
-            </div>
+        <div class="preview-item">
+            <span style="font-weight:500;">Audio</span>
+            <audio id="audioPreview" controls style="display:none; width:100%;"></audio>
+            <div id="audioNamePreview" style="font-size:0.85rem; color:#4a5a6a; margin-top:0.2rem;"></div>
         </div>
     </div>
-    <footer>
-        ✅ <strong>Как работает:</strong> Каждая команда <code>\choice</code> или <code>\correctchoice</code> создаёт отдельную ячейку. Правильный ответ помещается в колонку A со звёздочкой *, остальные — в B, C, D.<br>
-        Поддерживаются многострочные варианты, LaTeX-команды, химические формулы \ce{} и любые спецсимволы.
-    </footer>
+
+    <!-- Прогресс -->
+    <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill">0%</div>
+    </div>
+
+    <!-- Кнопка -->
+    <button class="btn-generate" id="generateBtn">🎬 Générer MP4</button>
+    <div class="status" id="statusMessage"></div>
+
+    <!-- Информация -->
+    <div class="footer-note">
+        <strong>📌 Comment ça marche :</strong><br>
+        • L'image sera affichée pendant toute la durée de l'audio<br>
+        • Le fichier MP4 généré pourra être lu dans <strong>n'importe quel lecteur</strong> (VLC, Windows Media Player, QuickTime, etc.)<br>
+        • La vidéo contient une image fixe + la piste audio<br>
+        • <strong>La première génération peut prendre 20-30 secondes</strong> (téléchargement de FFmpeg)
+    </div>
 </div>
 
-<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-<script>
-    let parsedQuestions = [];
+<script type="importmap">
+{
+    "imports": {
+        "@ffmpeg/ffmpeg": "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/esm/index.js",
+        "@ffmpeg/util": "https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/esm/index.js"
+    }
+}
+</script>
 
-    const fileInput = document.getElementById('fileInput');
-    const dropZone = document.getElementById('dropZone');
-    const latexTextarea = document.getElementById('latexInput');
-    const convertFromTextBtn = document.getElementById('convertFromTextBtn');
-    const clearAllBtn = document.getElementById('clearAllBtn');
-    const exportExcelBtn = document.getElementById('exportExcelBtn');
-    const statusArea = document.getElementById('statusArea');
-    const previewArea = document.getElementById('previewArea');
-    const previewTableDiv = document.getElementById('previewTable');
-    const questionsCountBadge = document.getElementById('questionsCountBadge');
+<script type="module">
+    import { FFmpeg } from '@ffmpeg/ffmpeg';
+    import { toBlobURL, fetchFile } from '@ffmpeg/util';
 
-    // ============= РАСШИРЕННЫЙ ПАРСЕР С ПОДДЕРЖКОЙ \ce =============
-    function parseLatexQuestions(content) {
-        let text = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-        
-        // Находим все вопросы
-        const questionPattern = /\\question\s+([\s\S]*?)(?=\\question\s+|\n*$)/gi;
-        let matches = [];
-        let match;
-        while ((match = questionPattern.exec(text)) !== null) {
-            let block = match[1].trim();
-            if (block.length > 0) matches.push(block);
-        }
-        
-        if (matches.length === 0 && text.includes('\\question')) {
-            const parts = text.split(/\\question/);
-            for (let i = 1; i < parts.length; i++) {
-                if (parts[i].trim()) matches.push(parts[i].trim());
-            }
-        }
-        
-        if (matches.length === 0) {
-            throw new Error('Не найдено ни одного вопроса с командой \\question');
-        }
-        
-        const questions = [];
-        
-        for (let qIdx = 0; qIdx < matches.length; qIdx++) {
-            let block = matches[qIdx];
-            
-            // Извлекаем текст вопроса
-            let questionText = '';
-            let choicesBlock = '';
-            
-            const beginMatch = block.match(/\\begin\{(randomizechoices|choices)\}/);
-            if (beginMatch) {
-                const envName = beginMatch[1];
-                const beginTag = beginMatch[0];
-                const endTag = `\\end{${envName}}`;
-                const beginPos = block.indexOf(beginTag);
-                questionText = block.substring(0, beginPos).trim();
-                
-                const afterBegin = block.substring(beginPos + beginTag.length);
-                const endPos = afterBegin.indexOf(endTag);
-                if (endPos !== -1) {
-                    choicesBlock = afterBegin.substring(0, endPos).trim();
-                } else {
-                    choicesBlock = afterBegin;
-                }
-            } else {
-                questionText = block;
-                choicesBlock = block;
-            }
-            
-            // ========== РАЗДЕЛЕНИЕ ВАРИАНТОВ ==========
-            // Разбиваем choicesBlock на строки и обрабатываем каждую строку
-            const lines = choicesBlock.split(/\n/);
-            const rawChoices = [];
-            
-            for (let line of lines) {
-                line = line.trim();
-                if (line.startsWith('\\correctchoice')) {
-                    let content = line.replace(/\\correctchoice\s*/, '').trim();
-                    rawChoices.push({ text: content, isCorrect: true });
-                }
-                else if (line.startsWith('\\choice')) {
-                    let content = line.replace(/\\choice\s*/, '').trim();
-                    rawChoices.push({ text: content, isCorrect: false });
-                }
-            }
-            
-            // Если варианты не найдены построчно, пробуем искать в одной строке
-            if (rawChoices.length === 0 && choicesBlock.length > 0) {
-                // Ищем все вхождения \correctchoice и \choice через регулярку
-                const allChoiceRegex = /(\\(?:correct)?choice)\s+([^\n\\]*(?:\\[a-z]+\{[^}]*\}[^\n\\]*)*)/gi;
-                let cMatch;
-                while ((cMatch = allChoiceRegex.exec(choicesBlock)) !== null) {
-                    const cmd = cMatch[1];
-                    let content = cMatch[2] || '';
-                    content = content.trim();
-                    const isCorrect = cmd.includes('correct');
-                    if (content.length > 0) {
-                        rawChoices.push({ text: content, isCorrect: isCorrect });
-                    }
-                }
-            }
-            
-            // Собираем варианты: максимум 4, первый (правильный) в A со *
-            let choices = [];
-            let correctFound = false;
-            let correctChoice = null;
-            let otherChoices = [];
-            
-            for (let rc of rawChoices) {
-                if (rc.isCorrect && !correctFound) {
-                    correctChoice = rc;
-                    correctFound = true;
-                } else {
-                    otherChoices.push(rc);
-                }
-            }
-            
-            if (correctChoice) {
-                choices.push({ text: correctChoice.text, isCorrect: true });
-            }
-            
-            for (let i = 0; i < Math.min(otherChoices.length, 3); i++) {
-                choices.push({ text: otherChoices[i].text, isCorrect: false });
-            }
-            
-            // Дополняем до 4 вариантов пустыми
-            while (choices.length < 4) {
-                choices.push({ text: '', isCorrect: false });
-            }
-            
-            if (questionText && questionText.length > 0) {
-                questions.push({
-                    questionText: questionText,
-                    choices: choices
-                });
-            }
-        }
-        
-        if (questions.length === 0) {
-            throw new Error('Не удалось распарсить вопросы. Убедитесь, что каждый вариант начинается с \\choice или \\correctchoice на отдельной строке.');
-        }
-        
-        return questions;
-    }
-    
-    // Формирование строк для Excel
-    function questionsToRows(questions) {
-        const rows = [["Номер вопроса", "Текст вопроса", "Вариант A*", "Вариант B", "Вариант C", "Вариант D"]];
-        
-        for (let i = 0; i < questions.length; i++) {
-            const q = questions[i];
-            const qNumber = i + 1;
-            const questionBody = q.questionText;
-            
-            let optionCells = ["", "", "", ""];
-            
-            for (let optIdx = 0; optIdx < q.choices.length && optIdx < 4; optIdx++) {
-                const ch = q.choices[optIdx];
-                let displayText = ch.text;
-                if (ch.isCorrect && displayText && displayText.length > 0) {
-                    displayText = `*${displayText}`;
-                }
-                optionCells[optIdx] = displayText;
-            }
-            
-            rows.push([
-                qNumber.toString(),
-                questionBody,
-                optionCells[0],
-                optionCells[1],
-                optionCells[2],
-                optionCells[3]
-            ]);
-        }
-        return rows;
-    }
-    
-    function exportToExcel(questions) {
-        if (!questions || questions.length === 0) {
-            alert("Нет данных для экспорта.");
+    // === DOM ===
+    const imageInput = document.getElementById('imageInput');
+    const audioInput = document.getElementById('audioInput');
+    const imageInfo = document.getElementById('imageInfo');
+    const audioInfo = document.getElementById('audioInfo');
+    const imagePreview = document.getElementById('imagePreview');
+    const audioPreview = document.getElementById('audioPreview');
+    const audioNamePreview = document.getElementById('audioNamePreview');
+    const generateBtn = document.getElementById('generateBtn');
+    const statusDiv = document.getElementById('statusMessage');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+
+    let imageFile = null;
+    let audioFile = null;
+    let audioFileName = null;
+    let ffmpeg = null;
+
+    // === Gestion image ===
+    imageInput.addEventListener('change', function(e) {
+        const file = this.files[0];
+        if (!file) {
+            imageInfo.textContent = 'Aucune image chargée';
+            imagePreview.style.display = 'none';
+            imageFile = null;
             return;
         }
-        const rows = questionsToRows(questions);
-        const ws = XLSX.utils.aoa_to_sheet(rows);
-        ws['!cols'] = [{ wch: 8 }, { wch: 55 }, { wch: 45 }, { wch: 45 }, { wch: 45 }, { wch: 45 }];
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Вопросы");
-        const fileName = `questions_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`;
-        XLSX.writeFile(wb, fileName);
-        statusArea.innerHTML = `✅ Экспорт выполнен! Скачан файл с ${questions.length} вопрос(ов).`;
-        return true;
-    }
-    
-    function renderPreview(questions) {
-        if (!questions || questions.length === 0) {
-            previewArea.style.display = "none";
+        imageFile = file;
+        imageInfo.textContent = '✅ ' + file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            imagePreview.src = ev.target.result;
+            imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // === Gestion audio ===
+    audioInput.addEventListener('change', function(e) {
+        const file = this.files[0];
+        if (!file) {
+            audioInfo.textContent = 'Aucun audio chargé';
+            audioPreview.style.display = 'none';
+            audioNamePreview.textContent = '';
+            audioFile = null;
+            audioFileName = null;
             return;
         }
-        previewArea.style.display = "block";
-        questionsCountBadge.innerText = `Всего: ${questions.length}`;
+        audioFile = file;
+        audioFileName = file.name;
+        audioInfo.textContent = '✅ ' + file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            audioPreview.src = ev.target.result;
+            audioPreview.style.display = 'block';
+            audioNamePreview.textContent = '🎵 ' + file.name;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // === Initialisation FFmpeg ===
+    async function initFFmpeg() {
+        if (ffmpeg) return ffmpeg;
         
-        const allRows = questionsToRows(questions);
-        if (allRows.length <= 1) {
-            previewTableDiv.innerHTML = "<p>Нет данных для отображения</p>";
-            return;
-        }
+        showStatus('⏳ Téléchargement de FFmpeg... (20-30 Mo, peut prendre du temps)', 'loading');
         
-        const maxShow = Math.min(allRows.length, 6);
-        const showRows = allRows.slice(0, maxShow);
+        const baseURL = 'https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/umd';
+        ffmpeg = new FFmpeg();
         
-        let html = '<table style="width:100%; border-collapse: collapse; font-size:13px;">\n<thead><tr>';
-        showRows[0].forEach(header => {
-            html += `<th style="padding:12px 10px; border:1px solid #cbdde9; background:#eef3fc; text-align:center;">${escapeHtml(header)}</th>`;
+        await ffmpeg.load({
+            coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+            wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+            workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript'),
         });
-        html += '</thead><tbody>';
         
-        for (let r = 1; r < showRows.length; r++) {
-            html += '<tr>';
-            for (let c = 0; c < showRows[r].length; c++) {
-                let cellValue = showRows[r][c] || '';
-                let isCorrectCol = (c === 2);
-                let hasStar = typeof cellValue === 'string' && cellValue.startsWith('*');
-                let cellClass = (hasStar && isCorrectCol) ? 'correct-col' : '';
-                let displayValue = cellValue.length > 120 ? cellValue.substring(0, 120) + '…' : cellValue;
-                html += `<td style="padding:10px 8px; border:1px solid #e2edf2; vertical-align:top; white-space:pre-wrap;" class="${cellClass}">${escapeHtml(displayValue)}</td>`;
-            }
-            html += '</tr>';
-        }
-        html += '</tbody></table>';
-        
-        if (allRows.length - 1 > 5) {
-            html += `<div style="margin-top:12px; font-size:0.8rem; color:#2c5a7a;">+ ещё ${allRows.length - 1 - 5} вопрос(ов)</div>`;
-        }
-        previewTableDiv.innerHTML = html;
+        return ffmpeg;
     }
-    
-    function escapeHtml(str) {
-        if (!str) return '';
-        return String(str).replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-    
-    function convertFromText() {
-        const rawText = latexTextarea.value.trim();
-        if (!rawText) {
-            statusArea.innerHTML = "⚠️ Поле ввода пустое. Вставьте LaTeX-код с вопросами.";
+
+    // === Генерация MP4 ===
+    generateBtn.addEventListener('click', async function() {
+        if (!imageFile) {
+            showStatus('❌ Veuillez charger une image.', 'error');
             return;
         }
-        statusArea.innerHTML = "⏳ Парсинг...";
+        if (!audioFile) {
+            showStatus('❌ Veuillez charger un fichier audio.', 'error');
+            return;
+        }
+
+        generateBtn.disabled = true;
+        progressBar.style.display = 'block';
+        progressFill.style.width = '0%';
+        progressFill.textContent = '0%';
+
         try {
-            const questions = parseLatexQuestions(rawText);
-            if (questions.length === 0) throw new Error("Нет вопросов после парсинга");
-            parsedQuestions = questions;
-            exportExcelBtn.disabled = false;
+            // Initialiser FFmpeg
+            const ffmpegInstance = await initFFmpeg();
             
-            let totalOpt = 0;
-            for (let q of questions) {
-                for (let c of q.choices) {
-                    if (c.text && c.text.length > 0) totalOpt++;
-                }
-            }
-            statusArea.innerHTML = `✅ Успешно: ${questions.length} вопрос(ов), ${totalOpt} вариантов. Правильный ответ (с \correctchoice) — в колонке A со *.`;
-            renderPreview(parsedQuestions);
+            showStatus('⏳ Traitement de l\'image et de l\'audio...', 'info');
+
+            // Écrire les fichiers
+            ffmpegInstance.FS('writeFile', 'image.jpg', await fetchFile(imageFile));
+            ffmpegInstance.FS('writeFile', 'audio.mp3', await fetchFile(audioFile));
+
+            // Suivi de progression
+            ffmpegInstance.on('progress', ({ progress }) => {
+                const percent = Math.round(progress * 100);
+                progressFill.style.width = Math.min(percent, 99) + '%';
+                progressFill.textContent = Math.min(percent, 99) + '%';
+            });
+
+            // Commande FFmpeg
+            await ffmpegInstance.exec([
+                '-loop', '1',
+                '-i', 'image.jpg',
+                '-i', 'audio.mp3',
+                '-c:v', 'libx264',
+                '-c:a', 'aac',
+                '-pix_fmt', 'yuv420p',
+                '-shortest',
+                '-vf', 'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2',
+                'output.mp4'
+            ]);
+
+            // Lire le fichier généré
+            const data = ffmpegInstance.FS('readFile', 'output.mp4');
+            const blob = new Blob([data.buffer], { type: 'video/mp4' });
+            const url = URL.createObjectURL(blob);
+
+            // Télécharger
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'video_image_audio.mp4';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // Nettoyer
+            ffmpegInstance.FS('unlink', 'image.jpg');
+            ffmpegInstance.FS('unlink', 'audio.mp3');
+            ffmpegInstance.FS('unlink', 'output.mp4');
+
+            progressFill.style.width = '100%';
+            progressFill.textContent = '100%';
+            showStatus('✅ MP4 généré avec succès ! Le téléchargement a commencé.', 'success');
+            generateBtn.disabled = false;
+
         } catch (err) {
             console.error(err);
-            statusArea.innerHTML = `❌ Ошибка: ${err.message}`;
-            parsedQuestions = [];
-            exportExcelBtn.disabled = true;
-            previewArea.style.display = "none";
-        }
-    }
-    
-    function loadAndParseFile(file) {
-        if (!file) return;
-        statusArea.innerHTML = "⏳ Чтение файла...";
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const content = e.target.result;
-                const questions = parseLatexQuestions(content);
-                parsedQuestions = questions;
-                if (parsedQuestions.length > 0) {
-                    exportExcelBtn.disabled = false;
-                    let totalOpt = 0;
-                    for (let q of parsedQuestions) {
-                        for (let c of q.choices) {
-                            if (c.text && c.text.length > 0) totalOpt++;
-                        }
-                    }
-                    statusArea.innerHTML = `✅ Файл загружен: ${parsedQuestions.length} вопрос(ов), ${totalOpt} вариантов. Каждый вариант в отдельной колонке.`;
-                    renderPreview(parsedQuestions);
-                    latexTextarea.value = content;
-                } else {
-                    throw new Error("Не удалось распарсить вопросы.");
-                }
-            } catch (err) {
-                statusArea.innerHTML = `❌ Ошибка: ${err.message}. Убедитесь, что каждый вариант начинается с \\choice или \\correctchoice на новой строке.`;
-                parsedQuestions = [];
-                exportExcelBtn.disabled = true;
-                previewArea.style.display = "none";
-            }
-        };
-        reader.onerror = () => statusArea.innerHTML = "❌ Ошибка чтения файла.";
-        reader.readAsText(file, "UTF-8");
-    }
-    
-    function clearAll() {
-        parsedQuestions = [];
-        exportExcelBtn.disabled = true;
-        previewArea.style.display = "none";
-        latexTextarea.value = "";
-        fileInput.value = "";
-        statusArea.innerHTML = "🧹 Очищено. Вставьте текст или загрузите файл, затем нажмите «Конвертировать из текста».";
-        previewTableDiv.innerHTML = "";
-    }
-    
-    convertFromTextBtn.addEventListener('click', convertFromText);
-    clearAllBtn.addEventListener('click', clearAll);
-    exportExcelBtn.addEventListener('click', () => {
-        if (parsedQuestions.length > 0) exportToExcel(parsedQuestions);
-        else alert("Нет данных для экспорта. Сначала сконвертируйте текст.");
-    });
-    
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.style.backgroundColor = "#eef4fc";
-    });
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.style.backgroundColor = "#ffffff";
-    });
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.style.backgroundColor = "#ffffff";
-        if (e.dataTransfer.files.length > 0) {
-            loadAndParseFile(e.dataTransfer.files[0]);
+            showStatus('❌ Erreur : ' + err.message, 'error');
+            generateBtn.disabled = false;
+            progressBar.style.display = 'none';
         }
     });
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files && fileInput.files[0]) {
-            loadAndParseFile(fileInput.files[0]);
-        }
-    });
-    
-    exportExcelBtn.disabled = true;
+
+    function showStatus(msg, type) {
+        statusDiv.innerHTML = msg;
+        statusDiv.className = 'status';
+        if (type) statusDiv.classList.add(type);
+        if (msg) statusDiv.style.display = 'block';
+        else statusDiv.style.display = 'none';
+    }
 </script>
 </body>
 </html>
