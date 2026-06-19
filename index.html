@@ -234,10 +234,10 @@
     <!-- Информация -->
     <div class="footer-note">
         <strong>📌 Comment ça marche :</strong><br>
-        • L'image sera affichée pendant toute la durée de l'audio<br>
-        • Le fichier MP4 généré pourra être lu dans <strong>n'importe quel lecteur</strong><br>
-        • La vidéo contient une image fixe + la piste audio<br>
-        • <strong>La génération prend environ 1-2 secondes</strong> (100% local, sans serveur)
+        • L'image chargée reste <strong>fixe</strong> pendant toute la vidéo<br>
+        • L'audio est synchronisé avec l'image<br>
+        • Le fichier est généré en <strong>MP4 (H.264 + AAC)</strong><br>
+        • 100% local — vos fichiers ne quittent pas votre navigateur
     </div>
 </div>
 
@@ -260,6 +260,7 @@
         let imageFile = null;
         let audioFile = null;
         let imageDataURL = null;
+        let audioDataURL = null;
 
         // === Gestion image ===
         imageInput.addEventListener('change', function(e) {
@@ -290,13 +291,15 @@
                 audioPreview.style.display = 'none';
                 audioNamePreview.textContent = '';
                 audioFile = null;
+                audioDataURL = null;
                 return;
             }
             audioFile = file;
             audioInfo.textContent = '✅ ' + file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
             const reader = new FileReader();
             reader.onload = function(ev) {
-                audioPreview.src = ev.target.result;
+                audioDataURL = ev.target.result;
+                audioPreview.src = audioDataURL;
                 audioPreview.style.display = 'block';
                 audioNamePreview.textContent = '🎵 ' + file.name;
             };
@@ -322,22 +325,22 @@
             showStatus('⏳ Préparation de la vidéo...', 'info');
 
             try {
-                // 1. Créer un canvas pour l'image
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                // 2. Charger l'image
+                // 1. Charger l'image
                 const img = new Image();
                 img.src = imageDataURL;
                 await new Promise((resolve) => { img.onload = resolve; });
+
+                // 2. Créer un canvas pour l'image
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
                 
-                // 3. Définir la taille du canvas (1280x720 - HD)
+                // 3. Définir la taille du canvas (HD 1280x720)
                 const width = 1280;
                 const height = 720;
                 canvas.width = width;
                 canvas.height = height;
                 
-                // 4. Dessiner l'image en conservant le ratio
+                // 4. Dessiner l'image en conservant le ratio (centrée, fond noir)
                 const imgRatio = img.width / img.height;
                 let drawWidth, drawHeight, offsetX = 0, offsetY = 0;
                 
@@ -355,112 +358,126 @@
                 ctx.fillStyle = '#000000';
                 ctx.fillRect(0, 0, width, height);
                 
-                // Image
+                // Image centrée
                 ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
 
-                // 5. Capturer le canvas en stream
-                const stream = canvas.captureStream(30); // 30 fps
-                
-                // 6. Ajouter l'audio
+                // 5. Préparer l'audio
                 const audioContext = new AudioContext();
                 const audioBuffer = await audioFile.arrayBuffer();
                 const decodedAudio = await audioContext.decodeAudioData(audioBuffer);
                 
-                // Créer un MediaStream avec l'audio
-                const audioStream = audioContext.createMediaStreamDestination();
+                // 6. Créer un MediaStream à partir du canvas (vidéo)
+                const canvasStream = canvas.captureStream(30);
+                
+                // 7. Créer un MediaStream pour l'audio
+                const audioStreamDest = audioContext.createMediaStreamDestination();
                 const source = audioContext.createBufferSource();
                 source.buffer = decodedAudio;
-                source.connect(audioStream);
+                source.connect(audioStreamDest);
                 
-                // Mélanger les streams (vidéo + audio)
+                // 8. Combiner les deux streams
                 const combinedStream = new MediaStream([
-                    ...stream.getTracks(),
-                    ...audioStream.stream.getTracks()
+                    ...canvasStream.getVideoTracks(),
+                    ...audioStreamDest.stream.getAudioTracks()
                 ]);
 
-                // 7. Enregistrer avec MediaRecorder
-                const mediaRecorder = new MediaRecorder(combinedStream, {
-                    mimeType: 'video/webm;codecs=vp9,opus'
-                });
+                // 9. Enregistrer avec MediaRecorder en essayant d'obtenir MP4
+                const mimeTypes = [
+                    'video/mp4;codecs=h264,aac',
+                    'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+                    'video/mp4',
+                    'video/webm;codecs=vp9,opus',
+                    'video/webm;codecs=vp8,opus',
+                    'video/webm'
+                ];
 
-                // Vérifier si le codec est supporté, sinon utiliser un autre
-                if (!MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')) {
-                    // Essayer avec un autre codec
-                    const recorder = new MediaRecorder(combinedStream, {
-                        mimeType: 'video/webm;codecs=vp8,opus'
-                    });
-                    if (!MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
-                        const fallback = new MediaRecorder(combinedStream, {
-                            mimeType: 'video/webm'
-                        });
-                        await recordVideo(fallback);
-                    } else {
-                        await recordVideo(recorder);
+                let mimeType = null;
+                for (const type of mimeTypes) {
+                    if (MediaRecorder.isTypeSupported(type)) {
+                        mimeType = type;
+                        break;
                     }
-                } else {
-                    await recordVideo(mediaRecorder);
                 }
 
-                async function recordVideo(recorder) {
-                    return new Promise((resolve, reject) => {
-                        const chunks = [];
-                        
-                        recorder.ondataavailable = (e) => {
-                            if (e.data.size > 0) chunks.push(e.data);
-                        };
-                        
-                        recorder.onstop = () => {
-                            const blob = new Blob(chunks, { type: 'video/webm' });
+                if (!mimeType) {
+                    throw new Error('Aucun codec supporté pour l\'enregistrement.');
+                }
+
+                const mediaRecorder = new MediaRecorder(combinedStream, {
+                    mimeType: mimeType
+                });
+
+                // 10. Démarrer l'enregistrement
+                const chunks = [];
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) {
+                        chunks.push(e.data);
+                    }
+                };
+
+                // 11. Fin de l'enregistrement
+                const recordingPromise = new Promise((resolve, reject) => {
+                    mediaRecorder.onstop = () => {
+                        try {
+                            const blob = new Blob(chunks, { type: mimeType });
                             const url = URL.createObjectURL(blob);
                             
-                            // Créer un lien de téléchargement
+                            // Déterminer l'extension
+                            let ext = 'mp4';
+                            if (mimeType.includes('webm')) ext = 'webm';
+                            
+                            // Télécharger
                             const a = document.createElement('a');
                             a.href = url;
-                            a.download = 'video_image_audio.webm';
+                            a.download = `video_image_audio.${ext}`;
                             document.body.appendChild(a);
                             a.click();
                             document.body.removeChild(a);
                             
-                            // Afficher le preview
+                            // Prévisualisation
                             videoPreview.src = url;
                             videoPreview.style.display = 'block';
                             
                             progressFill.style.width = '100%';
                             progressFill.textContent = '100%';
-                            showStatus('✅ Vidéo générée avec succès ! Téléchargement automatique.', 'success');
+                            showStatus(`✅ Vidéo générée avec succès ! (${(blob.size/1024/1024).toFixed(1)} MB)`, 'success');
                             generateBtn.disabled = false;
                             resolve();
-                        };
-                        
-                        recorder.onerror = (err) => {
+                        } catch (err) {
                             reject(err);
-                        };
-                        
-                        // Démarrer l'audio
-                        source.start(0);
-                        
-                        // Démarrer l'enregistrement
-                        recorder.start();
-                        
-                        // Arrêter après la durée de l'audio
-                        const duration = decodedAudio.duration * 1000;
-                        setTimeout(() => {
-                            recorder.stop();
-                            source.stop();
-                            audioContext.close();
-                        }, duration + 500);
-                        
-                        // Mettre à jour la progression
-                        let startTime = Date.now();
-                        const interval = setInterval(() => {
-                            const elapsed = Date.now() - startTime;
-                            const percent = Math.min((elapsed / duration) * 100, 99);
-                            progressFill.style.width = percent + '%';
-                            progressFill.textContent = Math.round(percent) + '%';
-                            if (percent >= 99) clearInterval(interval);
-                        }, 100);
-                    });
-                }
+                        }
+                    };
+                    
+                    mediaRecorder.onerror = (err) => reject(err);
+                });
+
+                // 12. Démarrer l'audio et l'enregistrement
+                source.start(0);
+                mediaRecorder.start();
+
+                // 13. Arrêter après la durée de l'audio
+                const durationMs = decodedAudio.duration * 1000;
+                const startTime = Date.now();
+                
+                // Progression
+                const progressInterval = setInterval(() => {
+                    const elapsed = Date.now() - startTime;
+                    const percent = Math.min((elapsed / durationMs) * 100, 99);
+                    progressFill.style.width = percent + '%';
+                    progressFill.textContent = Math.round(percent) + '%';
+                    if (percent >= 99) clearInterval(progressInterval);
+                }, 100);
+
+                // Attendre la fin de l'audio
+                await new Promise(resolve => setTimeout(resolve, durationMs + 200));
+                
+                // Arrêter
+                mediaRecorder.stop();
+                source.stop();
+                await audioContext.close();
+                
+                // Attendre que l'enregistrement soit terminé
+                await recordingPromise;
 
             } catch (err) {
                 console.error(err);
