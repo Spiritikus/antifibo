@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur MP4 · Image + Audio</title>
+    <title>Générateur MP4 · Image A4 + Audio</title>
     <style>
         * {
             box-sizing: border-box;
@@ -181,20 +181,30 @@
             text-align: center;
             margin-top: 1rem;
         }
+        .size-info {
+            background: #e9ecef;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-top: 0.3rem;
+            color: #2d3a4a;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🎬 Générateur MP4 · Image + Audio</h1>
+    <h1>🎬 Générateur MP4 · A4 + Audio</h1>
     <div class="sous-titre">
-        Créez une vidéo MP4 avec une image fixe et une piste audio
+        Image au format A4 (210×297 mm) + piste audio → MP4
     </div>
 
     <!-- Загрузка картинки -->
     <div class="form-group">
-        <label>🖼️ Charger une image (JPG, PNG)</label>
+        <label>🖼️ Charger une image (format A4 recommandé)</label>
         <input type="file" id="imageInput" accept="image/*">
         <div class="file-info" id="imageInfo">Aucune image chargée</div>
+        <span class="size-info">📐 L'image sera affichée en entier (sans recadrage)</span>
     </div>
 
     <!-- Загрузка аудио -->
@@ -207,7 +217,7 @@
     <!-- Превью -->
     <div class="preview-row" id="previewRow">
         <div class="preview-item">
-            <span style="font-weight:500;">Image</span>
+            <span style="font-weight:500;">Image A4</span>
             <img id="imagePreview" style="display:none; max-height:120px;" alt="Aperçu">
         </div>
         <div class="preview-item">
@@ -234,9 +244,10 @@
     <!-- Информация -->
     <div class="footer-note">
         <strong>📌 Comment ça marche :</strong><br>
-        • L'image chargée reste <strong>fixe</strong> pendant toute la vidéo<br>
+        • L'image A4 est affichée <strong>en entier</strong> (sans recadrage)<br>
+        • Des bandes noires sont ajoutées pour respecter les proportions de la vidéo<br>
         • L'audio est synchronisé avec l'image<br>
-        • Le fichier est généré en <strong>MP4 (H.264 + AAC)</strong><br>
+        • Vidéo au format <strong>MP4 (H.264 + AAC)</strong> en 1280×720<br>
         • 100% local — vos fichiers ne quittent pas votre navigateur
     </div>
 </div>
@@ -335,30 +346,35 @@
                 const ctx = canvas.getContext('2d');
                 
                 // 3. Définir la taille du canvas (HD 1280x720)
-                const width = 1280;
-                const height = 720;
-                canvas.width = width;
-                canvas.height = height;
+                const videoWidth = 1280;
+                const videoHeight = 720;
+                canvas.width = videoWidth;
+                canvas.height = videoHeight;
                 
-                // 4. Dessiner l'image en conservant le ratio (centrée, fond noir)
+                // 4. Dessiner l'image EN ENTIER (sans recadrage)
+                //    avec letterbox (bandes noires pour conserver les proportions)
                 const imgRatio = img.width / img.height;
+                const videoRatio = videoWidth / videoHeight;
+                
                 let drawWidth, drawHeight, offsetX = 0, offsetY = 0;
                 
-                if (imgRatio > width / height) {
-                    drawHeight = height;
-                    drawWidth = height * imgRatio;
-                    offsetX = (width - drawWidth) / 2;
+                if (imgRatio > videoRatio) {
+                    // Image plus large que la vidéo → on la met en largeur max
+                    drawWidth = videoWidth;
+                    drawHeight = videoWidth / imgRatio;
+                    offsetY = (videoHeight - drawHeight) / 2;
                 } else {
-                    drawWidth = width;
-                    drawHeight = width / imgRatio;
-                    offsetY = (height - drawHeight) / 2;
+                    // Image plus haute que la vidéo → on la met en hauteur max
+                    drawHeight = videoHeight;
+                    drawWidth = videoHeight * imgRatio;
+                    offsetX = (videoWidth - drawWidth) / 2;
                 }
                 
                 // Fond noir
                 ctx.fillStyle = '#000000';
-                ctx.fillRect(0, 0, width, height);
+                ctx.fillRect(0, 0, videoWidth, videoHeight);
                 
-                // Image centrée
+                // Image centrée (complète, sans recadrage)
                 ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
 
                 // 5. Préparer l'audio
@@ -381,7 +397,7 @@
                     ...audioStreamDest.stream.getAudioTracks()
                 ]);
 
-                // 9. Enregistrer avec MediaRecorder en essayant d'obtenir MP4
+                // 9. Enregistrer avec MediaRecorder
                 const mimeTypes = [
                     'video/mp4;codecs=h264,aac',
                     'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
@@ -422,25 +438,22 @@
                             const blob = new Blob(chunks, { type: mimeType });
                             const url = URL.createObjectURL(blob);
                             
-                            // Déterminer l'extension
                             let ext = 'mp4';
                             if (mimeType.includes('webm')) ext = 'webm';
                             
-                            // Télécharger
                             const a = document.createElement('a');
                             a.href = url;
-                            a.download = `video_image_audio.${ext}`;
+                            a.download = `video_A4_audio.${ext}`;
                             document.body.appendChild(a);
                             a.click();
                             document.body.removeChild(a);
                             
-                            // Prévisualisation
                             videoPreview.src = url;
                             videoPreview.style.display = 'block';
                             
                             progressFill.style.width = '100%';
                             progressFill.textContent = '100%';
-                            showStatus(`✅ Vidéo générée avec succès ! (${(blob.size/1024/1024).toFixed(1)} MB)`, 'success');
+                            showStatus(`✅ Vidéo générée ! (${(blob.size/1024/1024).toFixed(1)} MB)`, 'success');
                             generateBtn.disabled = false;
                             resolve();
                         } catch (err) {
@@ -459,7 +472,6 @@
                 const durationMs = decodedAudio.duration * 1000;
                 const startTime = Date.now();
                 
-                // Progression
                 const progressInterval = setInterval(() => {
                     const elapsed = Date.now() - startTime;
                     const percent = Math.min((elapsed / durationMs) * 100, 99);
@@ -468,15 +480,12 @@
                     if (percent >= 99) clearInterval(progressInterval);
                 }, 100);
 
-                // Attendre la fin de l'audio
                 await new Promise(resolve => setTimeout(resolve, durationMs + 200));
                 
-                // Arrêter
                 mediaRecorder.stop();
                 source.stop();
                 await audioContext.close();
                 
-                // Attendre que l'enregistrement soit terminé
                 await recordingPromise;
 
             } catch (err) {
