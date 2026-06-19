@@ -1,1 +1,657 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Конвертер LaTeX вопросов в Excel | Поддержка \ce и формул</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
+        body {
+            background: linear-gradient(135deg, #e9f0f5 0%, #dce6ef 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            max-width: 1500px;
+            width: 100%;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c5c 0%, #2a4a6e 100%);
+            color: white;
+            padding: 1.8rem 2rem;
+        }
+
+        .header h1 {
+            margin: 0 0 0.3rem 0;
+            font-weight: 700;
+            font-size: 1.9rem;
+        }
+
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .input-methods {
+            display: flex;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .method-card {
+            flex: 1;
+            min-width: 280px;
+            background: #f9fbfd;
+            border-radius: 24px;
+            padding: 1.3rem;
+            border: 1px solid #e2edf2;
+        }
+
+        .method-card h3 {
+            margin: 0 0 0.8rem 0;
+            font-size: 1.2rem;
+            color: #1e3c5c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-area {
+            background: #ffffff;
+            border: 2px dashed #b9d0e7;
+            border-radius: 20px;
+            padding: 1.2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .upload-area:hover {
+            border-color: #1e3c5c;
+            background: #f1f7fd;
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 320px;
+            padding: 14px;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            font-size: 0.82rem;
+            border: 1px solid #cbdde9;
+            border-radius: 18px;
+            background: #ffffff;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #1e3c5c;
+            box-shadow: 0 0 0 3px rgba(30,60,92,0.15);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1.5rem 0 1rem;
+        }
+
+        button {
+            background: #1e3c5c;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 44px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: #0f2b44;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+        }
+
+        button.secondary {
+            background: #5a7d9c;
+        }
+
+        button.success {
+            background: #2a7f6e;
+        }
+
+        button.success:hover {
+            background: #1e5f52;
+        }
+
+        .status-msg {
+            background: #eef2f7;
+            border-radius: 40px;
+            padding: 12px 22px;
+            font-size: 0.9rem;
+            color: #1e3c5c;
+            margin: 16px 0;
+            border-left: 4px solid #2a7f6e;
+        }
+
+        .preview-section {
+            margin-top: 2rem;
+            border-top: 1px solid #e2edf2;
+            padding-top: 1.5rem;
+        }
+
+        .preview-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: #1e3c5c;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+            border: 1px solid #dce7ef;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        th {
+            background: #eef3fc;
+            padding: 14px 12px;
+            text-align: center;
+            border-bottom: 2px solid #cbdde9;
+            color: #1e3c5c;
+            font-weight: 700;
+        }
+
+        td {
+            padding: 12px 12px;
+            border-bottom: 1px solid #e2edf2;
+            vertical-align: top;
+        }
+
+        .correct-col {
+            background-color: #d4f5e8 !important;
+        }
+
+        footer {
+            background: #f0f4f9;
+            padding: 1rem 2rem;
+            font-size: 0.75rem;
+            color: #5e7e9e;
+            text-align: center;
+            border-top: 1px solid #dce7ef;
+        }
+
+        .example-hint {
+            font-size: 0.7rem;
+            color: #5a7d9c;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <h1>📊 LaTeX → Excel | Полная поддержка \ce и формул</h1>
+        <p>Корректно обрабатывает LaTeX-команды \ce{}, формулы, переносы строк. Каждый вариант ответа — в отдельную ячейку.</p>
+    </div>
+    <div class="content">
+        <div class="input-methods">
+            <div class="method-card">
+                <h3>📁 Загрузить файл</h3>
+                <div class="upload-area" id="dropZone">
+                    <label for="fileInput" style="cursor: pointer; display: block;">
+                        📂 Нажмите или перетащите .txt / .tex
+                    </label>
+                    <input type="file" id="fileInput" accept=".txt, .tex, .text/plain">
+                </div>
+            </div>
+            <div class="method-card">
+                <h3>✏️ Вставить LaTeX</h3>
+                <textarea id="latexInput" placeholder='Пример с командами \ce (химические формулы):
+
+\question Какова электронная конфигурация атома водорода в основном состоянии?
+\begin{randomizechoices}
+    \correctchoice \ce{1s^1}
+    \choice \ce{1s^2}
+    \choice \ce{1s^2 2s^1}
+    \choice \ce{1s^2 2s^2 2p^1}
+\end{randomizechoices}
+
+\question Сходство спектров водорода и щелочных металлов является аргументом для размещения водорода в...
+\begin{randomizechoices}
+    \correctchoice I группе периодической системы.
+    \choice VII группе периодической системы.
+    \choice VIII группе периодической системы.
+    \choice отдельно от всех групп.
+\end{randomizechoices}
+
+\question Энергия ионизации атома водорода по сравнению с атомами щелочных металлов...
+\begin{randomizechoices}
+    \correctchoice намного больше.
+    \choice примерно одинакова.
+    \choice намного меньше.
+    \choice не может быть сравнена.
+\end{randomizechoices}'></textarea>
+                <div class="example-hint">💡 Каждый вариант должен начинаться с \choice или \correctchoice на отдельной строке. Поддерживаются \ce{}, \mathrm{}, \text{} и любые другие LaTeX-команды.</div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button id="convertFromTextBtn">🔄 Конвертировать из текста</button>
+            <button id="clearAllBtn" class="secondary">🗑 Очистить всё</button>
+            <button id="exportExcelBtn" class="success" disabled>📎 Экспорт в Excel (XLSX)</button>
+        </div>
+
+        <div id="statusArea" class="status-msg">
+            💡 Вставьте LaTeX-код или загрузите файл, затем нажмите «Конвертировать из текста».
+        </div>
+
+        <div class="preview-section" id="previewArea" style="display: none;">
+            <div class="preview-title">
+                <span>📋 Предпросмотр (первые 5 вопросов)</span>
+                <span style="background: #e1ecf4; padding: 4px 14px; border-radius: 30px; font-size: 0.75rem;" id="questionsCountBadge"></span>
+            </div>
+            <div class="table-wrapper">
+                <div id="previewTable"></div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        ✅ <strong>Как работает:</strong> Каждая команда <code>\choice</code> или <code>\correctchoice</code> создаёт отдельную ячейку. Правильный ответ помещается в колонку A со звёздочкой *, остальные — в B, C, D.<br>
+        Поддерживаются многострочные варианты, LaTeX-команды, химические формулы \ce{} и любые спецсимволы.
+    </footer>
+</div>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<script>
+    let parsedQuestions = [];
+
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const latexTextarea = document.getElementById('latexInput');
+    const convertFromTextBtn = document.getElementById('convertFromTextBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
+    const statusArea = document.getElementById('statusArea');
+    const previewArea = document.getElementById('previewArea');
+    const previewTableDiv = document.getElementById('previewTable');
+    const questionsCountBadge = document.getElementById('questionsCountBadge');
+
+    // ============= РАСШИРЕННЫЙ ПАРСЕР С ПОДДЕРЖКОЙ \ce =============
+    function parseLatexQuestions(content) {
+        let text = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        
+        // Находим все вопросы
+        const questionPattern = /\\question\s+([\s\S]*?)(?=\\question\s+|\n*$)/gi;
+        let matches = [];
+        let match;
+        while ((match = questionPattern.exec(text)) !== null) {
+            let block = match[1].trim();
+            if (block.length > 0) matches.push(block);
+        }
+        
+        if (matches.length === 0 && text.includes('\\question')) {
+            const parts = text.split(/\\question/);
+            for (let i = 1; i < parts.length; i++) {
+                if (parts[i].trim()) matches.push(parts[i].trim());
+            }
+        }
+        
+        if (matches.length === 0) {
+            throw new Error('Не найдено ни одного вопроса с командой \\question');
+        }
+        
+        const questions = [];
+        
+        for (let qIdx = 0; qIdx < matches.length; qIdx++) {
+            let block = matches[qIdx];
+            
+            // Извлекаем текст вопроса
+            let questionText = '';
+            let choicesBlock = '';
+            
+            const beginMatch = block.match(/\\begin\{(randomizechoices|choices)\}/);
+            if (beginMatch) {
+                const envName = beginMatch[1];
+                const beginTag = beginMatch[0];
+                const endTag = `\\end{${envName}}`;
+                const beginPos = block.indexOf(beginTag);
+                questionText = block.substring(0, beginPos).trim();
+                
+                const afterBegin = block.substring(beginPos + beginTag.length);
+                const endPos = afterBegin.indexOf(endTag);
+                if (endPos !== -1) {
+                    choicesBlock = afterBegin.substring(0, endPos).trim();
+                } else {
+                    choicesBlock = afterBegin;
+                }
+            } else {
+                questionText = block;
+                choicesBlock = block;
+            }
+            
+            // ========== РАЗДЕЛЕНИЕ ВАРИАНТОВ ==========
+            // Разбиваем choicesBlock на строки и обрабатываем каждую строку
+            const lines = choicesBlock.split(/\n/);
+            const rawChoices = [];
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (line.startsWith('\\correctchoice')) {
+                    let content = line.replace(/\\correctchoice\s*/, '').trim();
+                    rawChoices.push({ text: content, isCorrect: true });
+                }
+                else if (line.startsWith('\\choice')) {
+                    let content = line.replace(/\\choice\s*/, '').trim();
+                    rawChoices.push({ text: content, isCorrect: false });
+                }
+            }
+            
+            // Если варианты не найдены построчно, пробуем искать в одной строке
+            if (rawChoices.length === 0 && choicesBlock.length > 0) {
+                // Ищем все вхождения \correctchoice и \choice через регулярку
+                const allChoiceRegex = /(\\(?:correct)?choice)\s+([^\n\\]*(?:\\[a-z]+\{[^}]*\}[^\n\\]*)*)/gi;
+                let cMatch;
+                while ((cMatch = allChoiceRegex.exec(choicesBlock)) !== null) {
+                    const cmd = cMatch[1];
+                    let content = cMatch[2] || '';
+                    content = content.trim();
+                    const isCorrect = cmd.includes('correct');
+                    if (content.length > 0) {
+                        rawChoices.push({ text: content, isCorrect: isCorrect });
+                    }
+                }
+            }
+            
+            // Собираем варианты: максимум 4, первый (правильный) в A со *
+            let choices = [];
+            let correctFound = false;
+            let correctChoice = null;
+            let otherChoices = [];
+            
+            for (let rc of rawChoices) {
+                if (rc.isCorrect && !correctFound) {
+                    correctChoice = rc;
+                    correctFound = true;
+                } else {
+                    otherChoices.push(rc);
+                }
+            }
+            
+            if (correctChoice) {
+                choices.push({ text: correctChoice.text, isCorrect: true });
+            }
+            
+            for (let i = 0; i < Math.min(otherChoices.length, 3); i++) {
+                choices.push({ text: otherChoices[i].text, isCorrect: false });
+            }
+            
+            // Дополняем до 4 вариантов пустыми
+            while (choices.length < 4) {
+                choices.push({ text: '', isCorrect: false });
+            }
+            
+            if (questionText && questionText.length > 0) {
+                questions.push({
+                    questionText: questionText,
+                    choices: choices
+                });
+            }
+        }
+        
+        if (questions.length === 0) {
+            throw new Error('Не удалось распарсить вопросы. Убедитесь, что каждый вариант начинается с \\choice или \\correctchoice на отдельной строке.');
+        }
+        
+        return questions;
+    }
+    
+    // Формирование строк для Excel
+    function questionsToRows(questions) {
+        const rows = [["Номер вопроса", "Текст вопроса", "Вариант A*", "Вариант B", "Вариант C", "Вариант D"]];
+        
+        for (let i = 0; i < questions.length; i++) {
+            const q = questions[i];
+            const qNumber = i + 1;
+            const questionBody = q.questionText;
+            
+            let optionCells = ["", "", "", ""];
+            
+            for (let optIdx = 0; optIdx < q.choices.length && optIdx < 4; optIdx++) {
+                const ch = q.choices[optIdx];
+                let displayText = ch.text;
+                if (ch.isCorrect && displayText && displayText.length > 0) {
+                    displayText = `*${displayText}`;
+                }
+                optionCells[optIdx] = displayText;
+            }
+            
+            rows.push([
+                qNumber.toString(),
+                questionBody,
+                optionCells[0],
+                optionCells[1],
+                optionCells[2],
+                optionCells[3]
+            ]);
+        }
+        return rows;
+    }
+    
+    function exportToExcel(questions) {
+        if (!questions || questions.length === 0) {
+            alert("Нет данных для экспорта.");
+            return;
+        }
+        const rows = questionsToRows(questions);
+        const ws = XLSX.utils.aoa_to_sheet(rows);
+        ws['!cols'] = [{ wch: 8 }, { wch: 55 }, { wch: 45 }, { wch: 45 }, { wch: 45 }, { wch: 45 }];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Вопросы");
+        const fileName = `questions_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+        statusArea.innerHTML = `✅ Экспорт выполнен! Скачан файл с ${questions.length} вопрос(ов).`;
+        return true;
+    }
+    
+    function renderPreview(questions) {
+        if (!questions || questions.length === 0) {
+            previewArea.style.display = "none";
+            return;
+        }
+        previewArea.style.display = "block";
+        questionsCountBadge.innerText = `Всего: ${questions.length}`;
+        
+        const allRows = questionsToRows(questions);
+        if (allRows.length <= 1) {
+            previewTableDiv.innerHTML = "<p>Нет данных для отображения</p>";
+            return;
+        }
+        
+        const maxShow = Math.min(allRows.length, 6);
+        const showRows = allRows.slice(0, maxShow);
+        
+        let html = '<table style="width:100%; border-collapse: collapse; font-size:13px;">\n<thead><tr>';
+        showRows[0].forEach(header => {
+            html += `<th style="padding:12px 10px; border:1px solid #cbdde9; background:#eef3fc; text-align:center;">${escapeHtml(header)}</th>`;
+        });
+        html += '</thead><tbody>';
+        
+        for (let r = 1; r < showRows.length; r++) {
+            html += '<tr>';
+            for (let c = 0; c < showRows[r].length; c++) {
+                let cellValue = showRows[r][c] || '';
+                let isCorrectCol = (c === 2);
+                let hasStar = typeof cellValue === 'string' && cellValue.startsWith('*');
+                let cellClass = (hasStar && isCorrectCol) ? 'correct-col' : '';
+                let displayValue = cellValue.length > 120 ? cellValue.substring(0, 120) + '…' : cellValue;
+                html += `<td style="padding:10px 8px; border:1px solid #e2edf2; vertical-align:top; white-space:pre-wrap;" class="${cellClass}">${escapeHtml(displayValue)}</td>`;
+            }
+            html += '</tr>';
+        }
+        html += '</tbody></table>';
+        
+        if (allRows.length - 1 > 5) {
+            html += `<div style="margin-top:12px; font-size:0.8rem; color:#2c5a7a;">+ ещё ${allRows.length - 1 - 5} вопрос(ов)</div>`;
+        }
+        previewTableDiv.innerHTML = html;
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    function convertFromText() {
+        const rawText = latexTextarea.value.trim();
+        if (!rawText) {
+            statusArea.innerHTML = "⚠️ Поле ввода пустое. Вставьте LaTeX-код с вопросами.";
+            return;
+        }
+        statusArea.innerHTML = "⏳ Парсинг...";
+        try {
+            const questions = parseLatexQuestions(rawText);
+            if (questions.length === 0) throw new Error("Нет вопросов после парсинга");
+            parsedQuestions = questions;
+            exportExcelBtn.disabled = false;
+            
+            let totalOpt = 0;
+            for (let q of questions) {
+                for (let c of q.choices) {
+                    if (c.text && c.text.length > 0) totalOpt++;
+                }
+            }
+            statusArea.innerHTML = `✅ Успешно: ${questions.length} вопрос(ов), ${totalOpt} вариантов. Правильный ответ (с \correctchoice) — в колонке A со *.`;
+            renderPreview(parsedQuestions);
+        } catch (err) {
+            console.error(err);
+            statusArea.innerHTML = `❌ Ошибка: ${err.message}`;
+            parsedQuestions = [];
+            exportExcelBtn.disabled = true;
+            previewArea.style.display = "none";
+        }
+    }
+    
+    function loadAndParseFile(file) {
+        if (!file) return;
+        statusArea.innerHTML = "⏳ Чтение файла...";
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const content = e.target.result;
+                const questions = parseLatexQuestions(content);
+                parsedQuestions = questions;
+                if (parsedQuestions.length > 0) {
+                    exportExcelBtn.disabled = false;
+                    let totalOpt = 0;
+                    for (let q of parsedQuestions) {
+                        for (let c of q.choices) {
+                            if (c.text && c.text.length > 0) totalOpt++;
+                        }
+                    }
+                    statusArea.innerHTML = `✅ Файл загружен: ${parsedQuestions.length} вопрос(ов), ${totalOpt} вариантов. Каждый вариант в отдельной колонке.`;
+                    renderPreview(parsedQuestions);
+                    latexTextarea.value = content;
+                } else {
+                    throw new Error("Не удалось распарсить вопросы.");
+                }
+            } catch (err) {
+                statusArea.innerHTML = `❌ Ошибка: ${err.message}. Убедитесь, что каждый вариант начинается с \\choice или \\correctchoice на новой строке.`;
+                parsedQuestions = [];
+                exportExcelBtn.disabled = true;
+                previewArea.style.display = "none";
+            }
+        };
+        reader.onerror = () => statusArea.innerHTML = "❌ Ошибка чтения файла.";
+        reader.readAsText(file, "UTF-8");
+    }
+    
+    function clearAll() {
+        parsedQuestions = [];
+        exportExcelBtn.disabled = true;
+        previewArea.style.display = "none";
+        latexTextarea.value = "";
+        fileInput.value = "";
+        statusArea.innerHTML = "🧹 Очищено. Вставьте текст или загрузите файл, затем нажмите «Конвертировать из текста».";
+        previewTableDiv.innerHTML = "";
+    }
+    
+    convertFromTextBtn.addEventListener('click', convertFromText);
+    clearAllBtn.addEventListener('click', clearAll);
+    exportExcelBtn.addEventListener('click', () => {
+        if (parsedQuestions.length > 0) exportToExcel(parsedQuestions);
+        else alert("Нет данных для экспорта. Сначала сконвертируйте текст.");
+    });
+    
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = "#eef4fc";
+    });
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.backgroundColor = "#ffffff";
+    });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = "#ffffff";
+        if (e.dataTransfer.files.length > 0) {
+            loadAndParseFile(e.dataTransfer.files[0]);
+        }
+    });
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files && fileInput.files[0]) {
+            loadAndParseFile(fileInput.files[0]);
+        }
+    });
+    
+    exportExcelBtn.disabled = true;
+</script>
+</body>
+</html>
